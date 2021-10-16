@@ -17,8 +17,11 @@
     "start": "./bin/server",
     "start:dev": "concurrently \"yarn build:watch\" \"nodemon -w dist dist/index.js\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.17.1"
+  },
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.3",
     "concurrently": "^6.3.0",

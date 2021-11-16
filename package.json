@@ -1,5 +1,5 @@
 {
-  "name": "one-service",
+  "name": "@superfaceai/one-service",
   "version": "0.0.0",
   "description": "HTTP Service able to execute Superface capabilities",
   "main": "dist/index.js",

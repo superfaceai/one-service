@@ -8,7 +8,7 @@ import {
 import { validate, IsDefined } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { DEBUG_PREFIX } from './constants';
-import { getInstance as getOneSdk } from './oneSdk';
+import { getInstance as getOneSdk } from './onesdk';
 
 const debug = createDebug(`${DEBUG_PREFIX}:perform`);
 

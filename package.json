@@ -1,7 +1,7 @@
 {
   "name": "@superfaceai/one-service",
   "version": "0.0.0",
-  "description": "HTTP Service able to execute Superface capabilities",
+  "description": "GraphQL service on top of OneSDK",
   "main": "dist/index.js",
   "repository": "https://github.com/superfaceai/one-service",
   "author": "Superface Team <hello@superface.ai>",
@@ -12,22 +12,21 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json --outDir dist",
-    "build:watch": "yarn build --watch",
+    "build:watch": "npm run build --watch",
     "test": "jest",
     "lint": "eslint src/",
-    "lint:fix": "yarn lint --fix",
+    "lint:fix": "npm run lint --fix",
     "format": "prettier -c src/",
     "format:fix": "prettier --write src/",
     "start": "./bin/server",
-    "start:dev": "concurrently \"yarn build:watch\" \"nodemon -w dist bin/server\""
+    "start:dev": "concurrently \"npm run build:watch\" \"nodemon -w dist bin/server\""
   },
   "dependencies": {
-    "@superfaceai/one-sdk": "^0.0.38",
-    "body-parser": "^1.19.0",
-    "class-transformer": "^0.4.0",
-    "class-validator": "^0.13.1",
+    "@superfaceai/one-sdk": "^1.0.1",
     "debug": "^4.3.2",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.8.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

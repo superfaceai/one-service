@@ -1,25 +1,27 @@
-import express from 'express';
-import createDebug from 'debug';
-import { json as parseJson } from 'body-parser';
+import express, { Express } from 'express';
+import http from 'http';
+import { HOST, PORT } from './constants';
+import { createGraphQLServer } from './graphql';
 
-import { DEBUG_PREFIX, HOST, PORT } from './constants';
-import { performRoute } from './perform';
+export interface Configuration {
+  enableCors: boolean;
+}
 
-const debug = createDebug(`${DEBUG_PREFIX}:bootstrap`);
-
-export function bootstrap() {
+export async function bootstrap(config: Configuration): Promise<Express> {
   const app = express();
+  const httpServer = http.createServer(app);
 
-  app.use(parseJson());
-
-  app.post('/perform', performRoute);
+  const gqlServer = await createGraphQLServer();
+  app.use('/graphql', gqlServer);
 
   const host = process.env.HOST ?? HOST;
   const port = parseInt(process.env.PORT ?? '', 10) || PORT;
 
-  app.listen(port, host, () => {
-    debug(`Listening on ${host}:${port}`);
-  });
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ host, port }, resolve),
+  );
+  console.log(`🚀 Server ready at http://${host}:${port}`);
+  console.log('      GraphQL endpoint /graphql');
 
   return app;
 }

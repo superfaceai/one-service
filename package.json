@@ -11,7 +11,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json --outDir dist",
+    "build": "tsc -p tsconfig.build.json --outDir dist || true",
     "build:watch": "npm run build --watch",
     "test": "jest",
     "lint": "eslint src/",

@@ -1,212 +1,342 @@
 import {
-  GraphQLEnumType,
-  GraphQLFieldResolver,
+  GraphQLFieldConfig,
+  GraphQLFieldConfigArgumentMap,
+  GraphQLFieldConfigMap,
   GraphQLInputObjectType,
-  GraphQLList,
-  GraphQLNonNull,
+  GraphQLInputType,
   GraphQLObjectType,
+  GraphQLOutputType,
   GraphQLSchema,
   GraphQLString,
+  printSchema,
 } from 'graphql';
-import { perform } from './oneSdk';
-import { DEBUG_PREFIX } from './constants';
+
+import { SuperJson, META_FILE } from '@superfaceai/one-sdk';
+import {
+  NormalizedProfileSettings,
+  ProfileDocumentNode,
+} from '@superfaceai/ast';
+import {
+  DocumentedStructure,
+  getProfileOutput,
+  getProfileUsecases,
+  StructureType,
+  UseCaseStructure,
+} from '@superfaceai/parser';
+import { loadProfile } from '@superfaceai/cli/dist/logic/publish.utils';
 import createDebug from 'debug';
+import { join as joinPath } from 'path';
+import { DEBUG_PREFIX } from './constants';
+import { createResolver } from './oneSdk';
+import {
+  description,
+  hasFieldsDefined,
+  inputType,
+  outputType,
+  pascalize,
+  sanitize,
+  sanitizedProfileName,
+  typeFromSafety,
+} from './schema.utils';
+import { ProfileId } from '@superfaceai/cli/dist/common/profile';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
 // Attempt to do https://graphql.org/blog/rest-api-graphql-wrapper/ with Superface Profiles and OneSDK
 // Working with arrays: https://atheros.ai/blog/graphql-list-how-to-use-arrays-in-graphql-schema
 
-export function createResolver(
-  profile: string,
-  useCase: string,
-): GraphQLFieldResolver<any, any> {
-  debug(`Crating resolver for ${profile}/${useCase}`);
+export async function createSchema(): Promise<GraphQLSchema> {
+  const superPath = await SuperJson.detectSuperJson(process.cwd());
+  if (!superPath) {
+    throw new Error('Unable to generate, super.json not found');
+  }
 
-  return async function (
-    source: any,
-    args: any,
-    context: any,
-    info: any,
-  ): Promise<any> {
-    debug(`Performing ${profile}/${useCase}`, { source, args });
+  const loadedResult = await SuperJson.load(joinPath(superPath, META_FILE));
+  const superJson = loadedResult.match(
+    (v) => v,
+    (err) => {
+      throw new Error(`Unable to load super.json: ${err.formatShort()}`);
+    },
+  );
 
-    // TODO exception
-    const result = await perform({
-      profile,
-      useCase,
-      input: args?.input,
-      provider: args?.options?.provider,
-    });
+  return await generate(superJson);
+}
 
-    debug('Perform result', result);
+export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
+  const queryFields: GraphQLFieldConfigMap<any, any> = {};
+  const mutationFields: GraphQLFieldConfigMap<any, any> = {};
 
-    if (result.isOk()) {
-      // Following lines should be properly thought through and depends on decision
-      // how generated schema will look like.
+  for (const [profile, profileSettings] of Object.entries(
+    superJson.normalized.profiles,
+  )) {
+    debug(`generate start for ${profile}`);
 
-      const value = result.value;
+    const loadedProfile = await loadProfile(
+      superJson,
+      ProfileId.fromId(profile),
+    );
 
-      if (Array.isArray(value)) {
-        return {
-          edges: value,
-        };
+    const profilePrefix = sanitizedProfileName(loadedProfile.ast);
+
+    const { QueryType, MutationType } = await generateProfileTypes(
+      profilePrefix,
+      loadedProfile.ast,
+      profileSettings,
+    );
+
+    if (QueryType) {
+      if (queryFields[profilePrefix]) {
+        throw new Error(`Profile name collision in Query: ${profilePrefix}`);
       }
 
-      if (typeof value === 'object' && value !== null) {
-        return value;
-      }
-
-      return {
-        node: value,
+      queryFields[profilePrefix] = {
+        description: description(
+          loadedProfile.ast.header.documentation as DocumentedStructure,
+        ),
+        type: QueryType,
+        // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
+        // we need this to skip profile to run resolver on usecase
+        resolve: () => ({}),
       };
-    } else {
-      throw result.error;
     }
+
+    if (MutationType) {
+      if (mutationFields[profilePrefix]) {
+        throw new Error(`Profile name collision in Mutation: ${profilePrefix}`);
+      }
+
+      mutationFields[profilePrefix] = {
+        description: description(
+          loadedProfile.ast.header.documentation as DocumentedStructure,
+        ),
+        type: MutationType,
+        // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
+        // we need this to skip profile to run resolver on usecase
+        resolve: () => ({}),
+      };
+    }
+  }
+
+  const schema = new GraphQLSchema({
+    description: 'Superface.ai ❤️',
+    query: new GraphQLObjectType({
+      name: 'Query',
+      description: "Profile's safe use-cases",
+      fields: queryFields,
+    }),
+    mutation: hasFieldsDefined(mutationFields)
+      ? new GraphQLObjectType({
+          name: 'Mutation',
+          description: "Profile's unsafe and idenpotent use-cases",
+          fields: mutationFields,
+        })
+      : undefined,
+  });
+
+  debug('generated schema:\n', printSchema(schema));
+
+  return schema;
+}
+
+export async function generateProfileTypes(
+  profilePrefix: string,
+  profileAst: ProfileDocumentNode,
+  profileSettings: NormalizedProfileSettings,
+): Promise<{
+  QueryType?: GraphQLObjectType;
+  MutationType?: GraphQLObjectType;
+}> {
+  debug('generateProfileTypes profilePrefix', profilePrefix);
+
+  const output = getProfileOutput(profileAst);
+  debug('generateProfileTypes profile output:', output);
+
+  const useCasesInfo = getProfileUsecases(profileAst);
+  debug('generateProfileTypes profile usecases info:', useCasesInfo);
+
+  const queryFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
+  const mutationFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
+
+  for (const useCase of output.usecases) {
+    const useCaseInfo = useCasesInfo.find(
+      (uc) => uc.name === useCase.useCaseName,
+    );
+
+    if (!useCaseInfo) {
+      throw new Error('Can find useCase info');
+    }
+
+    const useCaseFieldConfig = generateUseCaseFieldConfig(
+      profilePrefix,
+      profileAst,
+      profileSettings,
+      useCase,
+    );
+
+    const type = typeFromSafety(useCaseInfo.safety);
+    if (type === 'query') {
+      queryFields[useCase.useCaseName] = useCaseFieldConfig;
+    } else {
+      mutationFields[useCase.useCaseName] = useCaseFieldConfig;
+    }
+  }
+
+  return {
+    QueryType: hasFieldsDefined(queryFields)
+      ? new GraphQLObjectType({
+          name: `${profilePrefix}Query`,
+          description: description(output),
+          fields: queryFields,
+        })
+      : undefined,
+    MutationType: hasFieldsDefined(mutationFields)
+      ? new GraphQLObjectType({
+          name: `${profilePrefix}Mutation`,
+          description: description(output),
+          fields: mutationFields,
+        })
+      : undefined,
   };
 }
 
-export async function createSchema(): Promise<GraphQLSchema> {
-  // This function should generate schema from Superface Profiles
+export function generateUseCaseFieldConfig(
+  profilePrefix: string,
+  profileAst: ProfileDocumentNode,
+  profileSettings: NormalizedProfileSettings,
+  useCase: UseCaseStructure,
+): GraphQLFieldConfig<any, any> {
+  if (!useCase.result) {
+    throw new Error(`${useCase.useCaseName} doesn't have defined result`);
+  }
 
-  const UseCaseOptionsType = new GraphQLInputObjectType({
-    name: 'UseCaseOptions',
+  const useCasePrefix = `${profilePrefix}${pascalize(
+    sanitize(useCase.useCaseName),
+  )}`;
+
+  const ResultType = generateStructureResultType(
+    `${useCasePrefix}Result`,
+    useCase.result,
+  );
+
+  const InputType = useCase.input
+    ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
+    : undefined;
+
+  const OptionsType = generateUseCaseOptionsInputType(
+    `${useCasePrefix}Options`,
+    profileSettings,
+  );
+
+  const args: GraphQLFieldConfigArgumentMap = {
+    options: {
+      type: OptionsType,
+    },
+  };
+
+  if (InputType) {
+    args.input = {
+      description: 'Use-case inputs',
+      type: InputType,
+    };
+  }
+
+  return {
+    description: description(useCase),
+    type: ResultType,
+    args,
+    resolve: createResolver(
+      ProfileId.fromScopeName(
+        profileAst.header.scope,
+        profileAst.header.name,
+      ).toString(),
+      useCase.useCaseName,
+    ),
+  };
+}
+
+export function generateStructureResultType(
+  name: string,
+  structure: StructureType,
+): GraphQLOutputType {
+  debug(`generateStructureResultType for ${name} from structure`, structure);
+
+  const type = outputType(`${name}Node`, structure);
+
+  return new GraphQLObjectType({
+    name,
+    description:
+      'Wrapping type to handle many possible types returned as result by OneSDK',
+    fields: {
+      result: {
+        type,
+      },
+    },
+  });
+}
+
+export function generateStructureInputType(
+  name: string,
+  structure: StructureType,
+): GraphQLInputType {
+  debug(`generateStructureInputType for ${name} from structure`, structure);
+
+  return inputType(name, structure);
+}
+
+export function generateUseCaseOptionsInputType(
+  name: string,
+  profileSettings: NormalizedProfileSettings,
+): GraphQLInputObjectType {
+  debug(
+    `generateUseCaseOptionsInputType for ${name} with providers: ${Object.keys(
+      profileSettings.providers,
+    ).join(', ')}`,
+  );
+
+  return new GraphQLInputObjectType({
+    name,
+    description: 'Additional options to pass to OneSDK perform function',
     fields: {
       provider: {
         type: GraphQLString,
-        description: 'Specify what provider to use',
       },
     },
   });
+}
 
-  const CrmContactsSearchInputOperatorEnum = new GraphQLEnumType({
-    name: 'CrmContactsSearchInputOperatorEnum',
-    values: {
-      EQ: { value: 'EQ' },
-      NEQ: { value: 'NEQ' },
-    },
-  });
+export function generateRootQueryType(
+  profileTypes: GraphQLObjectType[],
+): GraphQLObjectType | null {
+  return generateRootType('Query', profileTypes);
+}
 
-  const CrmContactsSearchInput = new GraphQLInputObjectType({
-    name: 'CrmContactsSearchInput',
-    fields: () => ({
-      property: {
-        type: GraphQLNonNull(GraphQLString),
-        description: `
-          Property
-          Property name to compare value with
-        `,
-      },
-      operator: {
-        type: CrmContactsSearchInputOperatorEnum,
-        description: `
-          Operator
-          Comparison operation
-        `,
-      },
-      value: {
-        type: GraphQLNonNull(GraphQLString),
-        description: `
-          Value
-          Value to compare against values in property
-        `,
-      },
-    }),
-  });
+export function generateRootMutationType(
+  profileTypes: GraphQLObjectType[],
+): GraphQLObjectType | null {
+  return generateRootType('Mutation', profileTypes);
+}
 
-  const CrmContactsSearchResultNodeType = new GraphQLObjectType({
-    name: 'CrmContactsSearchResultNode',
-    fields: () => ({
-      id: {
-        type: GraphQLString,
-      },
-      email: {
-        type: GraphQLString,
-      },
-      phone: {
-        type: GraphQLString,
-      },
-      firstName: {
-        type: GraphQLString,
-      },
-      lastName: {
-        type: GraphQLString,
-      },
-      company: {
-        type: GraphQLString,
-      },
-      country: {
-        type: GraphQLString,
-      },
-      customProperties: {
-        type: GraphQLString,
-      },
-    }),
-  });
+export function generateRootType(
+  name: string,
+  profileTypes: GraphQLObjectType[],
+): GraphQLObjectType | null {
+  if (profileTypes.length === 0) {
+    return null;
+  }
 
-  const CrmContactsSearchResultType = new GraphQLObjectType({
-    name: 'CrmContactsSearchResult',
-    fields: {
-      edges: {
-        type: GraphQLList(CrmContactsSearchResultNodeType),
-      },
-    },
-  });
+  const fields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better then 'any'?
 
-  const CrmContactsQueryType = new GraphQLObjectType({
-    name: 'CrmContactsQuery',
-    fields: {
-      Search: {
-        type: CrmContactsSearchResultType,
-        args: {
-          input: {
-            type: CrmContactsSearchInput,
-          },
-          options: {
-            type: UseCaseOptionsType,
-          },
-        },
-        resolve: createResolver('crm/contacts', 'Search'),
-      },
-    },
-  });
+  for (const ProfileType of profileTypes) {
+    fields[ProfileType.name] = {
+      type: ProfileType,
+      // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
+      // we need this to skip profile to run resolver on usecase
+      resolve: () => ({}),
+    };
+  }
 
-  const CrmContactsMutationType = new GraphQLObjectType({
-    name: 'CrmContactsMutation',
-    fields: () => ({
-      Create: {
-        type: GraphQLString,
-        description: 'Not implemented',
-      },
-      Update: {
-        type: GraphQLString,
-        description: 'Not implemented',
-      },
-    }),
-  });
-
-  const QueryType = new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-      CrmContacts: {
-        type: CrmContactsQueryType,
-        // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
-        resolve: () => ({ profile: 'crm/contacts' }),
-      },
-    },
-  });
-
-  const MutationType = new GraphQLObjectType({
-    name: 'Mutation',
-    fields: {
-      CrmContacts: {
-        type: CrmContactsMutationType,
-      },
-    },
-  });
-
-  return new GraphQLSchema({
-    query: QueryType,
-    mutation: MutationType,
+  return new GraphQLObjectType({
+    name,
+    fields,
   });
 }

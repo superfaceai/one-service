@@ -7,7 +7,7 @@ export interface Configuration {
   enableCors: boolean;
 }
 
-export async function bootstrap(config: Configuration): Promise<Express> {
+export async function bootstrap(): Promise<Express> {
   const app = express();
   const httpServer = http.createServer(app);
 

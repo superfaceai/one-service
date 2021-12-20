@@ -1,0 +1,31 @@
+name = "test"
+version = "1.0.0"
+
+usecase Test safe {
+
+  input {
+    """
+	  Input Field title
+    Input Field description
+    """
+    field! string!
+    
+    namedField
+  }
+
+  result {
+    """
+	  Result Field title
+    Result Field description
+    """
+    field! string!
+    
+    namedField
+  }
+}
+
+"""
+Named Field title
+Named Field description
+"""
+field namedField string!

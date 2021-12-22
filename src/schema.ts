@@ -43,24 +43,24 @@ import { ProfileId } from '@superfaceai/cli/dist/common/profile';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
-// Attempt to do https://graphql.org/blog/rest-api-graphql-wrapper/ with Superface Profiles and OneSDK
-// Working with arrays: https://atheros.ai/blog/graphql-list-how-to-use-arrays-in-graphql-schema
-
 export async function createSchema(): Promise<GraphQLSchema> {
+  const superJson = await loadSuperJson();
+  return await generate(superJson);
+}
+
+export async function loadSuperJson(): Promise<SuperJson> {
   const superPath = await SuperJson.detectSuperJson(process.cwd());
   if (!superPath) {
     throw new Error('Unable to generate, super.json not found');
   }
 
   const loadedResult = await SuperJson.load(joinPath(superPath, META_FILE));
-  const superJson = loadedResult.match(
+  return loadedResult.match(
     (v) => v,
     (err) => {
       throw new Error(`Unable to load super.json: ${err.formatShort()}`);
     },
   );
-
-  return await generate(superJson);
 }
 
 export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
@@ -72,6 +72,7 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
   )) {
     debug(`generate start for ${profile}`);
 
+    // TODO: can it be done without CLI?
     const loadedProfile = await loadProfile(
       superJson,
       ProfileId.fromId(profile),
@@ -90,19 +91,7 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
         throw new Error(`Profile name collision in Query: ${profilePrefix}`);
       }
 
-      queryFields[profilePrefix] = {
-        description: isDocumentDefinition(
-          loadedProfile.ast.header.documentation,
-        )
-          ? description(
-              loadedProfile.ast.header.documentation as DocumentedStructure,
-            )
-          : undefined,
-        type: QueryType,
-        // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
-        // we need this to skip profile to run resolver on usecase
-        resolve: () => ({}),
-      };
+      queryFields[profilePrefix] = profileConfig(QueryType, loadedProfile.ast);
     }
 
     if (MutationType) {
@@ -110,15 +99,10 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
         throw new Error(`Profile name collision in Mutation: ${profilePrefix}`);
       }
 
-      mutationFields[profilePrefix] = {
-        description: description(
-          loadedProfile.ast.header.documentation as DocumentedStructure,
-        ),
-        type: MutationType,
-        // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
-        // we need this to skip profile to run resolver on usecase
-        resolve: () => ({}),
-      };
+      mutationFields[profilePrefix] = profileConfig(
+        MutationType,
+        loadedProfile.ast,
+      );
     }
   }
 
@@ -141,6 +125,21 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
   debug('generated schema:\n', printSchema(schema));
 
   return schema;
+}
+
+export function profileConfig(
+  type: GraphQLOutputType,
+  profileAst: ProfileDocumentNode,
+): GraphQLFieldConfig<any, any> {
+  return {
+    description: isDocumentDefinition(profileAst.header.documentation)
+      ? description(profileAst.header.documentation as DocumentedStructure)
+      : undefined,
+    type,
+    // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
+    // we need this to skip profile to run resolver on usecase
+    resolve: () => ({}),
+  };
 }
 
 export async function generateProfileTypes(

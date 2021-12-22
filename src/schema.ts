@@ -13,6 +13,7 @@ import {
 
 import { SuperJson, META_FILE } from '@superfaceai/one-sdk';
 import {
+  isDocumentDefinition,
   NormalizedProfileSettings,
   ProfileDocumentNode,
 } from '@superfaceai/ast';
@@ -90,9 +91,13 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
       }
 
       queryFields[profilePrefix] = {
-        description: description(
-          loadedProfile.ast.header.documentation as DocumentedStructure,
-        ),
+        description: isDocumentDefinition(
+          loadedProfile.ast.header.documentation,
+        )
+          ? description(
+              loadedProfile.ast.header.documentation as DocumentedStructure,
+            )
+          : undefined,
         type: QueryType,
         // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
         // we need this to skip profile to run resolver on usecase

@@ -37,7 +37,7 @@ const debug = createDebug(`${DEBUG_PREFIX}:schema-utils`);
  * Comlink allowed: [a-z][a-z0-9_-] + scope delimiter /
  */
 export function sanitize(input: string): string {
-  return input.replace('/', '_').replace('-', '_');
+  return input.replace(/\//g, '_').replace(/-/g, '_');
 }
 
 export function capitalize(input: string): string {

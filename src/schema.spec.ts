@@ -7,9 +7,9 @@ describe('schema', () => {
 
   describe('generate', () => {
     it('creates schema', async () => {
-      const schema = generate(createSuperJson('test.supr'));
-
-      await expect(schema).resolves.toBeInstanceOf(GraphQLSchema);
+      await expect(
+        generate(createSuperJson('test.supr')),
+      ).resolves.toBeInstanceOf(GraphQLSchema);
     });
   });
 

@@ -9,6 +9,12 @@ $ npm run start:dev
 
 # See debug
 $ DEBUG="oneservice*" npm run start:dev
+
+# Run tests
+$ npm test
+
+# Run tests with watch
+$ npm test -- --watch
 ```
 
 Example Quries:

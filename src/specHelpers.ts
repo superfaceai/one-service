@@ -1,4 +1,5 @@
 import { SuperJson } from '@superfaceai/one-sdk';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { join as joinPath } from 'path';
 
 export function createSuperJson(profileFixtureName: string): SuperJson {
@@ -18,4 +19,14 @@ export function createSuperJson(profileFixtureName: string): SuperJson {
       },
     },
   });
+}
+
+export function expectSchema(type: any) {
+  expect(
+    printSchema(
+      new GraphQLSchema({
+        types: [type],
+      }),
+    ),
+  ).toMatchSnapshot();
 }

@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`schema.utils enumType returns GraphQLEnumType 1`] = `
+"\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum TestEnum {
+  ONE
+  TWO
+}
+"
+`;
+
+exports[`schema.utils inputType returns GraphQLInputType 1`] = `
+"type MyObjectType {
+  \\"\\"\\"
+  Primitive
+  String
+  \\"\\"\\"
+  primitive_string: String
+
+  \\"\\"\\"
+  Primitive
+  Number
+  \\"\\"\\"
+  primitive_number: Int
+
+  \\"\\"\\"
+  Primitive
+  boolean
+  \\"\\"\\"
+  primitive_boolean: Boolean
+
+  \\"\\"\\"
+  Object
+  Nested
+  \\"\\"\\"
+  nested_object: MyObjectTypeNestedObject
+  list: [String!]
+
+  \\"\\"\\"
+  Enum title
+  Enum description
+  \\"\\"\\"
+  enum: MyObjectTypeEnum
+}
+
+type MyObjectTypeNestedObject {
+  \\"\\"\\"
+  Nested field title
+  Nested field description
+  \\"\\"\\"
+  field: String
+}
+
+\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum MyObjectTypeEnum {
+  one
+  two
+}
+"
+`;
+
+exports[`schema.utils outputType returns GraphQLObjectType 1`] = `
+"type MyObjectType {
+  \\"\\"\\"
+  Primitive
+  String
+  \\"\\"\\"
+  primitive_string: String
+
+  \\"\\"\\"
+  Primitive
+  Number
+  \\"\\"\\"
+  primitive_number: Int
+
+  \\"\\"\\"
+  Primitive
+  boolean
+  \\"\\"\\"
+  primitive_boolean: Boolean
+
+  \\"\\"\\"
+  Object
+  Nested
+  \\"\\"\\"
+  nested_object: MyObjectTypeNestedObject
+  list: [String!]
+
+  \\"\\"\\"
+  Enum title
+  Enum description
+  \\"\\"\\"
+  enum: MyObjectTypeEnum
+}
+
+type MyObjectTypeNestedObject {
+  \\"\\"\\"
+  Nested field title
+  Nested field description
+  \\"\\"\\"
+  field: String
+}
+
+\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum MyObjectTypeEnum {
+  one
+  two
+}
+"
+`;
+
+exports[`schema.utils scalarType returns GraphQLScalarType 1`] = `
+"\\"\\"\\"
+Scalar title
+Scalar description
+\\"\\"\\"
+scalar TestScalar
+"
+`;

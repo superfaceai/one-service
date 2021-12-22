@@ -143,7 +143,7 @@ export function enumType(
   structure.enums.forEach((enumValue) => {
     values[sanitize(String(enumValue.value))] = {
       value: enumValue.value,
-      description: description(structure),
+      description: description(enumValue),
     };
   });
 

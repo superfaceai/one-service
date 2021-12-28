@@ -68,4 +68,17 @@ mutation Example2 {
     }
   }
 }
+
+query ExampleSelectProvider {
+  VcsUserRepos {
+    UserRepos(input: { user: "freaz" }, options: { provider: mock }) {
+      result {
+        repos {
+          name
+          description
+        }
+      }
+    }
+  }
+}
 ```

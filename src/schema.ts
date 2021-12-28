@@ -1,4 +1,6 @@
 import {
+  GraphQLEnumType,
+  GraphQLEnumValueConfigMap,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
@@ -7,7 +9,6 @@ import {
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLSchema,
-  GraphQLString,
   printSchema,
 } from 'graphql';
 
@@ -291,18 +292,29 @@ export function generateUseCaseOptionsInputType(
   name: string,
   profileSettings: NormalizedProfileSettings,
 ): GraphQLInputObjectType {
+  const providersNames = Object.keys(profileSettings.providers);
+
   debug(
-    `generateUseCaseOptionsInputType for ${name} with providers: ${Object.keys(
-      profileSettings.providers,
-    ).join(', ')}`,
+    `generateUseCaseOptionsInputType for ${name} with providers: ${providersNames.join(
+      ', ',
+    )}`,
   );
+
+  const values: GraphQLEnumValueConfigMap = {};
+
+  providersNames.forEach((value) => {
+    values[sanitize(value)] = { value };
+  });
 
   return new GraphQLInputObjectType({
     name,
     description: 'Additional options to pass to OneSDK perform function',
     fields: {
       provider: {
-        type: GraphQLString,
+        type: new GraphQLEnumType({
+          name: `${name}ProviderEnum`,
+          values,
+        }),
       },
     },
   });

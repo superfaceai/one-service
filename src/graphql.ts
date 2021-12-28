@@ -1,7 +1,8 @@
-import { graphqlHTTP } from 'express-graphql';
+import { graphqlHTTP, OptionsData } from 'express-graphql';
 import { IncomingMessage, ServerResponse } from 'http';
-import { GraphiQLOptions } from 'express-graphql/renderGraphiQL';
 import { createSchema } from './schema';
+import { GraphQLSchema } from 'graphql';
+import { assertMapDocumentNode } from '@superfaceai/ast';
 
 declare type Request = IncomingMessage & {
   url: string;
@@ -15,15 +16,25 @@ export type Middleware = (
   response: Response,
 ) => Promise<void>;
 
-export type CreateGrapgQLServerOptions = {
-  graphiql?: boolean | GraphiQLOptions;
-};
+export interface CreateGraphQLServerOptions
+  extends Omit<OptionsData, 'schema'> {
+  schema?: GraphQLSchema;
+}
 
-export async function createGraphQLServer(
-  options: CreateGrapgQLServerOptions = {},
+export async function createGraphQLMiddleware(
+  options: CreateGraphQLServerOptions = {},
 ): Promise<Middleware> {
-  return graphqlHTTP({
-    graphiql: options.graphiql ?? true,
-    schema: await createSchema(),
-  });
+  options.schema = options.schema ?? (await createSchema());
+
+  if (!isOptionsData(options)) {
+    throw new Error('Property "schema" is missing');
+  }
+
+  return graphqlHTTP(options);
+}
+
+export function isOptionsData(
+  options: CreateGraphQLServerOptions,
+): options is OptionsData {
+  return options.schema instanceof GraphQLSchema;
 }

@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import http from 'http';
 import { HOST, PORT } from './constants';
-import { createGraphQLServer } from './graphql';
+import { createGraphQLMiddleware } from './graphql';
 
 export interface Configuration {
   enableCors: boolean;
@@ -11,7 +11,7 @@ export async function bootstrap(): Promise<Express> {
   const app = express();
   const httpServer = http.createServer(app);
 
-  const gqlServer = await createGraphQLServer();
+  const gqlServer = await createGraphQLMiddleware();
   app.use('/graphql', gqlServer);
 
   const host = process.env.HOST ?? HOST;

@@ -45,7 +45,7 @@ export function createResolver(
 ): GraphQLFieldResolver<any, any> {
   debug(`Creating resolver for ${profile}/${useCase}`);
 
-  return async function (source: any, args: any): Promise<any> {
+  return async function oneSdkResolver(source: any, args: any): Promise<any> {
     debug(`Performing ${profile}/${useCase}`, { source, args });
 
     // TODO exception

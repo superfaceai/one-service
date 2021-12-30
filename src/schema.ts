@@ -117,7 +117,7 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
     mutation: hasFieldsDefined(mutationFields)
       ? new GraphQLObjectType({
           name: 'Mutation',
-          description: "Profile's unsafe and idenpotent use-cases",
+          description: "Profile's unsafe and idempotent use-cases",
           fields: mutationFields,
         })
       : undefined,

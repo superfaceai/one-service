@@ -25,7 +25,7 @@ describe('oneSdk', () => {
     });
 
     describe('with invalid setup', () => {
-      it.skip('fails with invalid provider', async () => {
+      it('fails with invalid provider', async () => {
         await expect(
           callResolver({
             options: { provider: 'invalid-provider' },

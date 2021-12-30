@@ -1,4 +1,9 @@
-import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
+import {
+  PerformError,
+  Provider,
+  Result,
+  SuperfaceClient,
+} from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
@@ -48,13 +53,18 @@ export function createResolver(
   return async function oneSdkResolver(source: any, args: any): Promise<any> {
     debug(`Performing ${profile}/${useCase}`, { source, args });
 
-    // TODO exception
-    const result = await perform({
-      profile,
-      useCase,
-      input: args?.input,
-      provider: args?.options?.provider,
-    });
+    let result: Result<unknown, PerformError>;
+    try {
+      result = await perform({
+        profile,
+        useCase,
+        input: args?.input,
+        provider: args?.options?.provider,
+      });
+    } catch (err) {
+      debug('Perform exception', err);
+      throw err;
+    }
 
     debug('Perform result', result);
 

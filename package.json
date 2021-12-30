@@ -20,7 +20,7 @@
     "format": "prettier -c src/",
     "format:fix": "prettier --write src/",
     "start": "./bin/server",
-    "start:dev": "concurrently \"npm run build:watch\" \"nodemon -w dist bin/server\""
+    "start:dev": "concurrently -n tsc,server \"npm:build:watch\" \"nodemon bin/server\""
   },
   "dependencies": {
     "@superfaceai/ast": "^1.0.0",

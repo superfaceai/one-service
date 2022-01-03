@@ -12,7 +12,7 @@ function callResolver(
 
 const validWeatherInput = { input: { city: 'Prague, Czechia' } };
 
-describe('oneSdk', () => {
+describe('one_sdk', () => {
   describe('createResolver', () => {
     it('wraps a use-case into a resolver', async () => {
       await expect(callResolver(validWeatherInput)).resolves.toMatchSnapshot();

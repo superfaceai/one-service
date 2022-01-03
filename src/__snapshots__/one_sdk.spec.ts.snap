@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`oneSdk createResolver throws with invalid input 1`] = `
+exports[`one_sdk createResolver throws with invalid input 1`] = `
 "Input validation failed:
 Path: input.city
 Error: Wrong type: expected string, but got number"
 `;
 
-exports[`oneSdk createResolver with invalid setup fails with invalid profile 1`] = `
+exports[`one_sdk createResolver with invalid setup fails with invalid profile 1`] = `
 "Profile not installed: weather/invalid-profile
 
 Hint: Check that the profile is installed in super.json -> profiles[\\"weather/invalid-profile\\"]
@@ -14,7 +14,7 @@ Hint: Profile can be installed using the superface cli tool: \`superface install
 "
 `;
 
-exports[`oneSdk createResolver with invalid setup fails with invalid provider 1`] = `
+exports[`one_sdk createResolver with invalid setup fails with invalid provider 1`] = `
 "Provider not configured: invalid-provider
 
 Provider \\"invalid-provider\\" was not configured in super.json
@@ -23,9 +23,9 @@ Hint: Providers can be configured using the superface cli tool: \`superface conf
 "
 `;
 
-exports[`oneSdk createResolver with invalid setup fails with invalid use-case 1`] = `"Unknown error from validator"`;
+exports[`one_sdk createResolver with invalid setup fails with invalid use-case 1`] = `"Unknown error from validator"`;
 
-exports[`oneSdk createResolver wraps a use-case into a resolver 1`] = `
+exports[`one_sdk createResolver wraps a use-case into a resolver 1`] = `
 Object {
   "result": Object {
     "description": "Cloudy with a Chance of Meatballs",

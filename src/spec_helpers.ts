@@ -1,10 +1,14 @@
 import { ProfileDocumentNode } from '@superfaceai/ast';
 import { SuperJson } from '@superfaceai/one-sdk';
 import {
+  getProfileOutput as parserGetProfileOutput,
+  getProfileUsecases as parserGetProfileUsecases,
   parseProfile,
   ProfileId,
+  ProfileOutput,
   ProfileVersion,
   Source,
+  UseCaseInfo,
 } from '@superfaceai/parser';
 import { readFile } from 'fs/promises';
 import { GraphQLSchema, printSchema } from 'graphql';
@@ -54,6 +58,28 @@ export async function parseProfileFixture(
   const source = new Source(content, basename(path));
 
   return parseProfile(source);
+}
+
+export async function getProfileOutput(
+  profileFixtureName: string,
+  profileAst?: ProfileDocumentNode,
+): Promise<ProfileOutput> {
+  if (!profileAst) {
+    profileAst = await parseProfileFixture(profileFixtureName);
+  }
+
+  return parserGetProfileOutput(profileAst);
+}
+
+export async function getProfileUsecases(
+  profileFixtureName: string,
+  profileAst?: ProfileDocumentNode,
+): Promise<UseCaseInfo[]> {
+  if (!profileAst) {
+    profileAst = await parseProfileFixture(profileFixtureName);
+  }
+
+  return parserGetProfileUsecases(profileAst);
 }
 
 export function fixturePath(fixture: string): string {

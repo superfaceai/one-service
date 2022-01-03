@@ -1,15 +1,15 @@
+"""
+Full profile
+Full profile to test all generation functionality
+"""
 name = "scope/name"
 version = "1.0.0"
 
-usecase SafeUsecase safe {
-  result number
-}
-
-usecase UnsafeUsecase unsafe {
-  result number
-}
-
-usecase NamedFieldsUsecase {
+"""
+UseCase
+UseCase description
+"""
+usecase UseCase {
   input {
     """
 	  Input Field title

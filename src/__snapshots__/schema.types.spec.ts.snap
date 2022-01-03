@@ -12,6 +12,24 @@ enum TestEnum {
 "
 `;
 
+exports[`schema.types generateUseCaseFieldConfig for profile fixture matches snapshot 1`] = `
+Object {
+  "args": Object {
+    "input": Object {
+      "description": "Use-case inputs",
+      "type": "ScopeNameUseCaseInput",
+    },
+    "options": Object {
+      "type": "ScopeNameUseCaseOptions",
+    },
+  },
+  "description": "UseCase
+UseCase description",
+  "resolve": [Function],
+  "type": "ScopeNameUseCaseResult",
+}
+`;
+
 exports[`schema.types inputType returns GraphQLInputType 1`] = `
 "type MyObjectType {
   \\"\\"\\"

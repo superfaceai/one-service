@@ -3,10 +3,15 @@ import { ObjectStructure } from '@superfaceai/parser';
 import {
   enumType,
   generateProfileTypes,
+  generateUseCaseFieldConfig,
   outputType,
   scalarType,
 } from './schema.types';
-import { expectSchema, parseProfileFixture } from './spec_helpers';
+import {
+  expectSchema,
+  getProfileOutput,
+  parseProfileFixture,
+} from './spec_helpers';
 
 const objectStructure: ObjectStructure = {
   kind: 'ObjectStructure',
@@ -100,6 +105,37 @@ describe('schema.types', () => {
       );
 
       expect(result.MutationType).toBeUndefined();
+    });
+  });
+
+  describe('generateUseCaseFieldConfig', () => {
+    it('throws if usecase is missing result', async () => {
+      const profileAst = await parseProfileFixture('no_result');
+      const profileOutput = await getProfileOutput('no_result', profileAst);
+
+      expect(() =>
+        generateUseCaseFieldConfig(
+          'ScopeName',
+          profileAst,
+          profileSettings,
+          profileOutput.usecases[0],
+        ),
+      ).toThrowError();
+    });
+
+    describe('for profile fixture', () => {
+      it('creates field config with arguments, resolver and description', async () => {
+        const profileAst = await parseProfileFixture('profile');
+        const profileOutput = await getProfileOutput('profile', profileAst);
+        const config = generateUseCaseFieldConfig(
+          'ScopeName',
+          profileAst,
+          profileSettings,
+          profileOutput.usecases[0],
+        );
+
+        expect(config).toMatchSnapshot();
+      });
     });
   });
 

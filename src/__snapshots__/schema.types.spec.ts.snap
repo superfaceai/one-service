@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`schema.utils enumType returns GraphQLEnumType 1`] = `
+exports[`schema.types enumType returns GraphQLEnumType 1`] = `
 "\\"\\"\\"
 Enum title
 Enum description
@@ -12,7 +12,7 @@ enum TestEnum {
 "
 `;
 
-exports[`schema.utils inputType returns GraphQLInputType 1`] = `
+exports[`schema.types inputType returns GraphQLInputType 1`] = `
 "type MyObjectType {
   \\"\\"\\"
   Primitive
@@ -65,7 +65,7 @@ enum MyObjectTypeEnum {
 "
 `;
 
-exports[`schema.utils outputType returns GraphQLObjectType 1`] = `
+exports[`schema.types outputType returns GraphQLObjectType 1`] = `
 "type MyObjectType {
   \\"\\"\\"
   Primitive
@@ -118,7 +118,7 @@ enum MyObjectTypeEnum {
 "
 `;
 
-exports[`schema.utils scalarType returns GraphQLScalarType 1`] = `
+exports[`schema.types scalarType returns GraphQLScalarType 1`] = `
 "\\"\\"\\"
 Scalar title
 Scalar description

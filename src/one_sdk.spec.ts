@@ -1,4 +1,4 @@
-import { createResolver } from './oneSdk';
+import { createResolver } from './one_sdk';
 
 function callResolver(
   args: { input?: Record<string, any>; options?: { provider?: string } },

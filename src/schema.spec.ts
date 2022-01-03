@@ -5,6 +5,8 @@ import { createSuperJson } from './specHelpers';
 describe('schema', () => {
   describe('createSchema', () => {});
 
+  describe('loadSuperJson', () => {});
+
   describe('generate', () => {
     it('creates schema', async () => {
       await expect(
@@ -13,9 +15,5 @@ describe('schema', () => {
     });
   });
 
-  describe('loadProfile', () => {});
-
-  describe('capitalize', () => {});
-
-  describe('camelize', () => {});
+  describe('profileConfig', () => {});
 });

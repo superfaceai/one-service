@@ -1,10 +1,13 @@
+import { GraphQLString } from 'graphql';
 import {
   camelize,
   capitalize,
   description,
+  hasFieldsDefined,
   pascalize,
   sanitize,
   sanitizedProfileName,
+  typeFromSafety,
 } from './schema.utils';
 
 describe('schema.utils', () => {
@@ -94,6 +97,38 @@ describe('schema.utils', () => {
           description: 'description',
         }),
       ).toBe('title\ndescription');
+    });
+  });
+
+  describe('typeFromSafety', () => {
+    it('returns "query" for "safe" operation', () => {
+      expect(typeFromSafety('safe')).toBe('query');
+    });
+
+    it('returns "mutation" for "unsafe" operation', () => {
+      expect(typeFromSafety('unsafe')).toBe('mutation');
+    });
+
+    it('returns "mutation" for "idempotent" operation', () => {
+      expect(typeFromSafety('idempotent')).toBe('mutation');
+    });
+
+    it('returns "mutation" for unspecified safety', () => {
+      expect(typeFromSafety()).toBe('mutation');
+    });
+  });
+
+  describe('hasFieldsDefined', () => {
+    it('returns "false" for empty configuration object', () => {
+      expect(hasFieldsDefined({})).toBeFalsy();
+    });
+
+    it('returns true for configuration with one field', () => {
+      expect(
+        hasFieldsDefined({
+          field: { type: GraphQLString },
+        }),
+      ).toBeTruthy();
     });
   });
 });

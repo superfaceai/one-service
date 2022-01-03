@@ -1,6 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { generate } from './schema';
-import { createSuperJson } from './specHelpers';
+import { createSuperJson } from './spec_helpers';
 
 describe('schema', () => {
   describe('createSchema', () => {});

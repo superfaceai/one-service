@@ -1,6 +1,12 @@
+import { NormalizedProfileSettings } from '@superfaceai/ast';
 import { ObjectStructure } from '@superfaceai/parser';
-import { enumType, outputType, scalarType } from './schema.types';
-import { expectSchema } from './specHelpers';
+import {
+  enumType,
+  generateProfileTypes,
+  outputType,
+  scalarType,
+} from './schema.types';
+import { expectSchema, parseProfileFixture } from './spec_helpers';
 
 const objectStructure: ObjectStructure = {
   kind: 'ObjectStructure',
@@ -60,6 +66,43 @@ const objectStructure: ObjectStructure = {
 };
 
 describe('schema.types', () => {
+  const profileSettings: NormalizedProfileSettings = {
+    version: '1.0.0',
+    defaults: {},
+    priority: ['mock'],
+    providers: {
+      mock: {
+        defaults: {},
+      },
+    },
+  };
+
+  describe('generateProfileTypes', () => {
+    it('skips QueryType if no safe usecase is present', async () => {
+      const profileAst = await parseProfileFixture('unsafe_only');
+
+      const result = await generateProfileTypes(
+        'ScopeName',
+        profileAst,
+        profileSettings,
+      );
+
+      expect(result.QueryType).toBeUndefined();
+    });
+
+    it('skips MutationType if only safe usecases are present', async () => {
+      const profileAst = await parseProfileFixture('safe_only');
+
+      const result = await generateProfileTypes(
+        'ScopeName',
+        profileAst,
+        profileSettings,
+      );
+
+      expect(result.MutationType).toBeUndefined();
+    });
+  });
+
   describe('scalarType', () => {
     it('returns GraphQLScalarType', () => {
       expectSchema(

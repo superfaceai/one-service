@@ -73,7 +73,7 @@ export async function generateProfileTypes(
     );
 
     if (!useCaseInfo) {
-      throw new Error('Can find useCase info');
+      throw new Error('Missing usecase information');
     }
 
     const useCaseFieldConfig = generateUseCaseFieldConfig(

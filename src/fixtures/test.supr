@@ -1,8 +1,15 @@
-name = "test"
+name = "scope/name"
 version = "1.0.0"
 
-usecase Test safe {
+usecase SafeUsecase safe {
+  result number
+}
 
+usecase UnsafeUsecase unsafe {
+  result number
+}
+
+usecase NamedFieldsUsecase {
   input {
     """
 	  Input Field title

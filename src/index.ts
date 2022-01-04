@@ -11,7 +11,7 @@ export async function bootstrap(): Promise<Express> {
   const app = express();
   const httpServer = http.createServer(app);
 
-  const gqlServer = await createGraphQLMiddleware();
+  const gqlServer = await createGraphQLMiddleware({ graphiql: true });
   app.use('/graphql', gqlServer);
 
   const host = process.env.HOST ?? HOST;

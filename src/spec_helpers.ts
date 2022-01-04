@@ -11,7 +11,7 @@ import {
   UseCaseInfo,
 } from '@superfaceai/parser';
 import { readFile } from 'fs/promises';
-import { GraphQLSchema, printSchema } from 'graphql';
+import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 import { basename, join as joinPath } from 'path';
 
 export async function createSuperJson(
@@ -86,12 +86,16 @@ export function fixturePath(fixture: string): string {
   return joinPath(__dirname, 'fixtures', fixture);
 }
 
-export function expectSchema(type: any) {
-  expect(
-    printSchema(
-      new GraphQLSchema({
-        types: [type],
-      }),
-    ),
-  ).toMatchSnapshot();
+export function expectSchema(value: any) {
+  if (!(value instanceof GraphQLSchema)) {
+    value = new GraphQLSchema({
+      types: [value],
+    });
+  }
+
+  expect(printSchema(value)).toMatchSnapshot();
+}
+
+export function expectSchemaValidationErrors(value: any) {
+  expect(validateSchema(value)).toMatchSnapshot();
 }

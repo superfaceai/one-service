@@ -1,6 +1,5 @@
-import { GraphQLSchema } from 'graphql';
 import { generate } from './schema';
-import { createSuperJson } from './spec_helpers';
+import { createSuperJson, expectSchemaValidationErrors } from './spec_helpers';
 
 describe('schema', () => {
   describe('createSchema', () => {});
@@ -8,10 +7,16 @@ describe('schema', () => {
   describe('loadSuperJson', () => {});
 
   describe('generate', () => {
-    it('creates schema', async () => {
-      await expect(
-        generate(await createSuperJson('profile')),
-      ).resolves.toBeInstanceOf(GraphQLSchema);
+    it('generates valid schema for profile without scope', async () => {
+      expectSchemaValidationErrors(
+        await generate(await createSuperJson('profile_without_scope')),
+      );
+    });
+
+    it('generates valid schema for usecases mapped to mutation only', async () => {
+      expectSchemaValidationErrors(
+        await generate(await createSuperJson('unsafe_only')),
+      );
     });
   });
 

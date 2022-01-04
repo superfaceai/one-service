@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`schema generate generates valid schema for profile without scope 1`] = `Array []`;
+
+exports[`schema generate generates valid schema for usecases mapped to mutation only 1`] = `Array []`;

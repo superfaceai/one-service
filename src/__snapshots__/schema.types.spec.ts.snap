@@ -63,6 +63,19 @@ UseCase description",
 }
 `;
 
+exports[`schema.types generateUseCaseOptionsInputType creates inout with provider option and enum with mock and superface values 1`] = `
+"\\"\\"\\"Additional options to pass to OneSDK perform function\\"\\"\\"
+input Test {
+  provider: TestProviderEnum
+}
+
+enum TestProviderEnum {
+  mock
+  superface
+}
+"
+`;
+
 exports[`schema.types inputType returns GraphQLInputType 1`] = `
 "type MyObjectType {
   \\"\\"\\"

@@ -7,6 +7,7 @@ import {
   generateProfileTypes,
   generateStructureResultType,
   generateUseCaseFieldConfig,
+  generateUseCaseOptionsInputType,
   outputType,
   scalarType,
 } from './schema.types';
@@ -80,6 +81,9 @@ describe('schema.types', () => {
     priority: ['mock'],
     providers: {
       mock: {
+        defaults: {},
+      },
+      superface: {
         defaults: {},
       },
     },
@@ -164,6 +168,12 @@ describe('schema.types', () => {
           profileOutput.usecases[0].result as StructureType,
         ),
       );
+    });
+  });
+
+  describe('generateUseCaseOptionsInputType', () => {
+    it('creates inout with provider option and enum with mock and superface values', () => {
+      expectSchema(generateUseCaseOptionsInputType('Test', profileSettings));
     });
   });
 

@@ -12,7 +12,16 @@ enum TestEnum {
 "
 `;
 
-exports[`schema.types generateUseCaseFieldConfig for profile fixture matches snapshot 1`] = `
+exports[`schema.types generateProfileConfig creates config with description and resolve function 1`] = `
+Object {
+  "description": "Full profile
+Full profile to test all generation functionality",
+  "resolve": [Function],
+  "type": "Test",
+}
+`;
+
+exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
 Object {
   "args": Object {
     "input": Object {

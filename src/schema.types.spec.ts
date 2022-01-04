@@ -1,7 +1,9 @@
 import { NormalizedProfileSettings } from '@superfaceai/ast';
 import { ObjectStructure } from '@superfaceai/parser';
+import { GraphQLObjectType } from 'graphql';
 import {
   enumType,
+  generateProfileConfig,
   generateProfileTypes,
   generateUseCaseFieldConfig,
   outputType,
@@ -136,6 +138,19 @@ describe('schema.types', () => {
 
         expect(config).toMatchSnapshot();
       });
+    });
+  });
+
+  describe('generateProfileConfig', () => {
+    it('creates config with description and resolve function', async () => {
+      const profileAst = await parseProfileFixture('profile');
+
+      expect(
+        generateProfileConfig(
+          new GraphQLObjectType({ name: 'Test', fields: {} }),
+          profileAst,
+        ),
+      ).toMatchSnapshot();
     });
   });
 

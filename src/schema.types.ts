@@ -1,5 +1,4 @@
 import {
-  isDocumentDefinition,
   NormalizedProfileSettings,
   ProfileDocumentNode,
 } from '@superfaceai/ast';
@@ -26,7 +25,6 @@ import createDebug from 'debug';
 
 import { DEBUG_PREFIX } from './constants';
 import {
-  DocumentedStructure,
   EnumStructure,
   getProfileOutput,
   getProfileUsecases,
@@ -169,8 +167,11 @@ export function generateProfileConfig(
   profileAst: ProfileDocumentNode,
 ): GraphQLFieldConfig<any, any> {
   return {
-    description: isDocumentDefinition(profileAst.header.documentation)
-      ? description(profileAst.header.documentation as DocumentedStructure)
+    description: profileAst.header.documentation?.title
+      ? description({
+          title: profileAst.header.documentation.title,
+          description: profileAst.header.documentation.description,
+        })
       : undefined,
     type,
     // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/

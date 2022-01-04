@@ -2,7 +2,6 @@ import { graphqlHTTP, OptionsData } from 'express-graphql';
 import { IncomingMessage, ServerResponse } from 'http';
 import { createSchema } from './schema';
 import { GraphQLSchema } from 'graphql';
-import { assertMapDocumentNode } from '@superfaceai/ast';
 
 declare type Request = IncomingMessage & {
   url: string;

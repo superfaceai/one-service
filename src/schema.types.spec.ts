@@ -1,5 +1,9 @@
 import { NormalizedProfileSettings } from '@superfaceai/ast';
-import { ObjectStructure, StructureType } from '@superfaceai/parser';
+import {
+  ObjectStructure,
+  PrimitiveStructure,
+  StructureType,
+} from '@superfaceai/parser';
 import { GraphQLObjectType, GraphQLString } from 'graphql';
 import {
   enumType,
@@ -10,6 +14,7 @@ import {
   generateUseCaseFieldConfig,
   generateUseCaseOptionsInputType,
   outputType,
+  primitiveType,
   scalarType,
 } from './schema.types';
 import {
@@ -207,6 +212,14 @@ describe('schema.types', () => {
           }),
         ]),
       );
+    });
+  });
+
+  describe('primitveType', () => {
+    it('throws error if type is unknown', () => {
+      expect(() =>
+        primitiveType('', { kind: 'PrimitiveStructure' } as PrimitiveStructure),
+      ).toThrowError();
     });
   });
 

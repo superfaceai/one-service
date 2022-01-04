@@ -292,8 +292,10 @@ export function primitiveType(
       return GraphQLInt; // http://spec.graphql.org/October2021/#sec-Int
     case 'boolean':
       return GraphQLBoolean; // http://spec.graphql.org/October2021/#sec-Boolean
-    case undefined:
-      return GraphQLString; // If not spoecified in Comlink assume string
+    default:
+      throw new Error(
+        `Unable to translate structure of type ${structure.type} to GhraphQL type`,
+      );
   }
 }
 

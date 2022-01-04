@@ -1,10 +1,11 @@
 import { NormalizedProfileSettings } from '@superfaceai/ast';
 import { ObjectStructure, StructureType } from '@superfaceai/parser';
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType, GraphQLString } from 'graphql';
 import {
   enumType,
   generateProfileConfig,
   generateProfileTypes,
+  generateRootType,
   generateStructureResultType,
   generateUseCaseFieldConfig,
   generateUseCaseOptionsInputType,
@@ -174,6 +175,38 @@ describe('schema.types', () => {
   describe('generateUseCaseOptionsInputType', () => {
     it('creates inout with provider option and enum with mock and superface values', () => {
       expectSchema(generateUseCaseOptionsInputType('Test', profileSettings));
+    });
+  });
+
+  describe('generateRootType', () => {
+    it('create Query type with profiles', () => {
+      expectSchema(
+        generateRootType('Query', [
+          new GraphQLObjectType({
+            name: 'ProfileOne',
+            fields: {
+              field: {
+                type: GraphQLString, // Shortcut for tests, structure here is more complicated
+              },
+            },
+          }),
+          new GraphQLObjectType({
+            name: 'Scope',
+            fields: {
+              ProfileTwo: {
+                type: new GraphQLObjectType({
+                  name: 'ScopeProfileTwo',
+                  fields: {
+                    UseCase: {
+                      type: GraphQLString,
+                    },
+                  },
+                }),
+              },
+            },
+          }),
+        ]),
+      );
     });
   });
 

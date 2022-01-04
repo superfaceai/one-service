@@ -21,6 +21,26 @@ Full profile to test all generation functionality",
 }
 `;
 
+exports[`schema.types generateRootType create Query type with profiles 1`] = `
+"type Query {
+  ProfileOne: ProfileOne
+  Scope: Scope
+}
+
+type ProfileOne {
+  field: String
+}
+
+type Scope {
+  ProfileTwo: ScopeProfileTwo
+}
+
+type ScopeProfileTwo {
+  UseCase: String
+}
+"
+`;
+
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
 "\\"\\"\\"
 Wrapping type to handle many possible types returned as result by OneSDK

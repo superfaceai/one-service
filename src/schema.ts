@@ -1,7 +1,10 @@
 import {
+  GraphQLFieldConfig,
   GraphQLFieldConfigMap,
+  GraphQLList,
   GraphQLObjectType,
   GraphQLSchema,
+  GraphQLString,
   printSchema,
 } from 'graphql';
 
@@ -82,6 +85,8 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
     }
   }
 
+  queryFields['_superJson'] = superJsonFieldConfig();
+
   const schema = new GraphQLSchema({
     description: 'Superface.ai ❤️',
     query: new GraphQLObjectType({
@@ -101,4 +106,49 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
   debug('generated schema:\n', printSchema(schema));
 
   return schema;
+}
+
+export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
+  return {
+    type: new GraphQLObjectType({
+      name: 'SuperJson',
+      fields: {
+        profiles: {
+          type: GraphQLList(
+            new GraphQLObjectType({
+              name: 'ProfileInfo',
+              fields: {
+                name: {
+                  type: GraphQLString,
+                },
+                version: {
+                  type: GraphQLString,
+                },
+                providers: {
+                  type: GraphQLList(GraphQLString),
+                },
+              },
+            }),
+          ),
+        },
+        providers: {
+          type: GraphQLList(GraphQLString),
+        },
+      },
+    }),
+    resolve: async () => {
+      const superJson = await loadSuperJson();
+
+      return {
+        profiles: Object.entries(superJson.anonymized.profiles).map(
+          ([name, info]) => ({
+            name,
+            version: info.version,
+            providers: info.providers.map((p) => p.provider),
+          }),
+        ),
+        providers: superJson.anonymized.providers,
+      };
+    },
+  };
 }

@@ -21,6 +21,30 @@ Full profile to test all generation functionality",
 }
 `;
 
+exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
+"\\"\\"\\"
+Wrapping type to handle many possible types returned as result by OneSDK
+\\"\\"\\"
+type ScopeNameResult {
+  result: ScopeNameResultNode
+}
+
+type ScopeNameResultNode {
+  \\"\\"\\"
+  Result Field title
+  Result Field description
+  \\"\\"\\"
+  field: String!
+
+  \\"\\"\\"
+  Named Field title
+  Named Field description
+  \\"\\"\\"
+  namedField: String!
+}
+"
+`;
+
 exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
 Object {
   "args": Object {

@@ -1,10 +1,11 @@
 import { NormalizedProfileSettings } from '@superfaceai/ast';
-import { ObjectStructure } from '@superfaceai/parser';
+import { ObjectStructure, StructureType } from '@superfaceai/parser';
 import { GraphQLObjectType } from 'graphql';
 import {
   enumType,
   generateProfileConfig,
   generateProfileTypes,
+  generateStructureResultType,
   generateUseCaseFieldConfig,
   outputType,
   scalarType,
@@ -151,6 +152,18 @@ describe('schema.types', () => {
           profileAst,
         ),
       ).toMatchSnapshot();
+    });
+  });
+
+  describe('generateStructureResultType', () => {
+    it('creates ScopeNameResult with description and result field', async () => {
+      const profileOutput = await getProfileOutput('profile');
+      expectSchema(
+        generateStructureResultType(
+          'ScopeNameResult',
+          profileOutput.usecases[0].result as StructureType,
+        ),
+      );
     });
   });
 

@@ -2,10 +2,6 @@ import { generate } from './schema';
 import { createSuperJson, expectSchemaValidationErrors } from './spec_helpers';
 
 describe('schema', () => {
-  describe('createSchema', () => {});
-
-  describe('loadSuperJson', () => {});
-
   describe('generate', () => {
     it('generates valid schema for profile without scope', async () => {
       expectSchemaValidationErrors(
@@ -19,6 +15,4 @@ describe('schema', () => {
       );
     });
   });
-
-  describe('profileConfig', () => {});
 });

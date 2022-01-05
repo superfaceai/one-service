@@ -27,6 +27,7 @@
     "@superfaceai/cli": "^1.0.1",
     "@superfaceai/one-sdk": "^1.0.1",
     "@superfaceai/parser": "^1.0.0",
+    "commander": "^8.3.0",
     "debug": "^4.3.2",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",

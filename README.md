@@ -4,8 +4,13 @@
 # Install dependencies
 $ npm install
 
+# Build and run
+$ npm run build
+$ bin/cli
+
 # Develop
 $ npm run start:dev
+$ npm run start:dev -- --graphiql
 
 # See debug
 $ DEBUG="oneservice*" npm run start:dev
@@ -17,7 +22,7 @@ $ npm test
 $ npm test -- --watch
 ```
 
-Example Quries:
+### Example Queries
 
 ```graphql
 query Example {
@@ -79,6 +84,17 @@ query ExampleSelectProvider {
         }
       }
     }
+  }
+}
+
+query SuperJsonInfo {
+  _superJson {
+    profiles {
+      name
+      version
+      providers
+    }
+    providers
   }
 }
 ```

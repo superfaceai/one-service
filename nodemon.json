@@ -1,4 +1,4 @@
 {
-  "watch": ["dist/"],
+  "watch": ["src/"],
   "delay": 1000
 }

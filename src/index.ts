@@ -1,21 +1,28 @@
 import express, { Express } from 'express';
 import http from 'http';
-import { HOST, PORT } from './constants';
+import { DEBUG_PREFIX, HOST, PORT } from './constants';
 import { createGraphQLMiddleware } from './graphql';
+import createDebug from 'debug';
+
+const debug = createDebug(`${DEBUG_PREFIX}:index`);
 
 export interface Configuration {
-  enableCors: boolean;
+  host?: string;
+  port?: number;
+  graphiql?: boolean;
 }
 
-export async function bootstrap(): Promise<Express> {
+export async function bootstrap(config: Configuration): Promise<Express> {
+  debug('config', config);
+
   const app = express();
   const httpServer = http.createServer(app);
 
-  const gqlServer = await createGraphQLMiddleware({ graphiql: true });
+  const gqlServer = await createGraphQLMiddleware(config);
   app.use('/graphql', gqlServer);
 
-  const host = process.env.HOST ?? HOST;
-  const port = parseInt(process.env.PORT ?? '', 10) || PORT;
+  const host = config.host ?? HOST;
+  const port = config.port ?? PORT;
 
   await new Promise<void>((resolve) =>
     httpServer.listen({ host, port }, resolve),

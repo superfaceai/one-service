@@ -1,48 +1,175 @@
-import { createResolver } from './one_sdk';
+jest.mock('@superfaceai/one-sdk');
 
-function callResolver(
+import { Profile, Provider, SuperfaceClient } from '@superfaceai/one-sdk';
+import { mocked } from 'jest-mock';
+import {
+  createInstance,
+  createResolver,
+  getInstance,
+  perform,
+} from './one_sdk';
+
+const { Ok, Err } = jest.requireActual('@superfaceai/one-sdk');
+
+async function callResolver(
   args: { input?: Record<string, any>; options?: { provider?: string } },
-  profile = 'weather/current-city',
-  useCase = 'GetCurrentWeatherInCity',
+  profile = 'profile',
+  useCase = 'UseCase',
 ) {
   const resolver = createResolver(profile, useCase);
   // @ts-expect-error: Unused GraphQLResolveInfo argument
-  return resolver(null, args, null, null);
+  return await resolver(null, args, null, null);
 }
 
-const validWeatherInput = { input: { city: 'Prague, Czechia' } };
-
 describe('one_sdk', () => {
+  let getUseCaseMock: jest.Mock;
+  let performMock: jest.Mock;
+
+  beforeEach(() => {
+    performMock = jest.fn();
+
+    getUseCaseMock = jest.fn(() => ({
+      perform: performMock,
+    }));
+
+    mocked(SuperfaceClient.prototype.getProfile).mockResolvedValue({
+      getUseCase: getUseCaseMock,
+    } as unknown as Profile);
+
+    mocked(SuperfaceClient.prototype.getProvider).mockResolvedValue(
+      {} as Provider,
+    );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('createInstance', () => {
+    it('creates SuperfaceClient instance', () => {
+      createInstance();
+      expect(SuperfaceClient).toBeCalledTimes(1);
+    });
+  });
+
+  describe('getInstance', () => {
+    it('creates SuperfaceClient instance once', () => {
+      getInstance();
+      getInstance();
+
+      expect(SuperfaceClient).toBeCalledTimes(1);
+    });
+  });
+
+  describe('perform', () => {
+    beforeEach(async () => {
+      await perform({
+        profile: 'scope/name',
+        useCase: 'UseCase',
+        provider: 'provider',
+        input: {},
+      });
+    });
+
+    it('calls getProfile with "scope/name"', () => {
+      expect(SuperfaceClient.prototype.getProfile).toBeCalledWith('scope/name');
+    });
+
+    it('calls getUseCase with "UseCase"', () => {
+      expect(getUseCaseMock).toBeCalledWith('UseCase');
+    });
+
+    it('calls SuperfaceClient getProvider with "provider"', () => {
+      expect(SuperfaceClient.prototype.getProvider).toBeCalledWith('provider');
+    });
+
+    it('calls SuperfaceClient perform', () => {
+      expect(performMock).toBeCalled();
+    });
+  });
+
   describe('createResolver', () => {
-    it('wraps a use-case into a resolver', async () => {
-      await expect(callResolver(validWeatherInput)).resolves.toMatchSnapshot();
-    });
+    let resolverResult: any;
 
-    it('throws with invalid input', async () => {
-      await expect(
-        callResolver({ input: { city: 123 } }),
-      ).rejects.toThrowErrorMatchingSnapshot();
-    });
+    describe('perform returns Ok result', () => {
+      beforeEach(async () => {
+        performMock.mockResolvedValue(new Ok('perform result'));
 
-    describe('with invalid setup', () => {
-      it('fails with invalid provider', async () => {
-        await expect(
-          callResolver({
-            options: { provider: 'invalid-provider' },
-          }),
-        ).rejects.toThrowErrorMatchingSnapshot();
+        resolverResult = await callResolver(
+          {
+            input: { key: 'value' },
+            options: {
+              provider: 'provider',
+            },
+          },
+          'scope/name',
+        );
       });
 
-      it('fails with invalid use-case', async () => {
-        await expect(
-          callResolver({}, 'weather/current-city', 'InvalidUseCase'),
-        ).rejects.toThrowErrorMatchingSnapshot();
+      it('calls getProfile with "scope/name"', () => {
+        expect(SuperfaceClient.prototype.getProfile).toBeCalledWith(
+          'scope/name',
+        );
       });
 
-      it('fails with invalid profile', async () => {
+      it('calls getUseCase with "UseCase"', () => {
+        expect(getUseCaseMock).toBeCalledWith('UseCase');
+      });
+
+      it('calls SuperfaceClient getProvider with "provider"', () => {
+        expect(SuperfaceClient.prototype.getProvider).toBeCalledWith(
+          'provider',
+        );
+      });
+
+      it('calls SuperfaceClient perform', () => {
+        expect(performMock).toBeCalled();
+      });
+
+      it('returns value', () => {
+        expect(resolverResult).toEqual({ result: 'perform result' });
+      });
+    });
+
+    describe('perform returns Error result', () => {
+      beforeEach(() => {
+        performMock.mockResolvedValue(new Err(new Error('perform error')));
+      });
+
+      it('throws error from perform result', async () => {
         await expect(
-          callResolver({}, 'weather/invalid-profile', 'InvalidUseCase'),
-        ).rejects.toThrowErrorMatchingSnapshot();
+          callResolver(
+            {
+              input: { key: 'value' },
+              options: {
+                provider: 'provider',
+              },
+            },
+            'scope/name',
+          ),
+        ).rejects.toThrowError();
+      });
+    });
+
+    describe('perform throws exception', () => {
+      beforeEach(() => {
+        performMock.mockImplementation(() => {
+          throw new Error('failed perform');
+        });
+      });
+
+      it('re-throws error from perform', async () => {
+        await expect(
+          callResolver(
+            {
+              input: { key: 'value' },
+              options: {
+                provider: 'provider',
+              },
+            },
+            'scope/name',
+          ),
+        ).rejects.toThrowError();
       });
     });
   });

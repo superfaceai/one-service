@@ -1,9 +1,4 @@
-import {
-  PerformError,
-  Provider,
-  Result,
-  SuperfaceClient,
-} from '@superfaceai/one-sdk';
+import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
@@ -34,7 +29,7 @@ export async function perform(params: PerformParams) {
   const oneSdk = getInstance();
 
   const profile = await oneSdk.getProfile(params.profile);
-  const useCase = profile.getUseCase(params.useCase); // Why this doesn't throw if getProfile does?
+  const useCase = profile.getUseCase(params.useCase);
   let provider!: Provider;
 
   if (params.provider) {
@@ -53,27 +48,26 @@ export function createResolver(
   return async function oneSdkResolver(source: any, args: any): Promise<any> {
     debug(`Performing ${profile}/${useCase}`, { source, args });
 
-    let result: Result<unknown, PerformError>;
     try {
-      result = await perform({
+      const result = await perform({
         profile,
         useCase,
         input: args?.input,
         provider: args?.options?.provider,
       });
+
+      debug('Perform result', result);
+
+      if (result.isOk()) {
+        return {
+          result: result.value,
+        };
+      } else {
+        throw result.error;
+      }
     } catch (err) {
       debug('Perform exception', err);
       throw err;
-    }
-
-    debug('Perform result', result);
-
-    if (result.isOk()) {
-      return {
-        result: result.value,
-      };
-    } else {
-      throw result.error;
     }
   };
 }

@@ -1,74 +1,49 @@
 # One Service
 
+### Configure
+
 ```shell
-# Install dependencies
+# Clone and build One Service (this step will be replaced by npm install or running npx)
+$ git clone --branch feat/graphql_support git@github.com:superfaceai/one-service.git
+$ cd one-service
 $ npm install
-
-# Build and run
 $ npm run build
-$ bin/cli
+$ npm link
 
-# Develop
-$ npm run start:dev
-$ npm run start:dev -- --graphiql
+# Check One Service CLI is installed
+$ oneservice --help
 
-# See debug
-$ DEBUG="oneservice*" npm run start:dev
+# Create home for Superface configuration alongside one-service
+$ cd ..
+$ mkdir myapp
+$ cd myapp
 
-# Run tests
-$ npm test
+# Configure profiles and providers
+$ npx @superfaceai/cli install weather/current-city -p wttr-in
 
-# Run tests with watch
-$ npm test -- --watch
+# Start One Service
+$ oneservice --graphiql
 ```
 
 ### Example Queries
 
 ```graphql
 query Example {
-  VcsUserRepos {
-    UserRepos(input: { user: "test" }) {
-      result {
-        repos {
-          name
-          description
-        }
-      }
+  _superJson {
+    profiles {
+      name
+      version
+      providers
     }
+    providers
   }
-  CrmContacts {
-    Search(
-      input: { property: "email", operator: EQ, value: "test@example.com" }
-    ) {
-      result {
-        id
-        email
-      }
-    }
-  }
-}
 
-mutation Example2 {
-  CommunicationSendEmail {
-    SendEmail(
-      input: {
-        from: "test@example.com"
-        to: "user@example.com"
-        text: "Hello from Superface"
-      }
-    ) {
+  WeatherCurrentCity {
+    GetCurrentWeatherInCity(input: { city: "Prague" }) {
       result {
-        messageId
-      }
-    }
-  }
-  LanguageTranslate {
-    TranslateText(
-      input: { text: "test", targetLanguage: BG, sourceLanguage: EN }
-    ) {
-      result {
-        text
-        sourceLanguage
+        temperature
+        feelsLike
+        description
       }
     }
   }
@@ -97,4 +72,28 @@ query SuperJsonInfo {
     providers
   }
 }
+```
+
+### Develop
+
+```shell
+# Install dependencies
+$ npm install
+
+# Build and run
+$ npm run build
+$ bin/cli
+
+# Develop
+$ npm run start:dev
+$ npm run start:dev -- --graphiql
+
+# See debug
+$ DEBUG="oneservice*" npm run start:dev
+
+# Run tests
+$ npm test
+
+# Run tests with watch
+$ npm test -- --watch
 ```

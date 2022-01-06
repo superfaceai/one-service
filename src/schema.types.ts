@@ -367,10 +367,10 @@ export function outputType(
       });
 
     case 'ListStructure':
-      return GraphQLList(outputType(name, structure.value));
+      return new GraphQLList(outputType(name, structure.value));
 
     case 'NonNullStructure':
-      return GraphQLNonNull(outputType(name, structure.value));
+      return new GraphQLNonNull(outputType(name, structure.value));
 
     default:
       throw new Error(`Variable type not implemented for: ${structure.kind}`);
@@ -415,10 +415,10 @@ export function inputType(
       });
 
     case 'ListStructure':
-      return GraphQLList(inputType(name, structure.value));
+      return new GraphQLList(inputType(name, structure.value));
 
     case 'NonNullStructure':
-      return GraphQLNonNull(inputType(name, structure.value));
+      return new GraphQLNonNull(inputType(name, structure.value));
 
     default:
       throw new Error(`Variable type not implemented for: ${structure.kind}`);

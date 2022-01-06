@@ -114,7 +114,7 @@ export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
       name: 'SuperJson',
       fields: {
         profiles: {
-          type: GraphQLList(
+          type: new GraphQLList(
             new GraphQLObjectType({
               name: 'ProfileInfo',
               fields: {
@@ -125,14 +125,14 @@ export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
                   type: GraphQLString,
                 },
                 providers: {
-                  type: GraphQLList(GraphQLString),
+                  type: new GraphQLList(GraphQLString),
                 },
               },
             }),
           ),
         },
         providers: {
-          type: GraphQLList(GraphQLString),
+          type: new GraphQLList(GraphQLString),
         },
       },
     }),

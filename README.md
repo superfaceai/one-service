@@ -86,22 +86,22 @@ query SuperJsonInfo {
 
 ```shell
 # Install dependencies
-$ npm install
+$ yarn install
 
 # Build and run
-$ npm run build
+$ yarn build
 $ bin/cli
 
 # Develop
-$ npm run start:dev
-$ npm run start:dev -- --graphiql
+$ yarn start:dev
+$ yarn start:dev --graphiql
 
 # See debug
-$ DEBUG="oneservice*" npm run start:dev
+$ DEBUG="oneservice*" yarn start:dev
 
 # Run tests
-$ npm test
+$ yarn test
 
 # Run tests with watch
-$ npm test -- --watch
+$ yarn test --watch
 ```

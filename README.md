@@ -1,31 +1,39 @@
 # One Service
 
-### Configure
+## Install
+
+To install this package just install the cli globally using:
 
 ```shell
-# Clone and build One Service (this step will be replaced by npm install or running npx)
-$ git clone --branch feat/graphql_support git@github.com:superfaceai/one-service.git
-$ cd one-service
-$ npm install
-$ npm run build
-$ npm link
-
-# Check One Service CLI is installed
-$ oneservice --help
-
-# Create home for Superface configuration alongside one-service
-$ cd ..
-$ mkdir myapp
-$ cd myapp
-
-# Configure profiles and providers
-$ npx @superfaceai/cli install weather/current-city -p wttr-in
-
-# Start One Service
-$ oneservice --graphiql
+npm install --global @superfaceai/one-service
 ```
 
-### Example Queries
+## Usage
+
+To run One Service you need to have Superface configuration.
+
+1. Create new folder where the configuration will be created:
+
+   ```shell
+   mkdir myapp
+   cd myapp
+   ```
+
+2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider):
+
+   ```shell
+   npx @superfaceai/cli install weather/current-city -p wttr-in
+   ```
+
+   (Repeate for any usecase you find in [Catalog](https://superface.ai/catalog).)
+
+3. Start one service with [GraphiQL](https://github.com/graphql/graphiql).
+
+   ```shell
+   oneservice --graphiql
+   ```
+
+## Example Queries
 
 ```graphql
 query Example {

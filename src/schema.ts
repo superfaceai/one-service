@@ -1,3 +1,7 @@
+import { ProfileId } from '@superfaceai/cli/dist/common/profile';
+import { loadProfile } from '@superfaceai/cli/dist/logic/publish.utils';
+import { META_FILE, SuperJson } from '@superfaceai/one-sdk';
+import createDebug from 'debug';
 import {
   GraphQLFieldConfig,
   GraphQLFieldConfigMap,
@@ -7,15 +11,10 @@ import {
   GraphQLString,
   printSchema,
 } from 'graphql';
-
-import { SuperJson, META_FILE } from '@superfaceai/one-sdk';
-import { loadProfile } from '@superfaceai/cli/dist/logic/publish.utils';
-import createDebug from 'debug';
 import { join as joinPath } from 'path';
 import { DEBUG_PREFIX } from './constants';
-import { hasFieldsDefined, sanitizedProfileName } from './schema.utils';
-import { ProfileId } from '@superfaceai/cli/dist/common/profile';
 import { generateProfileConfig, generateProfileTypes } from './schema.types';
+import { hasFieldsDefined, sanitizedProfileName } from './schema.utils';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 

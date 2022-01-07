@@ -1,8 +1,8 @@
+import createDebug from 'debug';
 import express, { Express } from 'express';
 import http from 'http';
 import { DEBUG_PREFIX, HOST, PORT } from './constants';
 import { createGraphQLMiddleware } from './graphql';
-import createDebug from 'debug';
 
 const debug = createDebug(`${DEBUG_PREFIX}:index`);
 

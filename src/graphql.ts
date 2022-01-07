@@ -1,7 +1,7 @@
 import { graphqlHTTP, OptionsData } from 'express-graphql';
+import { GraphQLSchema } from 'graphql';
 import { IncomingMessage, ServerResponse } from 'http';
 import { createSchema } from './schema';
-import { GraphQLSchema } from 'graphql';
 
 declare type Request = IncomingMessage & {
   url: string;

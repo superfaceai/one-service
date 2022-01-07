@@ -1,3 +1,4 @@
+import { ProfileDocumentNode } from '@superfaceai/ast';
 import {
   DocumentedStructure,
   DocumentedStructureType,
@@ -5,7 +6,6 @@ import {
   StructureType,
 } from '@superfaceai/parser';
 import { GraphQLFieldConfigMap, GraphQLInputFieldConfigMap } from 'graphql';
-import { ProfileDocumentNode } from '@superfaceai/ast';
 
 /**
  * Creates valid field name

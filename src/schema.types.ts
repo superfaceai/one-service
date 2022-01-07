@@ -2,6 +2,17 @@ import {
   NormalizedProfileSettings,
   ProfileDocumentNode,
 } from '@superfaceai/ast';
+import { ProfileId } from '@superfaceai/cli/dist/common/profile';
+import {
+  EnumStructure,
+  getProfileOutput,
+  getProfileUsecases,
+  PrimitiveStructure,
+  ScalarStructure,
+  StructureType,
+  UseCaseStructure,
+} from '@superfaceai/parser';
+import createDebug from 'debug';
 import {
   GraphQLBoolean,
   GraphQLEnumType,
@@ -21,18 +32,8 @@ import {
   GraphQLScalarType,
   GraphQLString,
 } from 'graphql';
-import createDebug from 'debug';
-
 import { DEBUG_PREFIX } from './constants';
-import {
-  EnumStructure,
-  getProfileOutput,
-  getProfileUsecases,
-  PrimitiveStructure,
-  ScalarStructure,
-  StructureType,
-  UseCaseStructure,
-} from '@superfaceai/parser';
+import { createResolver } from './one_sdk';
 import {
   description,
   hasFieldsDefined,
@@ -41,8 +42,6 @@ import {
   sanitize,
   typeFromSafety,
 } from './schema.utils';
-import { createResolver } from './one_sdk';
-import { ProfileId } from '@superfaceai/cli/dist/common/profile';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 

@@ -1,0 +1,6 @@
+name = "scope/name"
+version = "1.0.0"
+
+usecase UnsafeUsecase unsafe {
+  result number
+}

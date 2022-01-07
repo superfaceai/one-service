@@ -1,0 +1,205 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`schema.types enumType returns GraphQLEnumType 1`] = `
+"\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum TestEnum {
+  ONE
+  TWO
+}"
+`;
+
+exports[`schema.types generateProfileConfig creates config with description and resolve function 1`] = `
+Object {
+  "description": "Full profile
+Full profile to test all generation functionality",
+  "resolve": [Function],
+  "type": "Test",
+}
+`;
+
+exports[`schema.types generateRootType create Query type with profiles 1`] = `
+"type Query {
+  ProfileOne: ProfileOne
+  Scope: Scope
+}
+
+type ProfileOne {
+  field: String
+}
+
+type Scope {
+  ProfileTwo: ScopeProfileTwo
+}
+
+type ScopeProfileTwo {
+  UseCase: String
+}"
+`;
+
+exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
+"\\"\\"\\"
+Wrapping type to handle many possible types returned as result by OneSDK
+\\"\\"\\"
+type ScopeNameResult {
+  result: ScopeNameResultNode
+}
+
+type ScopeNameResultNode {
+  \\"\\"\\"
+  Result Field title
+  Result Field description
+  \\"\\"\\"
+  field: String!
+
+  \\"\\"\\"
+  Named Field title
+  Named Field description
+  \\"\\"\\"
+  namedField: String!
+}"
+`;
+
+exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
+Object {
+  "args": Object {
+    "input": Object {
+      "description": "Use-case inputs",
+      "type": "ScopeNameUseCaseInput",
+    },
+    "options": Object {
+      "type": "ScopeNameUseCaseOptions",
+    },
+  },
+  "description": "UseCase
+UseCase description",
+  "resolve": [Function],
+  "type": "ScopeNameUseCaseResult",
+}
+`;
+
+exports[`schema.types generateUseCaseOptionsInputType creates inout with provider option and enum with mock and superface values 1`] = `
+"\\"\\"\\"Additional options to pass to OneSDK perform function\\"\\"\\"
+input Test {
+  provider: TestProviderEnum
+}
+
+enum TestProviderEnum {
+  mock
+  superface
+}"
+`;
+
+exports[`schema.types inputType returns GraphQLInputType 1`] = `
+"type MyObjectType {
+  \\"\\"\\"
+  Primitive
+  String
+  \\"\\"\\"
+  primitive_string: String
+
+  \\"\\"\\"
+  Primitive
+  Number
+  \\"\\"\\"
+  primitive_number: Int
+
+  \\"\\"\\"
+  Primitive
+  boolean
+  \\"\\"\\"
+  primitive_boolean: Boolean
+
+  \\"\\"\\"
+  Object
+  Nested
+  \\"\\"\\"
+  nested_object: MyObjectTypeNestedObject
+  list: [String!]
+
+  \\"\\"\\"
+  Enum title
+  Enum description
+  \\"\\"\\"
+  enum: MyObjectTypeEnum
+}
+
+type MyObjectTypeNestedObject {
+  \\"\\"\\"
+  Nested field title
+  Nested field description
+  \\"\\"\\"
+  field: String
+}
+
+\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum MyObjectTypeEnum {
+  one
+  two
+}"
+`;
+
+exports[`schema.types outputType returns GraphQLObjectType 1`] = `
+"type MyObjectType {
+  \\"\\"\\"
+  Primitive
+  String
+  \\"\\"\\"
+  primitive_string: String
+
+  \\"\\"\\"
+  Primitive
+  Number
+  \\"\\"\\"
+  primitive_number: Int
+
+  \\"\\"\\"
+  Primitive
+  boolean
+  \\"\\"\\"
+  primitive_boolean: Boolean
+
+  \\"\\"\\"
+  Object
+  Nested
+  \\"\\"\\"
+  nested_object: MyObjectTypeNestedObject
+  list: [String!]
+
+  \\"\\"\\"
+  Enum title
+  Enum description
+  \\"\\"\\"
+  enum: MyObjectTypeEnum
+}
+
+type MyObjectTypeNestedObject {
+  \\"\\"\\"
+  Nested field title
+  Nested field description
+  \\"\\"\\"
+  field: String
+}
+
+\\"\\"\\"
+Enum title
+Enum description
+\\"\\"\\"
+enum MyObjectTypeEnum {
+  one
+  two
+}"
+`;
+
+exports[`schema.types scalarType returns GraphQLScalarType 1`] = `
+"\\"\\"\\"
+Scalar title
+Scalar description
+\\"\\"\\"
+scalar TestScalar"
+`;

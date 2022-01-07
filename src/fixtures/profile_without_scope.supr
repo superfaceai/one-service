@@ -1,0 +1,6 @@
+name = "profile"
+version = "1.0.0"
+
+usecase UseCase safe {
+  result string
+}

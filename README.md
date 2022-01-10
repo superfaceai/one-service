@@ -16,7 +16,7 @@ For more details about Superface visit [how it works](https://superface.ai/how-i
 
 ## Install
 
-To install this package just install the CLI globally using:
+You can use this package as a globally installed CLI program:
 
 ```shell
 npm install --global @superfaceai/one-service
@@ -36,7 +36,7 @@ To run OneService you need to have Superface configuration.
 2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider) <a name="usage-install-profiles"></a>:
 
    ```shell
-   npx @superfaceai/cli install weather/current-city -p wttr-in
+   npx @superfaceai/cli install weather/current-city -p wttr-in H
    ```
 
    (Repeate for any usecase you find in [Catalog](https://superface.ai/catalog).)
@@ -47,7 +47,9 @@ To run OneService you need to have Superface configuration.
    oneservice --graphiql
    ```
 
-### Use HTTP Server Middleware
+4. Visit http://localhost:8000/graphql to open GraphQL interactive IDE
+
+### Use as HTTP Server Middleware
 
 Create a GraphQL HTTP server with any HTTP web framework that supports connect styled middleware, including [Connect](https://github.com/senchalabs/connect) itself, [Express](https://expressjs.com/) and [Restify](http://restify.com/).
 
@@ -61,7 +63,7 @@ const app = express();
 
 app.use(
   '/graphql',
-  crecreateGraphQLMiddlewareate({
+  createGraphQLMiddleware({
     graphiql: true,
   }),
 );
@@ -116,7 +118,7 @@ query InstalledProfilesAndProviders {
 ### Considerations
 
 OneService doesn't provide any authentication or CORS support.
-This should be handled by API Gateway (eg. [Express Gateway](https://github.com/ExpressGateway/express-gateway) or [Kong](https://github.com/kong/kong)) or you can use own Express instance and [attach the middleware](#use-http-server-middleware).
+This should be handled by API Gateway (eg. [Express Gateway](https://github.com/ExpressGateway/express-gateway) or [Kong](https://github.com/kong/kong)) or you can use own Express instance and [attach the middleware](#use-as-http-server-middleware).
 
 ### Heroku
 

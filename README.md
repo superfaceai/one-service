@@ -185,7 +185,3 @@ OneService is licensed under the [MIT License](LICENSE).
 © 2022 Superface s.r.o.
 
 <!-- TODO: allcontributors -->
-
-```
-
-```

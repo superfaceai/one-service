@@ -1,6 +1,6 @@
 {
   "name": "@superfaceai/one-service",
-  "version": "0.0.0",
+  "version": "1.0.0-rc.0",
   "description": "GraphQL service on top of OneSDK",
   "repository": "https://github.com/superfaceai/one-service",
   "author": "Superface Team <hello@superface.ai>",

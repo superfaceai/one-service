@@ -1,15 +1,15 @@
-name: Testing
+name: CI
 on:
   - push
 
 jobs:
   test:
-    name: CI
+    name: Test
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [16, 17]
 
     steps:
       - name: Setup Node.js environment ${{ matrix.node-version }}

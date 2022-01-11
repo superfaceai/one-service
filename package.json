@@ -6,6 +6,8 @@
   "author": "Superface Team <hello@superface.ai>",
   "license": "MIT",
   "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
   "bin": {
     "oneservice": "bin/cli"
   },

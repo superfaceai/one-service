@@ -1,8 +1,22 @@
-# One Service
+[Website](https://superface.ai) | [Get Started](https://superface.ai/docs/getting-started) | [Documentation](https://superface.ai/docs) | [Discord](https://sfc.is/discord) | [Twitter](https://twitter.com/superfaceai) | [Support](https://superface.ai/support)
+
+<img src="https://github.com/superfaceai/one-service/raw/main/docs/LogoGreen.png" alt="Superface" width="100" height="100">
+
+# OneService
+
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/superfaceai/one-service/CI)](https://github.com/superfaceai/one-service/actions/workflows/main.yml)
+[![npm](https://img.shields.io/npm/v/@superfaceai/one-service)](https://www.npmjs.com/package/@superfaceai/one-service)
+[![license](https://img.shields.io/npm/l/@superfaceai/one-service)](LICENSE)
+![TypeScript](https://img.shields.io/static/v1?message=TypeScript&&logoColor=ffffff&color=007acc&labelColor=5c5c5c&label=built%20with)
+[![Discord](https://img.shields.io/discord/819563244418105354?logo=discord&logoColor=fff)](https://sfc.is/discord)
+
+OneService allows you to run [OneSDK](https://github.com/superfaceai/one-sdk-js) as a service with configured usecases. And use it as [backend for frontend](https://samnewman.io/patterns/architectural/bff/).
+
+For more details about Superface visit [how it works](https://superface.ai/how-it-works) and [get started](https://superface.ai/docs/getting-started).
 
 ## Install
 
-To install this package just install the cli globally using:
+You can use this package as a globally installed CLI program:
 
 ```shell
 npm install --global @superfaceai/one-service
@@ -10,7 +24,7 @@ npm install --global @superfaceai/one-service
 
 ## Usage
 
-To run One Service you need to have Superface configuration.
+To run OneService you need to have Superface configuration.
 
 1. Create new folder where the configuration will be created:
 
@@ -19,33 +33,48 @@ To run One Service you need to have Superface configuration.
    cd myapp
    ```
 
-2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider):
+2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider) <a name="usage-install-profiles"></a>:
 
    ```shell
-   npx @superfaceai/cli install weather/current-city -p wttr-in
+   npx @superfaceai/cli install weather/current-city -p wttr-in H
    ```
 
    (Repeate for any usecase you find in [Catalog](https://superface.ai/catalog).)
 
-3. Start one service with [GraphiQL](https://github.com/graphql/graphiql).
+3. Start OneService with [GraphiQL](https://github.com/graphql/graphiql).
 
    ```shell
    oneservice --graphiql
    ```
 
+4. Visit http://localhost:8000/graphql to open GraphQL interactive IDE
+
+### Use as HTTP Server Middleware
+
+Create a GraphQL HTTP server with any HTTP web framework that supports connect styled middleware, including [Connect](https://github.com/senchalabs/connect) itself, [Express](https://expressjs.com/) and [Restify](http://restify.com/).
+
+Mount it as a router handler:
+
+```js
+const express = require('express');
+const { createGraphQLMiddleware } = '@superfaceai/one-service';
+
+const app = express();
+
+app.use(
+  '/graphql',
+  createGraphQLMiddleware({
+    graphiql: true,
+  }),
+);
+
+app.listen(3000);
+```
+
 ## Example Queries
 
 ```graphql
-query Example {
-  _superJson {
-    profiles {
-      name
-      version
-      providers
-    }
-    providers
-  }
-
+query WeatherInPrague {
   WeatherCurrentCity {
     GetCurrentWeatherInCity(input: { city: "Prague" }) {
       result {
@@ -57,20 +86,22 @@ query Example {
   }
 }
 
-query ExampleSelectProvider {
-  VcsUserRepos {
-    UserRepos(input: { user: "freaz" }, options: { provider: mock }) {
+query SelectProvider {
+  WeatherCurrentCity {
+    GetCurrentWeatherInCity(
+      input: { city: "Prague" }
+      options: { provider: mock }
+    ) {
       result {
-        repos {
-          name
-          description
-        }
+        temperature
+        feelsLike
+        description
       }
     }
   }
 }
 
-query SuperJsonInfo {
+query InstalledProfilesAndProviders {
   _superJson {
     profiles {
       name
@@ -82,26 +113,79 @@ query SuperJsonInfo {
 }
 ```
 
-### Develop
+## Deployment
 
-```shell
-# Install dependencies
-$ yarn install
+### Considerations
 
-# Build and run
-$ yarn build
-$ bin/cli
+OneService doesn't provide any authentication or CORS support.
+This should be handled by API Gateway (eg. [Express Gateway](https://github.com/ExpressGateway/express-gateway) or [Kong](https://github.com/kong/kong)) or you can use own Express instance and [attach the middleware](#use-as-http-server-middleware).
 
-# Develop
-$ yarn start:dev
-$ yarn start:dev --graphiql
+### Heroku
 
-# See debug
-$ DEBUG="oneservice*" yarn start:dev
+OneService can be deployed to [Heroku with Git](https://devcenter.heroku.com/articles/git).
 
-# Run tests
-$ yarn test
+#### Prerequisites
 
-# Run tests with watch
-$ yarn test --watch
+- [Heroku CLI installation instructions](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+- [Git installation instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node.js installation instructions](https://nodejs.dev/learn/how-to-install-nodejs)
+
+#### Steps
+
+1. You will need folder for the application with local Git repository
+
+   ```shell
+   mkdir myapp
+   cd myapp
+   git init
+   ```
+
+2. Next step is to install OneService
+
+   ```shell
+   npm init -y
+   npm install --save @superfaceai/one-service
+   ```
+
+3. Install profiles as explaied in [Usage step 2](#usage-install-profiles).
+
+4. [Create Heroku Procfile](https://devcenter.heroku.com/articles/procfile)
+
+   ```shell
+   echo 'web: oneservice --port $PORT --host 0.0.0.0 --graphiql' > Procfile
+   ```
+
+5. Commit changes to Git repository
+
+   ```shell
+   git add --all
+   git commit -m 'OneService configuration'
+   ```
+
+6. Create Heroku remote
+
+   ```shell
+   heroku create
+   ```
+
+7. Deploy app
+
+   ```shell
+   git push heroku main
+   ```
+
+## Contributing
+
+We welcome all kinds of contributions! Please see the [Contribution Guide](CONTRIBUTING.md) to learn how to participate.
+
+## License
+
+OneService is licensed under the [MIT License](LICENSE).
+
+© 2022 Superface s.r.o.
+
+<!-- TODO: allcontributors -->
+
+```
+
 ```

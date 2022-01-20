@@ -113,6 +113,22 @@ query InstalledProfilesAndProviders {
 }
 ```
 
+### Use with `.env` file
+
+OneService doesn't automatically load `.env` file. You can manually use [dotenv package](https://github.com/motdotla/dotenv) for this functionality. If you would like to use OneService CLI with dotenv, follow these steps:
+
+1. Install dotenv and OneService locally in your project:
+
+   ```
+   npm i dotenv @superfaceai/one-service
+   ```
+   
+2. Run the CLI via `node` with [dotenv preload](https://github.com/motdotla/dotenv#preload):
+
+   ```
+   node -r dotenv/config node_modules/.bin/oneservice
+   ```
+
 ## Deployment
 
 ### Considerations

@@ -57,7 +57,7 @@ Mount it as a router handler:
 
 ```js
 const express = require('express');
-const { createGraphQLMiddleware } = '@superfaceai/one-service';
+const { createGraphQLMiddleware } = require('@superfaceai/one-service');
 
 const app = express();
 

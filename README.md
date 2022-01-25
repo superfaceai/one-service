@@ -36,7 +36,7 @@ To run OneService you need to have Superface configuration.
 2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider) <a name="usage-install-profiles"></a>:
 
    ```shell
-   npx @superfaceai/cli install weather/current-city -p wttr-in H
+   npx @superfaceai/cli install weather/current-city -p wttr-in
    ```
 
    (Repeate for any usecase you find in [Catalog](https://superface.ai/catalog).)

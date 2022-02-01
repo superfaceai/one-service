@@ -48,16 +48,16 @@ function throwCallback(err: unknown): void {
 export function createGraphQLMiddleware(
   options: CreateGraphQLServerOptions = {},
 ): Middleware {
-  let resolvedMiddleware: Middleware | undefined;
+  const middleware: Promise<Middleware> = createServerOptions(options).then(
+    (options) => graphqlHTTP(options),
+  );
 
   return async function graphqlMiddleware(req, res, next = throwCallback) {
-    if (!resolvedMiddleware) {
-      try {
-        const resolvedOptions = await createServerOptions(options);
-        resolvedMiddleware = graphqlHTTP(resolvedOptions);
-      } catch (err) {
-        return next(err);
-      }
+    let resolvedMiddleware: Middleware;
+    try {
+      resolvedMiddleware = await middleware;
+    } catch (err) {
+      return next(err);
     }
     return resolvedMiddleware(req, res);
   };

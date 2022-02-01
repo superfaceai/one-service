@@ -13,6 +13,7 @@ declare type Response = ServerResponse & {
 export type Middleware = (
   request: Request,
   response: Response,
+  next?: (error?: unknown) => void,
 ) => Promise<void>;
 
 export interface CreateGraphQLServerOptions
@@ -20,20 +21,44 @@ export interface CreateGraphQLServerOptions
   schema?: GraphQLSchema;
 }
 
-export async function createGraphQLMiddleware(
+async function createServerOptions(
   options: CreateGraphQLServerOptions = {},
-): Promise<Middleware> {
-  options.schema = options.schema ?? (await createSchema());
-
-  if (!isOptionsData(options)) {
+): Promise<OptionsData> {
+  const schema = options.schema ?? (await createSchema());
+  const resolvedOptions = { ...options, schema };
+  if (!isOptionsData(resolvedOptions)) {
     throw new Error('Property "schema" is missing');
   }
 
-  return graphqlHTTP(options);
+  return resolvedOptions;
 }
 
 export function isOptionsData(
   options: CreateGraphQLServerOptions,
 ): options is OptionsData {
   return options.schema instanceof GraphQLSchema;
+}
+
+function throwCallback(err: unknown): void {
+  if (err) {
+    throw err;
+  }
+}
+
+export function createGraphQLMiddleware(
+  options: CreateGraphQLServerOptions = {},
+): Middleware {
+  let resolvedMiddleware: Middleware | undefined;
+
+  return async function graphqlMiddleware(req, res, next = throwCallback) {
+    if (!resolvedMiddleware) {
+      try {
+        const resolvedOptions = await createServerOptions(options);
+        resolvedMiddleware = graphqlHTTP(resolvedOptions);
+      } catch (err) {
+        return next(err);
+      }
+    }
+    return resolvedMiddleware(req, res);
+  };
 }

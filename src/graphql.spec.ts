@@ -28,7 +28,7 @@ describe('graphql', () => {
         });
 
         it('throws upon initialization', async () => {
-          expect(createGraphQLMiddleware()).rejects.toThrowError();
+          await expect(createGraphQLMiddleware()).rejects.toThrowError();
         });
       });
     });

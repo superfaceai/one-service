@@ -36,10 +36,10 @@ To run OneService you need to have Superface configuration.
 2. [Install usecases](https://superface.ai/docs/getting-started#install-the-capability) and [configure providers](https://superface.ai/docs/getting-started#configure-the-provider) <a name="usage-install-profiles"></a>:
 
    ```shell
-   npx @superfaceai/cli install weather/current-city -p wttr-in
+   npx @superfaceai/cli install weather/current-city --providers wttr-in
    ```
 
-   (Repeate for any usecase you find in [Catalog](https://superface.ai/catalog).)
+   (Repeat for any usecase you find in [Catalog](https://superface.ai/catalog).)
 
 3. Start OneService with [GraphiQL](https://github.com/graphql/graphiql).
 
@@ -49,27 +49,53 @@ To run OneService you need to have Superface configuration.
 
 4. Visit http://localhost:8000/graphql to open GraphQL interactive IDE
 
-### Use as HTTP Server Middleware
+### Use as a HTTP server middleware
 
-Create a GraphQL HTTP server with any HTTP web framework that supports connect styled middleware, including [Connect](https://github.com/senchalabs/connect) itself, [Express](https://expressjs.com/) and [Restify](http://restify.com/).
+OneService package provides `createGraphQLMiddleware` function for mounting the GraphQL server as a middleware with any HTTP web framework that supports connect styled middleware. This includes [Connect](https://github.com/senchalabs/connect) itself, [Express](https://expressjs.com/), [Polka](https://github.com/lukeed/polka), [Restify](http://restify.com/) and others.
 
-Mount it as a router handler:
+The `createGraphQLMiddleware` function returns a promise, therefore you need to await resolution before mounting the middelware.
+
+If you can use [ES modules](https://nodejs.org/api/esm.html) in your project, you can resolve the promise with top-level `await`:
+
+```js
+// server.mjs
+import express from 'express';
+import { createGraphQLMiddleware } from '@superfaceai/one-service';
+
+const app = express();
+const graphqlMiddleware = await createGraphQLMiddleware({
+  graphiql: true,
+});
+
+app.use('/graphql', graphqlMiddleware);
+
+app.listen(3000);
+```
+
+Alternatively you can setup the server inside an `async` funtion:
 
 ```js
 const express = require('express');
 const { createGraphQLMiddleware } = require('@superfaceai/one-service');
 
-const app = express();
-
-app.use(
-  '/graphql',
-  createGraphQLMiddleware({
+async function startServer() {
+  const app = express();
+  const graphqlMiddleware = await createGraphQLMiddleware({
     graphiql: true,
-  }),
-);
+  });
+  app.use('/graphql', graphqlMiddleware);
 
-app.listen(3000);
+  app.listen(3000);
+}
+
+startServer();
 ```
+
+`createGraphQLMiddleware` function will throw an error if it cannot generate a GraphQL schema. Possible issues include:
+
+- missing or invalid `super.json`
+- name collision between use-cases of installed profiles
+- profile with features unsupported by GraphQL
 
 ## Example Queries
 
@@ -122,7 +148,7 @@ OneService doesn't automatically load `.env` file. You can manually use [dotenv 
    ```
    npm i dotenv @superfaceai/one-service
    ```
-   
+
 2. Run the CLI via `node` with [dotenv preload](https://github.com/motdotla/dotenv#preload):
 
    ```

@@ -16,8 +16,7 @@ describe('graphql', () => {
   describe('createGraphQLMiddleware', () => {
     describe('with no options', () => {
       it('returns a middleware with generated schema', async () => {
-        const middleware = createGraphQLMiddleware();
-        expect(middleware).resolves.toEqual(expect.any(Function));
+        await expect(createGraphQLMiddleware()).resolves.toEqual(expect.any(Function));
         expect(createSchema).toHaveBeenCalled();
       });
 

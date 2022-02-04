@@ -211,13 +211,7 @@ describe('schema.types', () => {
           ['superface', 'mock'],
           providers,
         ),
-      ).toMatchInlineSnapshot(`
-        Object {
-          "accessToken": Object {
-            "type": "String",
-          },
-        }
-      `);
+      ).toMatchSnapshot();
     });
 
     it('returns undefined when no parameters are configured', () => {

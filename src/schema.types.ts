@@ -46,7 +46,7 @@ import {
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
-type ProviderSettingsRecord = Record<string, NormalizedProviderSettings>;
+export type ProviderSettingsRecord = Record<string, NormalizedProviderSettings>;
 
 export async function generateProfileTypes(
   profilePrefix: string,

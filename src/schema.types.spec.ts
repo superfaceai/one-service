@@ -15,6 +15,7 @@ import {
   generateUseCaseOptionsInputType,
   outputType,
   primitiveType,
+  ProviderSettingsRecord,
   scalarType,
 } from './schema.types';
 import {
@@ -95,6 +96,19 @@ describe('schema.types', () => {
     },
   };
 
+  const providers: ProviderSettingsRecord = {
+    mock: {
+      security: [],
+      parameters: {},
+    },
+    superface: {
+      security: [],
+      parameters: {
+        accessToken: '$SUPERFACE_ACCESS_TOKEN',
+      },
+    },
+  };
+
   describe('generateProfileTypes', () => {
     it('skips QueryType if no safe usecase is present', async () => {
       const profileAst = await parseProfileFixture('unsafe_only');
@@ -103,6 +117,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
+        providers,
       );
 
       expect(result.QueryType).toBeUndefined();
@@ -115,6 +130,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
+        providers,
       );
 
       expect(result.MutationType).toBeUndefined();
@@ -132,6 +148,7 @@ describe('schema.types', () => {
           profileAst,
           profileSettings,
           profileOutput.usecases[0],
+          providers,
         ),
       ).toThrowError();
     });
@@ -145,6 +162,7 @@ describe('schema.types', () => {
           profileAst,
           profileSettings,
           profileOutput.usecases[0],
+          providers,
         );
 
         expect(config).toMatchSnapshot();
@@ -178,8 +196,10 @@ describe('schema.types', () => {
   });
 
   describe('generateUseCaseOptionsInputType', () => {
-    it('creates inout with provider option and enum with mock and superface values', () => {
-      expectSchema(generateUseCaseOptionsInputType('Test', profileSettings));
+    it('creates input with provider option and enum with mock and superface values', () => {
+      expectSchema(
+        generateUseCaseOptionsInputType('Test', profileSettings, providers),
+      );
     });
   });
 

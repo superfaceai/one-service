@@ -83,15 +83,21 @@ UseCase description",
 }
 `;
 
-exports[`schema.types generateUseCaseOptionsInputType creates inout with provider option and enum with mock and superface values 1`] = `
+exports[`schema.types generateUseCaseOptionsInputType creates input with provider option and enum with mock and superface values 1`] = `
 "\\"\\"\\"Additional options to pass to OneSDK perform function\\"\\"\\"
 input Test {
   provider: TestProviderEnum
+  parameters: TestProviderParameters
 }
 
 enum TestProviderEnum {
   mock
   superface
+}
+
+\\"\\"\\"Provider-specific parameters\\"\\"\\"
+input TestProviderParameters {
+  accessToken: String
 }
 "
 `;

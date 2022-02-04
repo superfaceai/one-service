@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Support for provider parameters in use-case options (#10)
+
 ## 1.0.0-rc.1 - 2022-01-11
 
 ## 1.0.0-rc.0 - 2022-01-11

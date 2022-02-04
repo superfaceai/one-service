@@ -272,16 +272,18 @@ export function generateUseCaseProviderParametersFields(
   // Generate a union of all parameters' names by all configured providers
   for (const providerName of configuredProviders) {
     const providerSettings = allProviderSettings[providerName];
-    const parameters = Object.entries(providerSettings.parameters);
-    if (parameters.length === 0) {
-      continue;
-    }
-    parameters.forEach(([parameterName]) => parameterNames.add(parameterName));
+    const parameters = Object.keys(providerSettings.parameters);
+    parameters.forEach((parameterName) => parameterNames.add(parameterName));
   }
 
   if (parameterNames.size === 0) {
     return undefined;
   }
+
+  debug(
+    'generateUseCaseProviderParametersFields found provider parameters %o',
+    parameterNames,
+  );
 
   const fields: GraphQLInputFieldConfigMap = {};
   for (const parameterName of parameterNames.values()) {

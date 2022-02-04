@@ -1,5 +1,6 @@
 import {
   NormalizedProfileSettings,
+  NormalizedProviderSettings,
   ProfileDocumentNode,
 } from '@superfaceai/ast';
 import { ProfileId } from '@superfaceai/cli/dist/common/profile';
@@ -45,10 +46,13 @@ import {
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
+type ProviderSettingsRecord = Record<string, NormalizedProviderSettings>;
+
 export async function generateProfileTypes(
   profilePrefix: string,
   profileAst: ProfileDocumentNode,
   profileSettings: NormalizedProfileSettings,
+  providers: ProviderSettingsRecord,
 ): Promise<{
   QueryType?: GraphQLObjectType;
   MutationType?: GraphQLObjectType;
@@ -78,6 +82,7 @@ export async function generateProfileTypes(
       profileAst,
       profileSettings,
       useCase,
+      providers,
     );
 
     const type = typeFromSafety(useCaseInfo.safety);
@@ -111,6 +116,7 @@ export function generateUseCaseFieldConfig(
   profileAst: ProfileDocumentNode,
   profileSettings: NormalizedProfileSettings,
   useCase: UseCaseStructure,
+  providers: ProviderSettingsRecord,
 ): GraphQLFieldConfig<any, any> {
   if (!useCase.result) {
     throw new Error(`${useCase.useCaseName} doesn't have defined result`);
@@ -132,6 +138,7 @@ export function generateUseCaseFieldConfig(
   const OptionsType = generateUseCaseOptionsInputType(
     `${useCasePrefix}Options`,
     profileSettings,
+    providers,
   );
 
   const args: GraphQLFieldConfigArgumentMap = {
@@ -211,6 +218,7 @@ export function generateStructureInputType(
 export function generateUseCaseOptionsInputType(
   name: string,
   profileSettings: NormalizedProfileSettings,
+  providers: ProviderSettingsRecord,
 ): GraphQLInputObjectType {
   const providersNames = Object.keys(profileSettings.providers);
 
@@ -226,6 +234,11 @@ export function generateUseCaseOptionsInputType(
     values[sanitize(value)] = { value };
   });
 
+  const providerParameters = generateUseCaseProviderParametersFields(
+    providersNames,
+    providers,
+  );
+
   return new GraphQLInputObjectType({
     name,
     description: 'Additional options to pass to OneSDK perform function',
@@ -236,8 +249,43 @@ export function generateUseCaseOptionsInputType(
           values,
         }),
       },
+      parameters: {
+        type: new GraphQLInputObjectType({
+          name: `${name}ProviderParameters`,
+          fields: providerParameters,
+        }),
+      },
     },
   });
+}
+
+export function generateUseCaseProviderParametersFields(
+  configuredProviders: string[],
+  allProviderSettings: ProviderSettingsRecord,
+) {
+  // Set to prevent duplicated fields; it's okay if there are conflicting fields since we always expect a string
+  const parameterNames = new Set<string>();
+
+  // Generate a union of all parameters' namess by all configured providers
+  for (const providerName of configuredProviders) {
+    const providerSettings = allProviderSettings[providerName];
+    const parameters = Object.entries(providerSettings.parameters);
+    if (parameters.length === 0) {
+      continue;
+    }
+    parameters.forEach(([parameterName]) => parameterNames.add(parameterName));
+  }
+
+  // if (parameterNames.size === 0) {
+  //   return undefined;
+  // }
+
+  const fields: GraphQLInputFieldConfigMap = {};
+  for (const parameterName of parameterNames.values()) {
+    fields[parameterName] = { type: GraphQLString };
+  }
+
+  return fields;
 }
 
 export function generateRootQueryType(

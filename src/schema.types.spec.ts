@@ -13,6 +13,7 @@ import {
   generateStructureResultType,
   generateUseCaseFieldConfig,
   generateUseCaseOptionsInputType,
+  generateUseCaseProviderParametersFields,
   outputType,
   primitiveType,
   ProviderSettingsRecord,
@@ -196,10 +197,37 @@ describe('schema.types', () => {
   });
 
   describe('generateUseCaseOptionsInputType', () => {
-    it('creates input with provider option and enum with mock and superface values', () => {
+    it('creates input with providers enum and input parameters', () => {
       expectSchema(
         generateUseCaseOptionsInputType('Test', profileSettings, providers),
       );
+    });
+  });
+
+  describe('generateUseCaseProviderParametersFields', () => {
+    it('generates provider parameters for configured providers', () => {
+      expect(
+        generateUseCaseProviderParametersFields(
+          ['superface', 'mock'],
+          providers,
+        ),
+      ).toMatchInlineSnapshot(`
+        Object {
+          "accessToken": Object {
+            "type": "String",
+          },
+        }
+      `);
+    });
+
+    it('returns undefined when no parameters are configured', () => {
+      const emptyProvider = { security: [], parameters: {} };
+      expect(
+        generateUseCaseProviderParametersFields(['foo', 'bar'], {
+          foo: emptyProvider,
+          bar: emptyProvider,
+        }),
+      ).toBeUndefined();
     });
   });
 

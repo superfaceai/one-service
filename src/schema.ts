@@ -59,6 +59,7 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
       profilePrefix,
       loadedProfile.ast,
       profileSettings,
+      superJson.normalized.providers,
     );
 
     if (QueryType) {

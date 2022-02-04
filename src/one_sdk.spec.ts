@@ -67,7 +67,10 @@ describe('one_sdk', () => {
         profile: 'scope/name',
         useCase: 'UseCase',
         provider: 'provider',
-        input: {},
+        parameters: {
+          foo: 'bar',
+        },
+        input: { input: 'value' },
       });
     });
 
@@ -84,7 +87,13 @@ describe('one_sdk', () => {
     });
 
     it('calls SuperfaceClient perform', () => {
-      expect(performMock).toBeCalled();
+      expect(performMock).toHaveBeenCalledWith(
+        { input: 'value' },
+        {
+          provider: {},
+          parameters: { foo: 'bar' },
+        },
+      );
     });
   });
 

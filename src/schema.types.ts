@@ -249,12 +249,15 @@ export function generateUseCaseOptionsInputType(
           values,
         }),
       },
-      parameters: {
-        type: new GraphQLInputObjectType({
-          name: `${name}ProviderParameters`,
-          fields: providerParameters,
-        }),
-      },
+      ...(providerParameters && {
+        parameters: {
+          type: new GraphQLInputObjectType({
+            name: `${name}ProviderParameters`,
+            description: 'Provider-specific parameters',
+            fields: providerParameters,
+          }),
+        },
+      }),
     },
   });
 }
@@ -262,11 +265,11 @@ export function generateUseCaseOptionsInputType(
 export function generateUseCaseProviderParametersFields(
   configuredProviders: string[],
   allProviderSettings: ProviderSettingsRecord,
-) {
+): GraphQLInputFieldConfigMap | undefined {
   // Set to prevent duplicated fields; it's okay if there are conflicting fields since we always expect a string
   const parameterNames = new Set<string>();
 
-  // Generate a union of all parameters' namess by all configured providers
+  // Generate a union of all parameters' names by all configured providers
   for (const providerName of configuredProviders) {
     const providerSettings = allProviderSettings[providerName];
     const parameters = Object.entries(providerSettings.parameters);
@@ -276,9 +279,9 @@ export function generateUseCaseProviderParametersFields(
     parameters.forEach(([parameterName]) => parameterNames.add(parameterName));
   }
 
-  // if (parameterNames.size === 0) {
-  //   return undefined;
-  // }
+  if (parameterNames.size === 0) {
+    return undefined;
+  }
 
   const fields: GraphQLInputFieldConfigMap = {};
   for (const parameterName of parameterNames.values()) {

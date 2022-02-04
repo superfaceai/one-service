@@ -10,6 +10,7 @@ export interface PerformParams {
   profile: string;
   useCase: string;
   provider?: string;
+  parameters?: Record<string, string>;
   input: Record<string, any>;
 }
 
@@ -36,7 +37,10 @@ export async function perform(params: PerformParams) {
     provider = await oneSdk.getProvider(params.provider);
   }
 
-  return await useCase.perform(params.input, { provider });
+  return await useCase.perform(params.input, {
+    provider,
+    parameters: params.parameters,
+  });
 }
 
 export function createResolver(
@@ -54,6 +58,7 @@ export function createResolver(
         useCase,
         input: args?.input,
         provider: args?.options?.provider,
+        parameters: args?.options?.parameters,
       });
 
       debug('Perform result', result);

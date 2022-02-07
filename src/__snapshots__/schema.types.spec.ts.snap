@@ -97,6 +97,7 @@ enum TestProviderEnum {
 
 \\"\\"\\"Provider-specific parameters\\"\\"\\"
 input TestProviderParameters {
+  \\"\\"\\"Parameter accepted by superface\\"\\"\\"
   accessToken: String
 }
 "
@@ -105,6 +106,7 @@ input TestProviderParameters {
 exports[`schema.types generateUseCaseProviderParametersFields generates provider parameters for configured providers 1`] = `
 Object {
   "accessToken": Object {
+    "description": "Parameter accepted by superface",
     "type": "String",
   },
 }

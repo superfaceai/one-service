@@ -43,6 +43,7 @@ import {
   sanitize,
   typeFromSafety,
 } from './schema.utils';
+import { ArrayMultiMap } from './structures';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
@@ -267,27 +268,32 @@ export function generateUseCaseProviderParametersFields(
   allProviderSettings: ProviderSettingsRecord,
 ): GraphQLInputFieldConfigMap | undefined {
   // Set to prevent duplicated fields; it's okay if there are conflicting fields since we always expect a string
-  const parameterNames = new Set<string>();
+  const parametersWithProviders = new ArrayMultiMap<string, string>();
 
   // Generate a union of all parameters' names by all configured providers
   for (const providerName of configuredProviders) {
     const providerSettings = allProviderSettings[providerName];
     const parameters = Object.keys(providerSettings.parameters);
-    parameters.forEach((parameterName) => parameterNames.add(parameterName));
+    parameters.forEach((parameterName) =>
+      parametersWithProviders.set(parameterName, providerName),
+    );
   }
 
-  if (parameterNames.size === 0) {
+  if (parametersWithProviders.size === 0) {
     return undefined;
   }
 
   debug(
     'generateUseCaseProviderParametersFields found provider parameters %o',
-    parameterNames,
+    parametersWithProviders,
   );
 
   const fields: GraphQLInputFieldConfigMap = {};
-  for (const parameterName of parameterNames.values()) {
-    fields[parameterName] = { type: GraphQLString };
+  for (const [parameterName, providers] of parametersWithProviders) {
+    fields[parameterName] = {
+      description: `Parameter accepted by ${providers.join(', ')}`,
+      type: GraphQLString,
+    };
   }
 
   return fields;

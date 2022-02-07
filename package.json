@@ -25,7 +25,8 @@
     "format": "prettier -c src/",
     "format:fix": "prettier --write src/",
     "start": "./bin/cli",
-    "start:dev": "nodemon --exec 'ts-node' src/cli.ts"
+    "start:dev": "nodemon --exec 'ts-node' src/cli.ts",
+    "prepack": "yarn build"
   },
   "dependencies": {
     "@superfaceai/ast": "^1.0.0",

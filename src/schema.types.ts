@@ -3,12 +3,12 @@ import {
   NormalizedProviderSettings,
   ProfileDocumentNode,
 } from '@superfaceai/ast';
-import { ProfileId } from '@superfaceai/cli/dist/common/profile';
 import {
   EnumStructure,
   getProfileOutput,
   getProfileUsecases,
   PrimitiveStructure,
+  ProfileId,
   ScalarStructure,
   StructureType,
   UseCaseStructure,
@@ -160,10 +160,10 @@ export function generateUseCaseFieldConfig(
     type: ResultType,
     args,
     resolve: createResolver(
-      ProfileId.fromScopeName(
-        profileAst.header.scope,
-        profileAst.header.name,
-      ).toString(),
+      ProfileId.fromParameters({
+        scope: profileAst.header.scope,
+        name: profileAst.header.name,
+      }).toString(),
       useCase.useCaseName,
     ),
   };

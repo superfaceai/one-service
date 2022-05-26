@@ -374,7 +374,7 @@ export function enumType(
   const values: GraphQLEnumValueConfigMap = {};
 
   structure.enums.forEach((enumValue) => {
-    values[sanitize(String(enumValue.value))] = {
+    values[sanitize(String(enumValue.name ?? enumValue.value))] = {
       value: enumValue.value,
       description: description(enumValue),
     };

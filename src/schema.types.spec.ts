@@ -75,7 +75,7 @@ const objectStructure: ObjectStructure = {
     },
     enum: {
       kind: 'EnumStructure',
-      enums: [{ value: 'one' }, { value: 'two' }],
+      enums: [{ name: 'ONE', value: 'one' }, { value: 'TWO' }],
       title: 'Enum title',
       description: 'Enum description',
     },
@@ -282,7 +282,7 @@ describe('schema.types', () => {
       expectSchema(
         enumType('TestEnum', {
           kind: 'EnumStructure',
-          enums: [{ value: 'ONE' }, { value: 'TWO' }],
+          enums: [{ name: 'O_N_E', value: 'ONE' }, { value: 'TWO' }],
           title: 'Enum title',
           description: 'Enum description',
         }),

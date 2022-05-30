@@ -12,6 +12,19 @@ export interface Configuration {
   graphiql?: boolean;
 }
 
+export async function shutdown(httpServer: http.Server): Promise<void> {
+  debug('Closing http server.');
+
+  await new Promise((resolve) => {
+    httpServer.close(resolve);
+  });
+
+  debug('Http server closed.');
+  console.log('🌍 Server stopped');
+
+  process.exit(0);
+}
+
 export async function bootstrap(config: Configuration): Promise<Express> {
   debug('config', config);
 
@@ -27,6 +40,17 @@ export async function bootstrap(config: Configuration): Promise<Express> {
   await new Promise<void>((resolve) =>
     httpServer.listen({ host, port }, resolve),
   );
+
+  process.on('SIGTERM', async () => {
+    debug('SIGTERM signal received.');
+    await shutdown(httpServer);
+  });
+
+  process.on('SIGINT', async () => {
+    debug('SIGINT signal received.');
+    await shutdown(httpServer);
+  });
+
   console.log(`🚀 Server ready at http://${host}:${port}`);
   console.log('      GraphQL endpoint /graphql');
 

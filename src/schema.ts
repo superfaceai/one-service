@@ -1,5 +1,3 @@
-import { ProfileId } from '@superfaceai/cli/dist/common/profile';
-import { loadProfile } from '@superfaceai/cli/dist/logic/publish.utils';
 import { META_FILE, SuperJson } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import {
@@ -13,6 +11,7 @@ import {
 } from 'graphql';
 import { join as joinPath } from 'path';
 import { DEBUG_PREFIX } from './constants';
+import { load as loadProfile } from './profile';
 import { generateProfileConfig, generateProfileTypes } from './schema.types';
 import { hasFieldsDefined, sanitizedProfileName } from './schema.utils';
 
@@ -47,10 +46,10 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
   )) {
     debug(`generate start for ${profile}`);
 
-    // TODO: can it be done without CLI?
     const loadedProfile = await loadProfile(
       superJson,
-      ProfileId.fromId(profile),
+      profile,
+      profileSettings,
     );
 
     const profilePrefix = sanitizedProfileName(loadedProfile.ast);

@@ -6,7 +6,7 @@ Enum title
 Enum description
 \\"\\"\\"
 enum TestEnum {
-  ONE
+  O_N_E
   TWO
 }
 "
@@ -159,8 +159,8 @@ Enum title
 Enum description
 \\"\\"\\"
 enum MyObjectTypeEnum {
-  one
-  two
+  ONE
+  TWO
 }
 "
 `;
@@ -212,8 +212,8 @@ Enum title
 Enum description
 \\"\\"\\"
 enum MyObjectTypeEnum {
-  one
-  two
+  ONE
+  TWO
 }
 "
 `;

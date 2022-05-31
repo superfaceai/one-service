@@ -7,20 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.0.0-rc.3 - 2022-05-31
 ### Added
-
 - Graceful shutdown
 
 ### Changed
-
 - Updated @superfaceai/ast, @superfaceai/parser and @superfaceai/one-sdk
 - Removed @superfaceai/cli dependency and reimplemented prifile loading
 - Fixed enum names
 
 ## 1.0.0-rc.2 - 2022-02-08
-
 ### Added
-
 - Support for provider parameters in use-case options (#10)
 
 ## 1.0.0-rc.1 - 2022-01-11

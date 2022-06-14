@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Updated and pin OneSDK to 1.5.1
+- Removed explicit dependency on AST and Parser
+
 ## 1.0.0-rc.3 - 2022-05-31
 ### Added
 - Graceful shutdown

@@ -2,7 +2,7 @@ import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
-import { OneSdkError, remapSdkError } from './errors';
+import { isOneSdkError, OneSdkError, remapOneSdkError } from './errors';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;
@@ -76,7 +76,10 @@ export function createResolver(
       // This is needed because OneSDK v1.x throws errors which don't inherit from Error,
       // causing graphql-js to throw the original error away.
       // While we do mapping, we can also extract SDK-specific properties to GraphQL extensions
-      throw remapSdkError(err as OneSdkError);
+      if (isOneSdkError(err)) {
+        throw remapOneSdkError(err);
+      }
+      throw err;
     }
   };
 }

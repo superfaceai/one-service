@@ -2,7 +2,7 @@ import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
-import { isOneSdkError, OneSdkError, remapOneSdkError } from './errors';
+import { isOneSdkError, remapOneSdkError } from './errors';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;

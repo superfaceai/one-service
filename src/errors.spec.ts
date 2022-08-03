@@ -45,9 +45,6 @@ describe('errors', () => {
         response: {
           body: 'foo',
         },
-        metadata: {
-          foo: 'bar',
-        },
       };
 
       const result = remapOneSdkError({
@@ -63,11 +60,16 @@ describe('errors', () => {
         message: 'Message',
         name: 'Error',
         foo: 'bar',
+        metadata: {
+          foo: 'bar',
+        },
       };
 
       const result = remapOneSdkError(input);
       expect(result).not.toHaveProperty('foo');
+      expect(result).not.toHaveProperty('metadata');
       expect(result.extensions).not.toHaveProperty('foo');
+      expect(result.extensions).not.toHaveProperty('metadata');
     });
   });
 });

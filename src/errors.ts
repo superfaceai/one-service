@@ -1,7 +1,6 @@
 interface ErrorExtensions {
   properties?: Record<string, unknown>;
   statusCode?: string;
-  metadata?: Record<string, unknown>;
   response?: Record<string, unknown>;
   kind?: string;
 }
@@ -26,7 +25,6 @@ export function remapOneSdkError(originalError: OneSdkError): WrappedError {
     properties: originalError.properties,
     statusCode: originalError.statusCode,
     response: originalError.response,
-    metadata: originalError.metadata,
   };
 
   return error;

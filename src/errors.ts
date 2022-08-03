@@ -1,3 +1,5 @@
+import { ErrorBase, SDKExecutionError } from '@superfaceai/one-sdk';
+
 interface ErrorExtensions {
   properties?: Record<string, unknown>;
   statusCode?: string;
@@ -7,18 +9,20 @@ interface ErrorExtensions {
 
 export interface OneSdkError extends ErrorExtensions, Error {}
 
-interface WrappedError extends Error {
+export interface OneSdkResolverError extends Error {
   originalError?: unknown;
   extensions?: ErrorExtensions;
 }
 
-export function isOneSdkError(err: unknown): err is OneSdkError {
-  return typeof err === 'object' && err != null && 'message' in err;
+export function isOneSdkError(error: unknown): error is OneSdkError {
+  return error instanceof ErrorBase || error instanceof SDKExecutionError;
 }
 
-export function remapOneSdkError(originalError: OneSdkError): WrappedError {
+export function remapOneSdkError(
+  originalError: OneSdkError,
+): OneSdkResolverError {
   const message = originalError.message || 'Unknown OneSDK Error';
-  const error: WrappedError = new Error(message);
+  const error: OneSdkResolverError = new Error(message);
   error.originalError = originalError;
   error.extensions = {
     kind: originalError.kind,

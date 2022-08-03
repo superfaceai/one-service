@@ -1,13 +1,20 @@
+import {
+  ErrorBase,
+  JessieError,
+  MappedError,
+  MappedHTTPError,
+  SDKExecutionError,
+} from '@superfaceai/one-sdk';
 import { isOneSdkError, remapOneSdkError } from './errors';
 
 describe('errors', () => {
   describe('isOneSdkError', () => {
-    it('accepts any object with message property', () => {
-      expect(isOneSdkError({ message: 'foo' })).toBe(true);
+    it("doesn't accept a plain object", () => {
+      expect(isOneSdkError({ message: 'foo' })).toBe(false);
     });
 
-    it('accepts an Error object', () => {
-      expect(isOneSdkError(new Error('bar'))).toBe(true);
+    it("doesn't accept an Error object", () => {
+      expect(isOneSdkError(new Error('bar'))).toBe(false);
     });
 
     it("doesn't accept null", () => {
@@ -17,6 +24,26 @@ describe('errors', () => {
     it("doesn't accept anything else", () => {
       expect(isOneSdkError(['baz'])).toBe(false);
       expect(isOneSdkError('foobar')).toBe(false);
+    });
+
+    it('accepts ErrorBase', () => {
+      expect(isOneSdkError(new ErrorBase('Foo', 'Bar'))).toBe(true);
+    });
+
+    it('accepts SDKExecutionError', () => {
+      expect(isOneSdkError(new SDKExecutionError('Foo', [], []))).toBe(true);
+    });
+
+    it('accepts MappedHTTPError', () => {
+      expect(isOneSdkError(new MappedHTTPError('foo', 200))).toBe(true);
+    });
+
+    it('accepts MappedError', () => {
+      expect(isOneSdkError(new MappedError('foo'))).toBe(true);
+    });
+
+    it('accepts JessieError', () => {
+      expect(isOneSdkError(new JessieError('foo', new Error()))).toBe(true);
     });
   });
 

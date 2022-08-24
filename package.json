@@ -29,7 +29,7 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@superfaceai/one-sdk": "1.5.1",
+    "@superfaceai/one-sdk": "2.0.0",
     "@superfaceai/service-client": "^3.0.0",
     "commander": "^9.0.0",
     "debug": "^4.3.3",

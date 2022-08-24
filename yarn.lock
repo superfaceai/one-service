@@ -563,7 +563,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@superfaceai/ast@1.2.0", "@superfaceai/ast@^1.2.0":
+"@superfaceai/ast@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@superfaceai/ast/-/ast-1.2.0.tgz#f41823d550e0b0a05a8398be22a68b7b3912dde3"
   integrity sha512-HMmdSUNzKuVgQ9g9YS/eiv3/CitSZks8eury8sAi2QbwT+n5f9SsVcmHxL2/QbkRCmlPpRqHJ6YSCqvBZ2fu1g==
@@ -571,28 +571,17 @@
     ajv "^8.8.2"
     ajv-formats "^2.1.1"
 
-"@superfaceai/one-sdk@1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@superfaceai/one-sdk/-/one-sdk-1.5.1.tgz#772a094a06b56865ca42a4f120bad783ea8098c4"
-  integrity sha512-yJRl/DRXJFGZtXfe5jeW4QROoVG/2hrrLBrz9sJAQKvv/38W1xfDx0M2inikgz/0yTmMaYTaYJH29fDLRceVVg==
+"@superfaceai/one-sdk@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@superfaceai/one-sdk/-/one-sdk-2.0.0.tgz#7f212e7e40099037c83a3b7d4ff15a11b16b3ddf"
+  integrity sha512-ZbyBeRuxbXs3VqfywQqXXg+hk3/HLhv+pEMGdZecnoq8VC2++1pbdCW8sre1zhgBYqhsN1hruVvypxbKilpvnw==
   dependencies:
     "@superfaceai/ast" "1.2.0"
-    "@superfaceai/parser" "1.2.0"
     abort-controller "^3.0.0"
     cross-fetch "^3.1.5"
     debug "^4.3.2"
     isomorphic-form-data "^2.0.0"
     vm2 "^3.9.7"
-
-"@superfaceai/parser@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@superfaceai/parser/-/parser-1.2.0.tgz#e89e64c9ec98ff2d1e4760c1441d88d945978a1d"
-  integrity sha512-8nQ4x15F8mygKg4BcWwzqgDVTaY5BXanvCcxirL/jKLgpGUxH+808t0KmVc2Ke9o2MdiYt/2UD2hyfpwwqN9DA==
-  dependencies:
-    "@superfaceai/ast" "^1.2.0"
-    "@types/debug" "^4.1.5"
-    debug "^4.3.3"
-    typescript "^4"
 
 "@superfaceai/service-client@^3.0.0":
   version "3.0.0"
@@ -681,7 +670,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/debug@^4.1.5", "@types/debug@^4.1.7":
+"@types/debug@^4.1.7":
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.7.tgz#7cc0ea761509124709b8b2d1090d8f6c17aadb82"
   integrity sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==
@@ -4072,11 +4061,6 @@ typedarray-to-buffer@^3.1.5:
   integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
   dependencies:
     is-typedarray "^1.0.0"
-
-typescript@^4:
-  version "4.5.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.4.tgz#a17d3a0263bf5c8723b9c52f43c5084edf13c2e8"
-  integrity sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==
 
 typescript@^4.6.2:
   version "4.6.2"

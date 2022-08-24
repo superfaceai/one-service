@@ -593,13 +593,6 @@
     debug "^4.3.3"
     typescript "^4"
 
-"@superfaceai/service-client@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@superfaceai/service-client/-/service-client-3.0.0.tgz#5e43cd7b1151934403d8f8286e62150c4a000c21"
-  integrity sha512-33H46lnJrd6sfe5nNfC1hHjhWMkMzvE7MlPpyGKyYGygSv+lR1HFIUVpdV0czo2O5m7bVnozsWVgsego/KZQOQ==
-  dependencies:
-    cross-fetch "^3.1.0"
-
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@szmarczak/http-timer/-/http-timer-1.1.2.tgz#b1665e2c461a2cd92f4c1bbf50d5454de0d4b421"
@@ -1441,7 +1434,7 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-cross-fetch@^3.1.0, cross-fetch@^3.1.5:
+cross-fetch@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
   integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==

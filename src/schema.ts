@@ -1,4 +1,12 @@
-import { META_FILE, SuperJson } from '@superfaceai/one-sdk';
+import {
+  detectSuperJson,
+  META_FILE,
+  loadSuperJson as sdkLoadSuperJson,
+  NodeFileSystem,
+  normalizeSuperJsonDocument,
+} from '@superfaceai/one-sdk';
+import { anonymizeSuperJson } from '@superfaceai/one-sdk/dist/core/events/reporter/utils';
+import { NormalizedSuperJsonDocument } from '@superfaceai/ast';
 import createDebug from 'debug';
 import {
   GraphQLFieldConfig,
@@ -22,35 +30,37 @@ export async function createSchema(): Promise<GraphQLSchema> {
   return await generate(superJson);
 }
 
-export async function loadSuperJson(): Promise<SuperJson> {
-  const superPath = await SuperJson.detectSuperJson(process.cwd());
+export async function loadSuperJson(): Promise<NormalizedSuperJsonDocument> {
+  const superPath = await detectSuperJson(process.cwd(), NodeFileSystem);
   if (!superPath) {
     throw new Error('Unable to generate, super.json not found');
   }
 
-  const loadedResult = await SuperJson.load(joinPath(superPath, META_FILE));
-  return loadedResult.match(
+  const loadedResult = await sdkLoadSuperJson(
+    joinPath(superPath, META_FILE),
+    NodeFileSystem,
+  );
+
+  const superJsonDocument = loadedResult.match(
     (v) => v,
     (err) => {
       throw new Error(`Unable to load super.json: ${err.formatShort()}`);
     },
   );
+
+  return normalizeSuperJsonDocument(superJsonDocument);
 }
 
-export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
+export async function generate(
+  superJson: NormalizedSuperJsonDocument,
+): Promise<GraphQLSchema> {
   const queryFields: GraphQLFieldConfigMap<any, any> = {};
   const mutationFields: GraphQLFieldConfigMap<any, any> = {};
 
-  for (const [profile, profileSettings] of Object.entries(
-    superJson.normalized.profiles,
-  )) {
+  for (const [profile, profileSettings] of Object.entries(superJson.profiles)) {
     debug(`generate start for ${profile}`);
 
-    const loadedProfile = await loadProfile(
-      superJson,
-      profile,
-      profileSettings,
-    );
+    const loadedProfile = await loadProfile(superJson, profile);
 
     const profilePrefix = sanitizedProfileName(loadedProfile.ast);
 
@@ -58,7 +68,7 @@ export async function generate(superJson: SuperJson): Promise<GraphQLSchema> {
       profilePrefix,
       loadedProfile.ast,
       profileSettings,
-      superJson.normalized.providers,
+      superJson.providers,
     );
 
     if (QueryType) {
@@ -137,16 +147,17 @@ export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
     }),
     resolve: async () => {
       const superJson = await loadSuperJson();
+      const anonymizedSuperJson = anonymizeSuperJson(superJson);
 
       return {
-        profiles: Object.entries(superJson.anonymized.profiles).map(
+        profiles: Object.entries(anonymizedSuperJson.profiles).map(
           ([name, info]) => ({
             name,
             version: info.version,
             providers: info.providers.map((p) => p.provider),
           }),
         ),
-        providers: superJson.anonymized.providers,
+        providers: anonymizedSuperJson.providers,
       };
     },
   };

@@ -35,7 +35,9 @@ describe('errors', () => {
     });
 
     it('accepts MappedHTTPError', () => {
-      expect(isOneSdkError(new MappedHTTPError('foo', 200))).toBe(true);
+      expect(isOneSdkError(new MappedHTTPError('foo', undefined, 200))).toBe(
+        true,
+      );
     });
 
     it('accepts MappedError', () => {

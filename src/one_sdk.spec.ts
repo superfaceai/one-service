@@ -1,7 +1,6 @@
 jest.mock('@superfaceai/one-sdk');
 
 import { Profile, Provider, SuperfaceClient } from '@superfaceai/one-sdk';
-import { mocked } from 'jest-mock';
 import {
   createInstance,
   createResolver,
@@ -32,13 +31,13 @@ describe('one_sdk', () => {
       perform: performMock,
     }));
 
-    mocked(SuperfaceClient.prototype.getProfile).mockResolvedValue({
+    jest.mocked(SuperfaceClient.prototype.getProfile).mockResolvedValue({
       getUseCase: getUseCaseMock,
     } as unknown as Profile);
 
-    mocked(SuperfaceClient.prototype.getProvider).mockResolvedValue(
-      {} as Provider,
-    );
+    jest
+      .mocked(SuperfaceClient.prototype.getProvider)
+      .mockResolvedValue({} as Provider);
   });
 
   afterEach(() => {

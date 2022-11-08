@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`schema.types enumType returns GraphQLEnumType 1`] = `
-"\\"\\"\\"
+""""
 Enum title
 Enum description
-\\"\\"\\"
+"""
 enum TestEnum {
   O_N_E
   TWO
@@ -13,7 +13,7 @@ enum TestEnum {
 `;
 
 exports[`schema.types generateProfileConfig creates config with description and resolve function 1`] = `
-Object {
+{
   "description": "Full profile
 Full profile to test all generation functionality",
   "resolve": [Function],
@@ -42,37 +42,37 @@ type ScopeProfileTwo {
 `;
 
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
-"\\"\\"\\"
+""""
 Wrapping type to handle many possible types returned as result by OneSDK
-\\"\\"\\"
+"""
 type ScopeNameResult {
   result: ScopeNameResultNode
 }
 
 type ScopeNameResultNode {
-  \\"\\"\\"
+  """
   Result Field title
   Result Field description
-  \\"\\"\\"
+  """
   field: String!
 
-  \\"\\"\\"
+  """
   Named Field title
   Named Field description
-  \\"\\"\\"
+  """
   namedField: String!
 }
 "
 `;
 
 exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
-Object {
-  "args": Object {
-    "input": Object {
+{
+  "args": {
+    "input": {
       "description": "Use-case inputs",
       "type": "ScopeNameUseCaseInput",
     },
-    "options": Object {
+    "options": {
       "type": "ScopeNameUseCaseOptions",
     },
   },
@@ -84,7 +84,7 @@ UseCase description",
 `;
 
 exports[`schema.types generateUseCaseOptionsInputType creates input with providers enum and input parameters 1`] = `
-"\\"\\"\\"Additional options to pass to OneSDK perform function\\"\\"\\"
+""""Additional options to pass to OneSDK perform function"""
 input Test {
   provider: TestProviderEnum
   parameters: TestProviderParameters
@@ -95,17 +95,17 @@ enum TestProviderEnum {
   superface
 }
 
-\\"\\"\\"Provider-specific parameters\\"\\"\\"
+"""Provider-specific parameters"""
 input TestProviderParameters {
-  \\"\\"\\"Parameter accepted by superface\\"\\"\\"
+  """Parameter accepted by superface"""
   accessToken: String
 }
 "
 `;
 
 exports[`schema.types generateUseCaseProviderParametersFields generates provider parameters for configured providers 1`] = `
-Object {
-  "accessToken": Object {
+{
+  "accessToken": {
     "description": "Parameter accepted by superface",
     "type": "String",
   },
@@ -114,50 +114,50 @@ Object {
 
 exports[`schema.types inputType returns GraphQLInputType 1`] = `
 "type MyObjectType {
-  \\"\\"\\"
+  """
   Primitive
   String
-  \\"\\"\\"
+  """
   primitive_string: String
 
-  \\"\\"\\"
+  """
   Primitive
   Number
-  \\"\\"\\"
+  """
   primitive_number: Int
 
-  \\"\\"\\"
+  """
   Primitive
   boolean
-  \\"\\"\\"
+  """
   primitive_boolean: Boolean
 
-  \\"\\"\\"
+  """
   Object
   Nested
-  \\"\\"\\"
+  """
   nested_object: MyObjectTypeNestedObject
   list: [String!]
 
-  \\"\\"\\"
+  """
   Enum title
   Enum description
-  \\"\\"\\"
+  """
   enum: MyObjectTypeEnum
 }
 
 type MyObjectTypeNestedObject {
-  \\"\\"\\"
+  """
   Nested field title
   Nested field description
-  \\"\\"\\"
+  """
   field: String
 }
 
-\\"\\"\\"
+"""
 Enum title
 Enum description
-\\"\\"\\"
+"""
 enum MyObjectTypeEnum {
   ONE
   TWO
@@ -167,50 +167,50 @@ enum MyObjectTypeEnum {
 
 exports[`schema.types outputType returns GraphQLObjectType 1`] = `
 "type MyObjectType {
-  \\"\\"\\"
+  """
   Primitive
   String
-  \\"\\"\\"
+  """
   primitive_string: String
 
-  \\"\\"\\"
+  """
   Primitive
   Number
-  \\"\\"\\"
+  """
   primitive_number: Int
 
-  \\"\\"\\"
+  """
   Primitive
   boolean
-  \\"\\"\\"
+  """
   primitive_boolean: Boolean
 
-  \\"\\"\\"
+  """
   Object
   Nested
-  \\"\\"\\"
+  """
   nested_object: MyObjectTypeNestedObject
   list: [String!]
 
-  \\"\\"\\"
+  """
   Enum title
   Enum description
-  \\"\\"\\"
+  """
   enum: MyObjectTypeEnum
 }
 
 type MyObjectTypeNestedObject {
-  \\"\\"\\"
+  """
   Nested field title
   Nested field description
-  \\"\\"\\"
+  """
   field: String
 }
 
-\\"\\"\\"
+"""
 Enum title
 Enum description
-\\"\\"\\"
+"""
 enum MyObjectTypeEnum {
   ONE
   TWO
@@ -219,10 +219,10 @@ enum MyObjectTypeEnum {
 `;
 
 exports[`schema.types scalarType returns GraphQLScalarType 1`] = `
-"\\"\\"\\"
+""""
 Scalar title
 Scalar description
-\\"\\"\\"
+"""
 scalar TestScalar
 "
 `;

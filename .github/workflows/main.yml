@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 17]
+        node-version: [16, 18, 19]
 
     steps:
       - name: Setup Node.js environment ${{ matrix.node-version }}
@@ -46,7 +46,7 @@ jobs:
         with:
           registry-url: https://registry.npmjs.org/
           scope: '@superfaceai'
-          node-version: '14'
+          node-version: '18'
 
       - name: Checkout repository
         uses: actions/checkout@v2

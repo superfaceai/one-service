@@ -4,7 +4,7 @@
 
 # OneService
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/superfaceai/one-service/CI)](https://github.com/superfaceai/one-service/actions/workflows/main.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/superfaceai/one-service/main.yml?branch=main)](https://github.com/superfaceai/one-service/actions/workflows/main.yml)
 [![npm](https://img.shields.io/npm/v/@superfaceai/one-service)](https://www.npmjs.com/package/@superfaceai/one-service)
 [![license](https://img.shields.io/npm/l/@superfaceai/one-service)](LICENSE)
 ![TypeScript](https://img.shields.io/static/v1?message=TypeScript&&logoColor=ffffff&color=007acc&labelColor=5c5c5c&label=built%20with)

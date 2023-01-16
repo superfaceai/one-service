@@ -1,5 +1,4 @@
 import { access } from 'fs/promises';
-import { mocked } from 'ts-jest/utils';
 import { assertIsIOError, exists } from './io';
 
 jest.mock('fs/promises');
@@ -43,14 +42,14 @@ describe('io', () => {
 
     it('returns false for ENOENT', async () => {
       const path = 'some/path';
-      mocked(access).mockRejectedValueOnce({ code: 'ENOENT' });
+      jest.mocked(access).mockRejectedValueOnce({ code: 'ENOENT' });
 
       await expect(exists(path)).resolves.toBe(false);
     });
 
     it('returns true if no error is thrown', async () => {
       const path = 'some/path';
-      mocked(access).mockResolvedValueOnce();
+      jest.mocked(access).mockResolvedValueOnce();
 
       await expect(exists(path)).resolves.toBe(true);
     });

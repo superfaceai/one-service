@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2023-02-08
+
 ## [2.0.1] - 2023-01-16
 ### Changed
 - use OneSDK 2.2
@@ -48,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0-rc.0 - 2022-01-11
 
-[Unreleased]: https://github.com/superfaceai/one-service/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/superfaceai/one-service/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/superfaceai/one-service/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/superfaceai/one-service/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/superfaceai/one-service/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/superfaceai/one-service/compare/v1.0.0...v1.1.0

@@ -2,6 +2,7 @@ import createDebug from 'debug';
 import express, { Express } from 'express';
 import http from 'http';
 import { DEBUG_PREFIX, HOST, PORT } from './constants';
+import { renderGraphiQL } from './graphiql';
 import { createGraphQLMiddleware } from './graphql';
 
 const debug = createDebug(`${DEBUG_PREFIX}:index`);
@@ -31,8 +32,11 @@ export async function bootstrap(config: Configuration): Promise<Express> {
   const app = express();
   const httpServer = http.createServer(app);
 
-  const gqlServer = await createGraphQLMiddleware(config);
-  app.use('/graphql', gqlServer);
+  app.use('/graphql', await createGraphQLMiddleware());
+
+  if (config.graphiql) {
+    app.get('/', renderGraphiQL);
+  }
 
   const host = config.host ?? HOST;
   const port = config.port ?? PORT;
@@ -53,6 +57,7 @@ export async function bootstrap(config: Configuration): Promise<Express> {
 
   console.log(`🚀 Server ready at http://${host}:${port}`);
   console.log('      GraphQL endpoint /graphql');
+  console.log('      GraphiQL endpoint /');
 
   return app;
 }

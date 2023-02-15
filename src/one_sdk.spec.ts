@@ -11,7 +11,10 @@ import {
 const { Ok, Err } = jest.requireActual('@superfaceai/one-sdk');
 
 async function callResolver(
-  args: { input?: Record<string, any>; options?: { provider?: string } },
+  args: {
+    input?: Record<string, any>;
+    options?: { provider?: string; parameters?: Record<string, string> };
+  },
   profile = 'profile',
   useCase = 'UseCase',
 ) {
@@ -98,6 +101,26 @@ describe('one_sdk', () => {
 
   describe('createResolver', () => {
     let resolverResult: any;
+
+    it('sets empty object if input is not set', async () => {
+      performMock.mockResolvedValue(new Ok('perform result'));
+      await callResolver({
+        input: undefined,
+      });
+
+      expect(performMock.mock.calls[0][0]).toEqual({});
+    });
+
+    it('sets empty object if parameters are not set', async () => {
+      performMock.mockResolvedValue(new Ok('perform result'));
+      await callResolver({
+        options: {
+          parameters: undefined,
+        },
+      });
+
+      expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
+    });
 
     describe('perform returns Ok result', () => {
       beforeEach(async () => {

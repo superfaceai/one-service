@@ -57,9 +57,9 @@ export function createResolver(
       const result = await perform({
         profile,
         useCase,
-        input: args?.input,
+        input: args?.input ?? {},
         provider: args?.options?.provider,
-        parameters: args?.options?.parameters,
+        parameters: args?.options?.parameters ?? {},
       });
 
       debug('Perform result', result);
@@ -73,7 +73,7 @@ export function createResolver(
       }
     } catch (err) {
       debug('Perform exception', err);
-      // This is needed because OneSDK v1.x throws errors which don't inherit from Error,
+      // This is needed because OneSDK throws errors which don't inherit from Error,
       // causing graphql-js to throw the original error away.
       // While we do mapping, we can also extract SDK-specific properties to GraphQL extensions
       if (isOneSdkError(err)) {

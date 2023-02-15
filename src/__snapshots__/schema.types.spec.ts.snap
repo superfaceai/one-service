@@ -8,8 +8,7 @@ Enum description
 enum TestEnum {
   O_N_E
   TWO
-}
-"
+}"
 `;
 
 exports[`schema.types generateProfileConfig creates config with description and resolve function 1`] = `
@@ -37,8 +36,7 @@ type Scope {
 
 type ScopeProfileTwo {
   UseCase: String
-}
-"
+}"
 `;
 
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
@@ -61,8 +59,7 @@ type ScopeNameResultNode {
   Named Field description
   """
   namedField: String!
-}
-"
+}"
 `;
 
 exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
@@ -99,8 +96,7 @@ enum TestProviderEnum {
 input TestProviderParameters {
   """Parameter accepted by superface"""
   accessToken: String
-}
-"
+}"
 `;
 
 exports[`schema.types generateUseCaseProviderParametersFields generates provider parameters for configured providers 1`] = `
@@ -161,8 +157,7 @@ Enum description
 enum MyObjectTypeEnum {
   ONE
   TWO
-}
-"
+}"
 `;
 
 exports[`schema.types outputType returns GraphQLObjectType 1`] = `
@@ -214,8 +209,7 @@ Enum description
 enum MyObjectTypeEnum {
   ONE
   TWO
-}
-"
+}"
 `;
 
 exports[`schema.types scalarType returns GraphQLScalarType 1`] = `
@@ -223,6 +217,5 @@ exports[`schema.types scalarType returns GraphQLScalarType 1`] = `
 Scalar title
 Scalar description
 """
-scalar TestScalar
-"
+scalar TestScalar"
 `;

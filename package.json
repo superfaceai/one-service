@@ -36,7 +36,7 @@
     "debug": "^4.3.4",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
-    "graphql": "^15.8.0"
+    "graphql": "^16.6.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

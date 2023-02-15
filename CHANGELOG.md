@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- replaced `express-graphql` with `graphql-http`
+- Replaced `express-graphql` with `graphql-http` - [#31](https://github.com/superfaceai/one-service/pull/31)
+- Moved GraphiQL from `/graphql` to root `/` - [#31](https://github.com/superfaceai/one-service/pull/31)
 
 ## [2.0.3] - 2023-02-15
 ### Fixed

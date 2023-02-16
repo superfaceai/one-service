@@ -30,23 +30,23 @@ export function renderGraphiQL(_req: Request, res: Response): void {
     <div id="graphiql">Loading...</div>
 
     <script
-      src="https://unpkg.com/react@17/umd/react.development.js"
-      integrity="sha512-Vf2xGDzpqUOEIKO+X2rgTLWPY+65++WPwCHkX2nFMu9IcstumPsf/uKKRd5prX3wOu8Q0GBylRpsDB26R6ExOg=="
+      src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"
+      integrity="sha384-7Er69WnAl0+tY5MWEvnQzWHeDFjgHSnlQfDDeWUvv8qlRXtzaF/pNo18Q2aoZNiO"
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
-      integrity="sha512-Wr9OKCTtq1anK0hq5bY3X/AvDI5EflDSAh0mE9gma+4hl+kXdTJPKZ3TwLMBcrgUeoY0s3dq9JjhCQc7vddtFg=="
+      src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"
+      integrity="sha384-vj2XpC1SOa8PHrb0YlBqKN7CQzJYO72jz4CkDQ+ePL1pwOV4+dn05rPrbLGUuvCv"
       crossorigin="anonymous"
     ></script>
     <script
       src="https://unpkg.com/graphiql/graphiql.min.js"
-      integrity="sha512-FVCV2//UVo1qJ3Kg6kkHLe0Hg+IJhjrGa+aYHh8xD4KmwbbjthIzvaAcCJsQgA43+k+6u7HqORKXMyMt82Srfw=="
+      integrity="sha384-JHFGCFTH/jUGV6uL38eHuw/3kb0aUiF0EzWPP68NQxvz7ldZXEoCv9RBGtsFHM86"
       crossorigin="anonymous"
     ></script>
     <script
       src="https://unpkg.com/@graphiql/plugin-explorer@0.1.12/dist/graphiql-plugin-explorer.umd.js"
-      integrity="sha512-Fjas/uSkzvsFjbv4jqU9nt4ulU7LDjiMAXW2YFTYD96NgKS1fhhAsGR4b2k2VaVLsE29aia3vyobAq9TNzusvA=="
+      integrity="sha384-rbN7vYh67VVbUGRkgCVTFu0Pk25KR5Ns9b6sOyPHf5GiYat1ce44UEF5I+HqE2Dg"
       crossorigin="anonymous"
     ></script>
 

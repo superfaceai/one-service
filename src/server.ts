@@ -57,7 +57,9 @@ export async function bootstrap(config: Configuration): Promise<Express> {
 
   console.log(`🚀 Server ready at http://${host}:${port}`);
   console.log('      GraphQL endpoint /graphql');
-  console.log('      GraphiQL endpoint /');
+  if (config.graphiql) {
+    console.log('      GraphiQL endpoint /');
+  }
 
   return app;
 }

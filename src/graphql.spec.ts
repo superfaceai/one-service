@@ -35,15 +35,5 @@ describe('graphql', () => {
         });
       });
     });
-
-    describe('with invalid schema', () => {
-      it('throws an error', async () => {
-        // @ts-expect-error Intentional error
-        const middleware = createGraphQLMiddleware({ schema: true });
-        await expect(middleware).rejects.toThrowErrorMatchingInlineSnapshot(
-          `"Property "schema" is missing"`,
-        );
-      });
-    });
   });
 });

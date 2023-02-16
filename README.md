@@ -224,6 +224,6 @@ We welcome all kinds of contributions! Please see the [Contribution Guide](CONTR
 
 OneService is licensed under the [MIT License](LICENSE).
 
-© 2022 Superface s.r.o.
+© 2023 Superface s.r.o.
 
 <!-- TODO: allcontributors -->

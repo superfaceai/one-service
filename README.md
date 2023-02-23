@@ -47,7 +47,7 @@ To run OneService you need to have Superface configuration.
    oneservice --graphiql
    ```
 
-4. Visit http://localhost:8000/graphql to open GraphQL interactive IDE
+4. Visit http://localhost:8000/ to open GraphQL interactive IDE
 
 ### Use as a HTTP server middleware
 

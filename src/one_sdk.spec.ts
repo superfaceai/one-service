@@ -1,11 +1,13 @@
 jest.mock('@superfaceai/one-sdk');
 
 import { Profile, Provider, SuperfaceClient } from '@superfaceai/one-sdk';
+import { GraphQLResolveInfo } from 'graphql';
 import {
   createInstance,
   createResolver,
   getInstance,
   perform,
+  ResolverContext,
 } from './one_sdk';
 
 const { Ok, Err } = jest.requireActual('@superfaceai/one-sdk');
@@ -17,10 +19,10 @@ async function callResolver(
   },
   profile = 'profile',
   useCase = 'UseCase',
+  context?: ResolverContext,
 ) {
   const resolver = createResolver(profile, useCase);
-  // @ts-expect-error: Unused GraphQLResolveInfo argument
-  return await resolver(null, args, null, null);
+  return await resolver(null, args, context ?? {}, {} as GraphQLResolveInfo);
 }
 
 describe('one_sdk', () => {
@@ -76,6 +78,25 @@ describe('one_sdk', () => {
       });
     });
 
+    it('uses oneSdk instance if passed', async () => {
+      const oneSdk = new SuperfaceClient();
+
+      const getProfileSpy = jest.spyOn(oneSdk, 'getProfile');
+
+      await perform({
+        profile: 'scope/name',
+        useCase: 'UseCase',
+        provider: 'provider',
+        parameters: {
+          foo: 'bar',
+        },
+        input: { input: 'value' },
+        oneSdk,
+      });
+
+      expect(getProfileSpy).toBeCalledTimes(1);
+    });
+
     it('calls getProfile with "scope/name"', () => {
       expect(SuperfaceClient.prototype.getProfile).toBeCalledWith('scope/name');
     });
@@ -120,6 +141,23 @@ describe('one_sdk', () => {
       });
 
       expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
+    });
+
+    it('passes `getOneSdkInstance` from context to perform', async () => {
+      const getOneSdkInstance = jest.fn(() => new SuperfaceClient());
+      performMock.mockResolvedValue(new Ok('perform result'));
+      await callResolver(
+        {
+          options: {
+            parameters: undefined,
+          },
+        },
+        'profile',
+        'UseCase',
+        { getOneSdkInstance },
+      );
+
+      expect(getOneSdkInstance).toBeCalledTimes(1);
     });
 
     describe('perform returns Ok result', () => {

@@ -194,7 +194,7 @@ OneService can be deployed to [Heroku with Git](https://devcenter.heroku.com/art
 4. [Create Heroku Procfile](https://devcenter.heroku.com/articles/procfile)
 
    ```shell
-   echo 'web: oneservice --port $PORT --host 0.0.0.0 --graphiql' > Procfile
+   echo 'web: oneservice --port $PORT --host 0.0.0.0 --graphiql --logs' > Procfile
    ```
 
 5. Commit changes to Git repository
@@ -215,6 +215,45 @@ OneService can be deployed to [Heroku with Git](https://devcenter.heroku.com/art
    ```shell
    git push heroku main
    ```
+
+## Logs
+
+OneService can print structured logs. To allow it use `--logs=<level>` flag:
+
+```shell
+oneservice --logs
+oneservice --logs=trace
+```
+
+Set the optional logging level specifier. Available levels are (ordered by priority):
+
+- fatal
+- error
+- warn
+- info
+- debug
+- trace
+- silent
+
+The logging level is the __minimum__ threshold. When set, every higher level will be logged as well. For instance if `logger.level` is `info` then all `fatal`, `error`, `warn`, and `info` logs will be enabled.
+
+You can pass `silent` to disable logging.
+
+### Pretty print
+
+To print structured logs in readable way during testing or developement, you can use [pino-pretty](https://www.npmjs.com/package/pino-pretty).
+
+Install `pino-pretty`:
+
+```shell
+npm install -g pino-pretty
+```
+
+Run OneService with pretty print:
+
+```shell
+oneservice --logs=trace | pino-pretty
+```
 
 ## Contributing
 

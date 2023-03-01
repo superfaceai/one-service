@@ -28,6 +28,7 @@ Follow these steps:
 2. **Setup** the OneService
    - Install packages with `yarn install`
    - Build with `yarn build`
+   - Run in dev mode `yarn start:dev` (requires `superface/super.json` in repository root)
    - Run tests with `yarn test`
    - Lint code with `yarn lint:fix`
 3. **Update** [CHANGELOG](CHANGELOG.md). See [Keep a Changelog](https://keepachangelog.com/).

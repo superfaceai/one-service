@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `createGraphQLMiddleware` accepts context agument with `getOneSdkInstance` to allow own OneSDK instances - [#32](https://github.com/superfaceai/one-service/pull/32)
+- option to log requests and OneSDK perform results as structured log using [Pino](https://github.com/pinojs/pino) - [#33](https://github.com/superfaceai/one-service/pull/33)
 
 ## [2.1.0] - 2023-02-16
 ### Changed

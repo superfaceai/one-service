@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
 import { isOneSdkError, remapOneSdkError } from './errors';
+import { Logger } from './logger';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;
@@ -46,6 +47,7 @@ export async function perform(params: PerformParams) {
 }
 
 export type ResolverContext = {
+  logger?: Logger;
   getOneSdkInstance?: () => SuperfaceClient;
 };
 export type ResolverArgs = {
@@ -96,6 +98,7 @@ export function createResolver<
       debug('Perform result', result);
 
       if (result.isOk()) {
+        context?.logger?.info(result.value, 'Perform result');
         return {
           result: result.value as TResult,
         };
@@ -104,6 +107,8 @@ export function createResolver<
       }
     } catch (err) {
       debug('Perform exception', err);
+      context?.logger?.error(err, 'Perform exception');
+
       // This is needed because OneSDK throws errors which don't inherit from Error,
       // causing graphql-js to throw the original error away.
       // While we do mapping, we can also extract SDK-specific properties to GraphQL extensions

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `createGraphQLMiddleware` accepts context agument with `getOneSdkInstance` to allow own OneSDK instances - [#32](https://github.com/superfaceai/one-service/pull/32)
 
+### Fixed
+- Pin GraphiQL to specific version (v2.4.0) to prevent breakage due to incorrect integrity check - [#34](https://github.com/superfaceai/one-service/pull/34)
+
 ## [2.1.0] - 2023-02-16
 ### Changed
 - Replaced `express-graphql` with `graphql-http` - [#31](https://github.com/superfaceai/one-service/pull/31)

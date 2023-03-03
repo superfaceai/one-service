@@ -4,16 +4,22 @@ import http from 'http';
 import { DEBUG_PREFIX, HOST, PORT } from './constants';
 import { renderGraphiQL } from './graphiql';
 import { createGraphQLMiddleware } from './graphql';
+import { HttpLogger, pinoHttp } from 'pino-http';
+import { Level, Logger } from './logger';
 
-const debug = createDebug(`${DEBUG_PREFIX}:index`);
+const debug = createDebug(`${DEBUG_PREFIX}:server`);
 
 export interface Configuration {
   host?: string;
   port?: number;
   graphiql?: boolean;
+  logs?: Level;
 }
 
-export async function shutdown(httpServer: http.Server): Promise<void> {
+export async function shutdown(
+  httpServer: http.Server,
+  httpLogger?: HttpLogger,
+): Promise<void> {
   debug('Closing http server.');
 
   await new Promise((resolve) => {
@@ -21,7 +27,12 @@ export async function shutdown(httpServer: http.Server): Promise<void> {
   });
 
   debug('Http server closed.');
-  console.log('🌍 Server stopped');
+
+  if (httpLogger?.logger) {
+    httpLogger?.logger.info('Server stopped');
+  } else {
+    console.log('🌍 Server stopped');
+  }
 
   process.exit(0);
 }
@@ -31,8 +42,19 @@ export async function bootstrap(config: Configuration): Promise<Express> {
 
   const app = express();
   const httpServer = http.createServer(app);
+  let httpLogger: HttpLogger | undefined = undefined;
 
-  app.use('/graphql', await createGraphQLMiddleware());
+  if (config.logs !== 'silent') {
+    httpLogger = pinoHttp({ level: config.logs });
+    app.use(httpLogger);
+  }
+
+  app.use(
+    '/graphql',
+    await createGraphQLMiddleware({
+      context: { logger: httpLogger?.logger as Logger },
+    }),
+  );
 
   if (config.graphiql) {
     app.get('/', renderGraphiQL);
@@ -47,18 +69,22 @@ export async function bootstrap(config: Configuration): Promise<Express> {
 
   process.on('SIGTERM', async () => {
     debug('SIGTERM signal received.');
-    await shutdown(httpServer);
+    await shutdown(httpServer, httpLogger);
   });
 
   process.on('SIGINT', async () => {
     debug('SIGINT signal received.');
-    await shutdown(httpServer);
+    await shutdown(httpServer, httpLogger);
   });
 
-  console.log(`🚀 Server ready at http://${host}:${port}`);
-  console.log('      GraphQL endpoint /graphql');
-  if (config.graphiql) {
-    console.log('      GraphiQL endpoint /');
+  if (httpLogger?.logger) {
+    httpLogger?.logger.info({ port, host }, 'Server ready');
+  } else {
+    console.log(`🚀 Server ready at http://${host}:${port}`);
+    console.log('      GraphQL endpoint /graphql');
+    if (config.graphiql) {
+      console.log('      GraphiQL endpoint /');
+    }
   }
 
   return app;

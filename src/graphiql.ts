@@ -19,10 +19,10 @@ export function renderGraphiQL(_req: Request, res: Response): void {
       }
     </style>
 
-    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/graphiql@2.4.0/graphiql.min.css" />
     <link
       rel="stylesheet"
-      href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css"
+      href="https://unpkg.com/@graphiql/plugin-explorer@0.1.14/dist/style.css"
     />
   </head>
 
@@ -40,12 +40,12 @@ export function renderGraphiQL(_req: Request, res: Response): void {
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://unpkg.com/graphiql/graphiql.min.js"
-      integrity="sha384-JHFGCFTH/jUGV6uL38eHuw/3kb0aUiF0EzWPP68NQxvz7ldZXEoCv9RBGtsFHM86"
+      src="https://unpkg.com/graphiql@2.4.0/graphiql.min.js"
+      integrity="sha384-MVcRONLrOPBea05C9lB5pu31zTbPkbZI/gIn2y0r5xH6GefRkJcnrBGlY4zo2nwC"
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://unpkg.com/@graphiql/plugin-explorer@0.1.12/dist/graphiql-plugin-explorer.umd.js"
+      src="https://unpkg.com/@graphiql/plugin-explorer@0.1.14/dist/graphiql-plugin-explorer.umd.js"
       integrity="sha384-rbN7vYh67VVbUGRkgCVTFu0Pk25KR5Ns9b6sOyPHf5GiYat1ce44UEF5I+HqE2Dg"
       crossorigin="anonymous"
     ></script>

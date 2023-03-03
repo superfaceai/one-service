@@ -45,7 +45,7 @@ export function renderGraphiQL(_req: Request, res: Response): void {
       crossorigin="anonymous"
     ></script>
     <script
-      src="https://unpkg.com/@graphiql/plugin-explorer@0.1.12/dist/graphiql-plugin-explorer.umd.js"
+      src="https://unpkg.com/@graphiql/plugin-explorer@0.1.14/dist/graphiql-plugin-explorer.umd.js"
       integrity="sha384-rbN7vYh67VVbUGRkgCVTFu0Pk25KR5Ns9b6sOyPHf5GiYat1ce44UEF5I+HqE2Dg"
       crossorigin="anonymous"
     ></script>

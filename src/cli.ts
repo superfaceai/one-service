@@ -3,6 +3,7 @@ const packageJson = require('../package.json');
 
 import { Command, InvalidOptionArgumentError } from 'commander';
 import { bootstrap } from '.';
+import { HOST, PORT } from './constants';
 import { Level } from './logger';
 
 const program = new Command();
@@ -20,6 +21,22 @@ function validateLogLevel(level: string): Level | undefined {
   return level as Level;
 }
 
+function validatePort(port: string): number {
+  const parsedPort = parseInt(port, 10);
+
+  if (isNaN(parsedPort)) {
+    throw new InvalidOptionArgumentError(`'${port}' is not a number.`);
+  }
+
+  if (parsedPort < 0 || parsedPort > 65535) {
+    throw new InvalidOptionArgumentError(
+      `'${port}' should be >= 0 and < 65536`,
+    );
+  }
+
+  return parsedPort;
+}
+
 program
   .option('--graphiql', 'serve GraphQL IDE')
   .option(
@@ -28,8 +45,8 @@ program
     validateLogLevel,
     'silent',
   )
-  .option('-n, --host <string>', 'the hostname to be used', 'localhost')
-  .option('-p, --port <number>', 'the port to be used', parseInt, 8000)
+  .option('-n, --host <string>', 'the hostname to be used', HOST)
+  .option('-p, --port <number>', 'the port to be used', validatePort, PORT)
   .parse();
 
 const opts = program.opts();

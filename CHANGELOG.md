@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Fixed
+- CLI port option validation with custom validation function Issue [#35](https://github.com/superfaceai/one-service/issues/35) - [#37](https://github.com/superfaceai/one-service/pull/37)
+
 ## [2.2.0] - 2023-03-06
 ### Added
 - `createGraphQLMiddleware` accepts context agument with `getOneSdkInstance` to allow own OneSDK instances - [#32](https://github.com/superfaceai/one-service/pull/32)

@@ -94,7 +94,7 @@ export async function generate(
     }
   }
 
-  queryFields['_superJson'] = superJsonFieldConfig();
+  queryFields['_superJson'] = superJsonFieldConfig(superJson);
 
   const schema = new GraphQLSchema({
     description: 'Superface.ai ❤️',
@@ -117,7 +117,9 @@ export async function generate(
   return schema;
 }
 
-export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
+export function superJsonFieldConfig(
+  superJsonDocument?: NormalizedSuperJsonDocument,
+): GraphQLFieldConfig<any, any> {
   return {
     type: new GraphQLObjectType({
       name: 'SuperJson',
@@ -146,7 +148,7 @@ export function superJsonFieldConfig(): GraphQLFieldConfig<any, any> {
       },
     }),
     resolve: async () => {
-      const superJson = await loadSuperJson();
+      const superJson = superJsonDocument ?? (await loadSuperJson());
       const anonymizedSuperJson = anonymizeSuperJson(superJson);
 
       return {

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- generate _superJson introspection schema and resolver with SuperJson document from argument instead of loading it from file system 
+
 ## [2.2.1] - 2023-03-07
 ### Fixed
 - CLI port option validation with custom validation function Issue [#35](https://github.com/superfaceai/one-service/issues/35) - [#37](https://github.com/superfaceai/one-service/pull/37)

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - generate schema when use case contains empty input fields without input argument
+- Configurable parameters are now taken from provider definition instead of super.json's providers section - [#41](https://github.com/superfaceai/one-service/pull/41)
+
+### Added
+- UseCase options now support `security` field to pass security information - [#41](https://github.com/superfaceai/one-service/pull/41)
 
 ## [2.2.2] - 2023-03-09
 ### Fixed

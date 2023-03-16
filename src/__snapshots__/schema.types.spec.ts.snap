@@ -20,6 +20,67 @@ Full profile to test all generation functionality",
 }
 `;
 
+exports[`schema.types generateProfileOptionsInputType creates input with providers enum and input parameters 1`] = `
+""""Additional options to pass to OneSDK perform function"""
+input Test {
+  provider: TestProviderConfig
+}
+
+input TestProviderConfig {
+  """Provider mock configuration"""
+  mock: TestmockConfig
+
+  """Provider superface configuration"""
+  superface: TestsuperfaceConfig
+}
+
+input TestmockConfig
+
+input TestsuperfaceConfig {
+  parameters: TestsuperfaceProviderParameters
+  security: TestsuperfaceProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input TestsuperfaceProviderParameters {
+  """Parameter accepted by superface"""
+  accessToken: String
+}
+
+"""Provider-specific security"""
+input TestsuperfaceProviderSecurity {
+  """Security accepted by superface"""
+  api_key: SuperfaceApiKeySecurityValues
+
+  """Security accepted by superface"""
+  basic: SuperfaceBasicSecurityValues
+
+  """Security accepted by superface"""
+  bearer_token: SuperfaceBearerTokenSecurityValues
+
+  """Security accepted by superface"""
+  digest: SuperfaceDigestSecurityValues
+}
+
+input SuperfaceApiKeySecurityValues {
+  apikey: String
+}
+
+input SuperfaceBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input SuperfaceBearerTokenSecurityValues {
+  token: String
+}
+
+input SuperfaceDigestSecurityValues {
+  username: String
+  password: String
+}"
+`;
+
 exports[`schema.types generateRootType create Query type with profiles 1`] = `
 "type Query {
   ProfileOne: ProfileOne
@@ -70,7 +131,7 @@ exports[`schema.types generateUseCaseFieldConfig for profile fixture creates fie
       "type": "ScopeNameUseCaseInput",
     },
     "options": {
-      "type": "ScopeNameUseCaseOptions",
+      "type": "ScopeNameOptions",
     },
   },
   "description": "UseCase

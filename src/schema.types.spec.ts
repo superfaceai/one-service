@@ -18,7 +18,7 @@ import {
   generateRootType,
   generateStructureResultType,
   generateUseCaseFieldConfig,
-  generateUseCaseOptionsInputType,
+  generateProfileOptionsInputType,
   generateUseCaseProviderParametersFields,
   generateUseCaseSecurityFields,
   outputType,
@@ -266,10 +266,10 @@ describe('schema.types', () => {
     });
   });
 
-  describe('generateUseCaseOptionsInputType', () => {
+  describe('generateProfileOptionsInputType', () => {
     it('creates input with providers enum and input parameters', () => {
       expectSchema(
-        generateUseCaseOptionsInputType(
+        generateProfileOptionsInputType(
           'Test',
           profileSettings,
           providersJsons,

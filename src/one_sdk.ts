@@ -58,9 +58,13 @@ export type ResolverContext = {
 export type ResolverArgs = {
   input?: PerformParams['input'];
   options?: {
-    provider?: PerformParams['provider'];
-    parameters?: PerformParams['parameters'];
-    security?: PerformParams['security'];
+    provider?: Record<
+      NonNullable<PerformParams['provider']>,
+      {
+        parameters?: PerformParams['parameters'];
+        security?: PerformParams['security'];
+      }
+    >;
   };
 };
 export type ResolverResult<TResult> = {
@@ -91,14 +95,28 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
+    if (
+      args?.options?.provider !== undefined &&
+      args.options.provider !== null &&
+      typeof args.options.provider === 'object' &&
+      Object.keys(args.options.provider).length > 1
+    ) {
+      throw new Error('Only one provider can be used at a time');
+    }
+
+    const provider = Object.keys(args.options?.provider ?? {})[0];
+    const providerOptions = args.options?.provider?.[provider];
+
+    const input = args.input ?? {};
+
     try {
       const result = await perform({
         profile,
         useCase,
-        input: args.input ?? {},
-        provider: args.options?.provider,
-        parameters: args.options?.parameters ?? {},
-        security: args.options?.security ?? {},
+        input,
+        provider,
+        parameters: providerOptions?.parameters ?? {},
+        security: providerOptions?.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

@@ -17,9 +17,13 @@ async function callResolver(
   args: {
     input?: Record<string, any>;
     options?: {
-      provider?: string;
-      parameters?: Record<string, string>;
-      security?: Record<string, Omit<SecurityValues, 'id'>>;
+      provider?: Record<
+        string,
+        {
+          parameters?: Record<string, string>;
+          security?: Record<string, Omit<SecurityValues, 'id'>>;
+        }
+      >;
     };
   },
   profile = 'profile',
@@ -143,7 +147,11 @@ describe('one_sdk', () => {
       performMock.mockResolvedValue(new Ok('perform result'));
       await callResolver({
         options: {
-          parameters: undefined,
+          provider: {
+            test: {
+              parameters: undefined,
+            },
+          },
         },
       });
 
@@ -154,7 +162,11 @@ describe('one_sdk', () => {
       performMock.mockResolvedValue(new Ok('perform result'));
       await callResolver({
         options: {
-          security: undefined,
+          provider: {
+            test: {
+              security: undefined,
+            },
+          },
         },
       });
 
@@ -167,7 +179,11 @@ describe('one_sdk', () => {
       await callResolver(
         {
           options: {
-            parameters: undefined,
+            provider: {
+              test: {
+                parameters: undefined,
+              },
+            },
           },
         },
         'profile',
@@ -186,7 +202,9 @@ describe('one_sdk', () => {
           {
             input: { key: 'value' },
             options: {
-              provider: 'provider',
+              provider: {
+                test: {},
+              },
             },
           },
           'scope/name',
@@ -203,10 +221,8 @@ describe('one_sdk', () => {
         expect(getUseCaseMock).toBeCalledWith('UseCase');
       });
 
-      it('calls SuperfaceClient getProvider with "provider"', () => {
-        expect(SuperfaceClient.prototype.getProvider).toBeCalledWith(
-          'provider',
-        );
+      it('calls SuperfaceClient getProvider with "test"', () => {
+        expect(SuperfaceClient.prototype.getProvider).toBeCalledWith('test');
       });
 
       it('calls SuperfaceClient perform', () => {
@@ -229,7 +245,9 @@ describe('one_sdk', () => {
             {
               input: { key: 'value' },
               options: {
-                provider: 'provider',
+                provider: {
+                  test: {},
+                },
               },
             },
             'scope/name',
@@ -251,7 +269,9 @@ describe('one_sdk', () => {
             {
               input: { key: 'value' },
               options: {
-                provider: 'provider',
+                provider: {
+                  test: {},
+                },
               },
             },
             'scope/name',

@@ -98,17 +98,17 @@ export async function generateProfileTypes(
   return {
     QueryType: hasFieldsDefined(queryFields)
       ? new GraphQLObjectType({
-          name: `${profilePrefix}Query`,
-          description: description(output),
-          fields: queryFields,
-        })
+        name: `${profilePrefix}Query`,
+        description: description(output),
+        fields: queryFields,
+      })
       : undefined,
     MutationType: hasFieldsDefined(mutationFields)
       ? new GraphQLObjectType({
-          name: `${profilePrefix}Mutation`,
-          description: description(output),
-          fields: mutationFields,
-        })
+        name: `${profilePrefix}Mutation`,
+        description: description(output),
+        fields: mutationFields,
+      })
       : undefined,
   };
 }
@@ -138,15 +138,15 @@ export function generateUseCaseFieldConfig(
       ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
       : undefined;
 
-  const OptionsType = generateUseCaseOptionsInputType(
-    `${useCasePrefix}Options`,
+  const ProfileOptionsType = generateProfileOptionsInputType(
+    `${profilePrefix}Options`,
     profileSettings,
     providersJsons,
   );
 
   const args: GraphQLFieldConfigArgumentMap = {
     options: {
-      type: OptionsType,
+      type: ProfileOptionsType,
     },
   };
 
@@ -178,9 +178,9 @@ export function generateProfileConfig(
   return {
     description: profileAst.header.documentation?.title
       ? description({
-          title: profileAst.header.documentation.title,
-          description: profileAst.header.documentation.description,
-        })
+        title: profileAst.header.documentation.title,
+        description: profileAst.header.documentation.description,
+      })
       : undefined,
     type,
     // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
@@ -218,7 +218,7 @@ export function generateStructureInputType(
   return inputType(name, structure);
 }
 
-export function generateUseCaseOptionsInputType(
+export function generateProfileOptionsInputType(
   name: string,
   profileSettings: NormalizedProfileSettings,
   providersJsons: ProvidersJsonRecord,
@@ -226,7 +226,7 @@ export function generateUseCaseOptionsInputType(
   const providersNames = Object.keys(profileSettings.providers);
 
   debug(
-    `generateUseCaseOptionsInputType for ${name} with providers: ${providersNames.join(
+    `generateProfileOptionsInputType for ${name} with providers: ${providersNames.join(
       ', ',
     )}`,
   );
@@ -237,44 +237,56 @@ export function generateUseCaseOptionsInputType(
     values[sanitize(value)] = { value };
   });
 
-  const providerParameters = generateUseCaseProviderParametersFields(
-    providersJsons,
-    providersNames,
-  );
+  const providerFields: GraphQLInputFieldConfigMap = {};
 
-  const security = generateUseCaseSecurityFields(
-    providersJsons,
-    providersNames,
-  );
+  for (const providerName of providersNames) {
+    const providerParameters = generateUseCaseProviderParametersFields(
+      providersJsons,
+      [providerName],
+    );
+
+    const security = generateUseCaseSecurityFields(providersJsons, [
+      providerName,
+    ]);
+
+    providerFields[providerName] = {
+      description: `Provider ${providerName} configuration`,
+      type: new GraphQLInputObjectType({
+        name: `${name}${providerName}Config`,
+        fields: {
+          ...(providerParameters && {
+            parameters: {
+              type: new GraphQLInputObjectType({
+                name: `${name}${providerName}ProviderParameters`,
+                description: 'Provider-specific parameters',
+                fields: providerParameters,
+              }),
+            },
+          }),
+          ...(security && {
+            security: {
+              type: new GraphQLInputObjectType({
+                name: `${name}${providerName}ProviderSecurity`,
+                description: 'Provider-specific security',
+                fields: security,
+              }),
+            },
+          }),
+        },
+      }),
+    };
+  }
 
   return new GraphQLInputObjectType({
     name,
     description: 'Additional options to pass to OneSDK perform function',
     fields: {
       provider: {
-        type: new GraphQLEnumType({
-          name: `${name}ProviderEnum`,
-          values,
+        type: new GraphQLInputObjectType({
+          name: `${name}ProviderConfig`,
+          fields: providerFields,
         }),
       },
-      ...(providerParameters && {
-        parameters: {
-          type: new GraphQLInputObjectType({
-            name: `${name}ProviderParameters`,
-            description: 'Provider-specific parameters',
-            fields: providerParameters,
-          }),
-        },
-      }),
-      ...(security && {
-        security: {
-          type: new GraphQLInputObjectType({
-            name: `${name}ProviderSecurity`,
-            description: 'Provider-specific security',
-            fields: security,
-          }),
-        },
-      }),
     },
   });
 }

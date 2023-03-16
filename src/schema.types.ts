@@ -1,7 +1,7 @@
 import {
   NormalizedProfileSettings,
-  NormalizedProviderSettings,
   ProfileDocumentNode,
+  ProviderJson,
 } from '@superfaceai/ast';
 import {
   EnumStructure,
@@ -36,6 +36,7 @@ import {
 import { DEBUG_PREFIX } from './constants';
 import { createResolver } from './one_sdk';
 import {
+  capitalize,
   description,
   hasFieldsDefined,
   isDocumentedStructure,
@@ -47,13 +48,13 @@ import { ArrayMultiMap } from './structures';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
-export type ProviderSettingsRecord = Record<string, NormalizedProviderSettings>;
+export type ProvidersJsonRecord = Record<string, ProviderJson>;
 
 export async function generateProfileTypes(
   profilePrefix: string,
   profileAst: ProfileDocumentNode,
   profileSettings: NormalizedProfileSettings,
-  providers: ProviderSettingsRecord,
+  providersJsons: ProvidersJsonRecord,
 ): Promise<{
   QueryType?: GraphQLObjectType;
   MutationType?: GraphQLObjectType;
@@ -83,7 +84,7 @@ export async function generateProfileTypes(
       profileAst,
       profileSettings,
       useCase,
-      providers,
+      providersJsons,
     );
 
     const type = typeFromSafety(useCaseInfo.safety);
@@ -117,7 +118,7 @@ export function generateUseCaseFieldConfig(
   profileAst: ProfileDocumentNode,
   profileSettings: NormalizedProfileSettings,
   useCase: UseCaseStructure,
-  providers: ProviderSettingsRecord,
+  providersJsons: ProvidersJsonRecord,
 ): GraphQLFieldConfig<any, any> {
   if (!useCase.result) {
     throw new Error(`${useCase.useCaseName} doesn't have defined result`);
@@ -140,7 +141,7 @@ export function generateUseCaseFieldConfig(
   const OptionsType = generateUseCaseOptionsInputType(
     `${useCasePrefix}Options`,
     profileSettings,
-    providers,
+    providersJsons,
   );
 
   const args: GraphQLFieldConfigArgumentMap = {
@@ -220,7 +221,7 @@ export function generateStructureInputType(
 export function generateUseCaseOptionsInputType(
   name: string,
   profileSettings: NormalizedProfileSettings,
-  providers: ProviderSettingsRecord,
+  providersJsons: ProvidersJsonRecord,
 ): GraphQLInputObjectType {
   const providersNames = Object.keys(profileSettings.providers);
 
@@ -237,8 +238,13 @@ export function generateUseCaseOptionsInputType(
   });
 
   const providerParameters = generateUseCaseProviderParametersFields(
+    providersJsons,
     providersNames,
-    providers,
+  );
+
+  const security = generateUseCaseSecurityFields(
+    providersJsons,
+    providersNames,
   );
 
   return new GraphQLInputObjectType({
@@ -260,23 +266,32 @@ export function generateUseCaseOptionsInputType(
           }),
         },
       }),
+      ...(security && {
+        security: {
+          type: new GraphQLInputObjectType({
+            name: `${name}ProviderSecurity`,
+            description: 'Provider-specific security',
+            fields: security,
+          }),
+        },
+      }),
     },
   });
 }
 
 export function generateUseCaseProviderParametersFields(
+  allProvidersJsons: ProvidersJsonRecord,
   configuredProviders: string[],
-  allProviderSettings: ProviderSettingsRecord,
 ): GraphQLInputFieldConfigMap | undefined {
   // Set to prevent duplicated fields; it's okay if there are conflicting fields since we always expect a string
   const parametersWithProviders = new ArrayMultiMap<string, string>();
 
   // Generate a union of all parameters' names by all configured providers
   for (const providerName of configuredProviders) {
-    const providerSettings = allProviderSettings[providerName];
-    const parameters = Object.keys(providerSettings.parameters);
-    parameters.forEach((parameterName) =>
-      parametersWithProviders.set(parameterName, providerName),
+    const providerSettings = allProvidersJsons[providerName];
+    const parameters = providerSettings.parameters ?? [];
+    parameters.forEach((parameter) =>
+      parametersWithProviders.set(parameter.name, providerName),
     );
   }
 
@@ -295,6 +310,94 @@ export function generateUseCaseProviderParametersFields(
       description: `Parameter accepted by ${providers.join(', ')}`,
       type: GraphQLString,
     };
+  }
+
+  return fields;
+}
+
+export function generateUseCaseSecurityFields(
+  allProvidersJsons: ProvidersJsonRecord,
+  configuredProviders: string[],
+): GraphQLInputFieldConfigMap | undefined {
+  const fields: GraphQLInputFieldConfigMap = {};
+
+  for (const providerName of configuredProviders) {
+    const providerJson = allProvidersJsons[providerName];
+
+    providerJson.securitySchemes?.forEach((schema) => {
+      let type: GraphQLInputType;
+
+      if (schema.type === 'http') {
+        if (schema.scheme === 'basic') {
+          type = new GraphQLInputObjectType({
+            name: `${capitalize(providerName)}${pascalize(
+              sanitize(schema.id),
+            )}SecurityValues`,
+            fields: {
+              username: {
+                type: GraphQLString,
+              },
+              password: {
+                type: GraphQLString,
+              },
+            },
+          });
+        } else if (schema.scheme === 'bearer') {
+          type = new GraphQLInputObjectType({
+            name: `${capitalize(providerName)}${pascalize(
+              sanitize(schema.id),
+            )}SecurityValues`,
+            fields: {
+              token: {
+                type: GraphQLString,
+              },
+            },
+          });
+        } else if (schema.scheme === 'digest') {
+          type = new GraphQLInputObjectType({
+            name: `${capitalize(providerName)}${pascalize(
+              sanitize(schema.id),
+            )}SecurityValues`,
+            fields: {
+              username: {
+                type: GraphQLString,
+              },
+              password: {
+                type: GraphQLString,
+              },
+            },
+          });
+        } else {
+          throw new Error(
+            `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
+          );
+        }
+      } else if (schema.type === 'apiKey') {
+        type = new GraphQLInputObjectType({
+          name: `${capitalize(providerName)}${pascalize(
+            sanitize(schema.id),
+          )}SecurityValues`,
+          fields: {
+            apikey: {
+              type: GraphQLString,
+            },
+          },
+        });
+      } else {
+        throw new Error(
+          `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
+        );
+      }
+
+      fields[schema.id] = {
+        description: `Security accepted by ${providerName}`,
+        type,
+      };
+    });
+  }
+
+  if (!hasFieldsDefined(fields)) {
+    return undefined;
   }
 
   return fields;

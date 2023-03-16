@@ -98,6 +98,7 @@ exports[`schema.types generateUseCaseOptionsInputType creates input with provide
 input Test {
   provider: TestProviderEnum
   parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 enum TestProviderEnum {
@@ -109,6 +110,39 @@ enum TestProviderEnum {
 input TestProviderParameters {
   """Parameter accepted by superface"""
   accessToken: String
+}
+
+"""Provider-specific security"""
+input TestProviderSecurity {
+  """Security accepted by superface"""
+  api_key: SuperfaceApiKeySecurityValues
+
+  """Security accepted by superface"""
+  basic: SuperfaceBasicSecurityValues
+
+  """Security accepted by superface"""
+  bearer_token: SuperfaceBearerTokenSecurityValues
+
+  """Security accepted by superface"""
+  digest: SuperfaceDigestSecurityValues
+}
+
+input SuperfaceApiKeySecurityValues {
+  apikey: String
+}
+
+input SuperfaceBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input SuperfaceBearerTokenSecurityValues {
+  token: String
+}
+
+input SuperfaceDigestSecurityValues {
+  username: String
+  password: String
 }"
 `;
 
@@ -117,6 +151,27 @@ exports[`schema.types generateUseCaseProviderParametersFields generates provider
   "accessToken": {
     "description": "Parameter accepted by superface",
     "type": "String",
+  },
+}
+`;
+
+exports[`schema.types generateUseCaseSecurityFields generates security fields for configured providers 1`] = `
+{
+  "api_key": {
+    "description": "Security accepted by superface",
+    "type": "SuperfaceApiKeySecurityValues",
+  },
+  "basic": {
+    "description": "Security accepted by superface",
+    "type": "SuperfaceBasicSecurityValues",
+  },
+  "bearer_token": {
+    "description": "Security accepted by superface",
+    "type": "SuperfaceBearerTokenSecurityValues",
+  },
+  "digest": {
+    "description": "Security accepted by superface",
+    "type": "SuperfaceDigestSecurityValues",
   },
 }
 `;

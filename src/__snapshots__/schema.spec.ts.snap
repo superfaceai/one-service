@@ -2,4 +2,185 @@
 
 exports[`schema generate generates valid schema for profile without scope 1`] = `[]`;
 
+exports[`schema generate generates valid schema for profile without scope 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  Profile: ProfileQuery
+  _superJson: SuperJson
+}
+
+type ProfileQuery {
+  UseCase(options: ProfileUseCaseOptions): ProfileUseCaseResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ProfileUseCaseResult {
+  result: String
+}
+
+"""Additional options to pass to OneSDK perform function"""
+input ProfileUseCaseOptions {
+  provider: ProfileUseCaseOptionsProviderEnum
+  parameters: ProfileUseCaseOptionsProviderParameters
+  security: ProfileUseCaseOptionsProviderSecurity
+}
+
+enum ProfileUseCaseOptionsProviderEnum {
+  test
+}
+
+"""Provider-specific parameters"""
+input ProfileUseCaseOptionsProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input ProfileUseCaseOptionsProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}"
+`;
+
 exports[`schema generate generates valid schema for usecases mapped to mutation only 1`] = `[]`;
+
+exports[`schema generate generates valid schema for usecases mapped to mutation only 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  _superJson: SuperJson
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}
+
+"""Profile's unsafe and idempotent use-cases"""
+type Mutation {
+  ScopeName: ScopeNameMutation
+}
+
+type ScopeNameMutation {
+  UnsafeUsecase(options: ScopeNameUnsafeUsecaseOptions): ScopeNameUnsafeUsecaseResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameUnsafeUsecaseResult {
+  result: Int
+}
+
+"""Additional options to pass to OneSDK perform function"""
+input ScopeNameUnsafeUsecaseOptions {
+  provider: ScopeNameUnsafeUsecaseOptionsProviderEnum
+  parameters: ScopeNameUnsafeUsecaseOptionsProviderParameters
+  security: ScopeNameUnsafeUsecaseOptionsProviderSecurity
+}
+
+enum ScopeNameUnsafeUsecaseOptionsProviderEnum {
+  test
+}
+
+"""Provider-specific parameters"""
+input ScopeNameUnsafeUsecaseOptionsProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input ScopeNameUnsafeUsecaseOptionsProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}"
+`;

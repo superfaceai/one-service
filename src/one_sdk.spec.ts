@@ -1,5 +1,6 @@
 jest.mock('@superfaceai/one-sdk');
 
+import { SecurityValues } from '@superfaceai/ast';
 import { Profile, Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import { GraphQLResolveInfo } from 'graphql';
 import {
@@ -15,7 +16,11 @@ const { Ok, Err } = jest.requireActual('@superfaceai/one-sdk');
 async function callResolver(
   args: {
     input?: Record<string, any>;
-    options?: { provider?: string; parameters?: Record<string, string> };
+    options?: {
+      provider?: string;
+      parameters?: Record<string, string>;
+      security?: Record<string, Omit<SecurityValues, 'id'>>;
+    };
   },
   profile = 'profile',
   useCase = 'UseCase',
@@ -71,6 +76,7 @@ describe('one_sdk', () => {
         profile: 'scope/name',
         useCase: 'UseCase',
         provider: 'provider',
+        security: { basic: { username: 'user', password: 'pass' } },
         parameters: {
           foo: 'bar',
         },
@@ -115,6 +121,7 @@ describe('one_sdk', () => {
         {
           provider: {},
           parameters: { foo: 'bar' },
+          security: { basic: { username: 'user', password: 'pass' } },
         },
       );
     });
@@ -141,6 +148,17 @@ describe('one_sdk', () => {
       });
 
       expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
+    });
+
+    it('sets empty object if security are not set', async () => {
+      performMock.mockResolvedValue(new Ok('perform result'));
+      await callResolver({
+        options: {
+          security: undefined,
+        },
+      });
+
+      expect(performMock.mock.calls[0][1]['security']).toEqual({});
     });
 
     it('passes `getOneSdkInstance` from context to perform', async () => {

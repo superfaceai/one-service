@@ -1,3 +1,4 @@
+import { SecurityValues } from '@superfaceai/ast';
 import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
@@ -14,6 +15,7 @@ export type PerformParams = {
   input: Record<string, any>;
   provider?: string;
   parameters?: Record<string, string>;
+  security?: Record<string, Omit<SecurityValues, 'id'>>;
   oneSdk?: SuperfaceClient;
 };
 
@@ -30,6 +32,8 @@ export function getInstance() {
 }
 
 export async function perform(params: PerformParams) {
+  debug('Performing with params', params);
+
   const oneSdk = params.oneSdk ?? getInstance();
 
   const profile = await oneSdk.getProfile(params.profile);
@@ -43,6 +47,7 @@ export async function perform(params: PerformParams) {
   return await useCase.perform(params.input, {
     provider,
     parameters: params.parameters,
+    security: params.security,
   });
 }
 
@@ -55,6 +60,7 @@ export type ResolverArgs = {
   options?: {
     provider?: PerformParams['provider'];
     parameters?: PerformParams['parameters'];
+    security?: PerformParams['security'];
   };
 };
 export type ResolverResult<TResult> = {
@@ -92,6 +98,7 @@ export function createResolver<
         input: args.input ?? {},
         provider: args.options?.provider,
         parameters: args.options?.parameters ?? {},
+        security: args.options?.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

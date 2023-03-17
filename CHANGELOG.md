@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configurable parameters are now taken from provider definition instead of super.json's providers section - [#41](https://github.com/superfaceai/one-service/pull/41)
 
 ### Added
-- **BREAKING** UseCase options have property `provider` to allow provider specific configuration and avoid collisions [#41](https://github.com/superfaceai/one-service/pull/41)
+- **BREAKING** Added UseCase arguemnt `provider` to allow provider specific configuration and avoid collisions between them [#41](https://github.com/superfaceai/one-service/pull/41)
 
 ## [2.2.2] - 2023-03-09
 ### Fixed

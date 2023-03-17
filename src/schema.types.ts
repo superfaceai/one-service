@@ -98,17 +98,17 @@ export async function generateProfileTypes(
   return {
     QueryType: hasFieldsDefined(queryFields)
       ? new GraphQLObjectType({
-        name: `${profilePrefix}Query`,
-        description: description(output),
-        fields: queryFields,
-      })
+          name: `${profilePrefix}Query`,
+          description: description(output),
+          fields: queryFields,
+        })
       : undefined,
     MutationType: hasFieldsDefined(mutationFields)
       ? new GraphQLObjectType({
-        name: `${profilePrefix}Mutation`,
-        description: description(output),
-        fields: mutationFields,
-      })
+          name: `${profilePrefix}Mutation`,
+          description: description(output),
+          fields: mutationFields,
+        })
       : undefined,
   };
 }
@@ -138,15 +138,15 @@ export function generateUseCaseFieldConfig(
       ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
       : undefined;
 
-  const ProfileOptionsType = generateProfileOptionsInputType(
-    `${profilePrefix}Options`,
+  const ProfileProviderOptionType = generateProfileProviderOptionInputType(
+    `${profilePrefix}ProviderOption`,
     profileSettings,
     providersJsons,
   );
 
   const args: GraphQLFieldConfigArgumentMap = {
-    options: {
-      type: ProfileOptionsType,
+    provider: {
+      type: ProfileProviderOptionType,
     },
   };
 
@@ -178,9 +178,9 @@ export function generateProfileConfig(
   return {
     description: profileAst.header.documentation?.title
       ? description({
-        title: profileAst.header.documentation.title,
-        description: profileAst.header.documentation.description,
-      })
+          title: profileAst.header.documentation.title,
+          description: profileAst.header.documentation.description,
+        })
       : undefined,
     type,
     // hack if nonscalar value is returned execution will continue towards leaves (our use-case) https://graphql.org/learn/execution/
@@ -218,7 +218,7 @@ export function generateStructureInputType(
   return inputType(name, structure);
 }
 
-export function generateProfileOptionsInputType(
+export function generateProfileProviderOptionInputType(
   name: string,
   profileSettings: NormalizedProfileSettings,
   providersJsons: ProvidersJsonRecord,
@@ -226,7 +226,7 @@ export function generateProfileOptionsInputType(
   const providersNames = Object.keys(profileSettings.providers);
 
   debug(
-    `generateProfileOptionsInputType for ${name} with providers: ${providersNames.join(
+    `generateProfileProviderOptionInputType for ${name} with providers: ${providersNames.join(
       ', ',
     )}`,
   );
@@ -279,15 +279,8 @@ export function generateProfileOptionsInputType(
 
   return new GraphQLInputObjectType({
     name,
-    description: 'Additional options to pass to OneSDK perform function',
-    fields: {
-      provider: {
-        type: new GraphQLInputObjectType({
-          name: `${name}ProviderConfig`,
-          fields: providerFields,
-        }),
-      },
-    },
+    description: 'Provider configuration for OneSDK perform',
+    fields: providerFields,
   });
 }
 

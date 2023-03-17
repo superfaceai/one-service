@@ -116,7 +116,7 @@ query SelectProvider {
   WeatherCurrentCity {
     GetCurrentWeatherInCity(
       input: { city: "Prague" }
-      options: { provider: mock }
+      provider: { mock: {} }
     ) {
       result {
         temperature

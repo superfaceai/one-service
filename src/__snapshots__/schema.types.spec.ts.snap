@@ -20,13 +20,9 @@ Full profile to test all generation functionality",
 }
 `;
 
-exports[`schema.types generateProfileOptionsInputType creates input with providers enum and input parameters 1`] = `
-""""Additional options to pass to OneSDK perform function"""
+exports[`schema.types generateProfileProviderOptionInputType creates input with providers enum and input parameters 1`] = `
+""""Provider configuration for OneSDK perform"""
 input Test {
-  provider: TestProviderConfig
-}
-
-input TestProviderConfig {
   """Provider mock configuration"""
   mock: TestmockConfig
 
@@ -130,8 +126,8 @@ exports[`schema.types generateUseCaseFieldConfig for profile fixture creates fie
       "description": "Use-case inputs",
       "type": "ScopeNameUseCaseInput",
     },
-    "options": {
-      "type": "ScopeNameOptions",
+    "provider": {
+      "type": "ScopeNameProviderOption",
     },
   },
   "description": "UseCase
@@ -144,67 +140,14 @@ UseCase description",
 exports[`schema.types generateUseCaseFieldConfig for profile fixture with empty input fields creates arguments without input 1`] = `
 {
   "args": {
-    "options": {
-      "type": "ScopeNameUseCaseOptions",
+    "provider": {
+      "type": "ScopeNameProviderOption",
     },
   },
   "description": undefined,
   "resolve": [Function],
   "type": "ScopeNameUseCaseResult",
 }
-`;
-
-exports[`schema.types generateUseCaseOptionsInputType creates input with providers enum and input parameters 1`] = `
-""""Additional options to pass to OneSDK perform function"""
-input Test {
-  provider: TestProviderEnum
-  parameters: TestProviderParameters
-  security: TestProviderSecurity
-}
-
-enum TestProviderEnum {
-  mock
-  superface
-}
-
-"""Provider-specific parameters"""
-input TestProviderParameters {
-  """Parameter accepted by superface"""
-  accessToken: String
-}
-
-"""Provider-specific security"""
-input TestProviderSecurity {
-  """Security accepted by superface"""
-  api_key: SuperfaceApiKeySecurityValues
-
-  """Security accepted by superface"""
-  basic: SuperfaceBasicSecurityValues
-
-  """Security accepted by superface"""
-  bearer_token: SuperfaceBearerTokenSecurityValues
-
-  """Security accepted by superface"""
-  digest: SuperfaceDigestSecurityValues
-}
-
-input SuperfaceApiKeySecurityValues {
-  apikey: String
-}
-
-input SuperfaceBasicSecurityValues {
-  username: String
-  password: String
-}
-
-input SuperfaceBearerTokenSecurityValues {
-  token: String
-}
-
-input SuperfaceDigestSecurityValues {
-  username: String
-  password: String
-}"
 `;
 
 exports[`schema.types generateUseCaseProviderParametersFields generates provider parameters for configured providers 1`] = `

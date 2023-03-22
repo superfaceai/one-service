@@ -87,8 +87,7 @@ exports[`schema.types generateUseCaseFieldConfig for profile fixture with empty 
       "type": "ScopeNameUseCaseOptions",
     },
   },
-  "description": "UseCase
-UseCase description",
+  "description": undefined,
   "resolve": [Function],
   "type": "ScopeNameUseCaseResult",
 }

@@ -1,0 +1,31 @@
+"""
+Full profile
+Full profile to test all generation functionality
+"""
+name = "scope/name"
+version = "1.0.0"
+
+"""
+UseCase
+UseCase description
+"""
+usecase UseCase {
+  input {
+  }
+
+  result {
+    """
+	  Result Field title
+    Result Field description
+    """
+    field! string!
+    
+    namedField
+  }
+}
+
+"""
+Named Field title
+Named Field description
+"""
+field namedField string!

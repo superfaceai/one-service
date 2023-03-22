@@ -169,6 +169,27 @@ describe('schema.types', () => {
         expect(config).toMatchSnapshot();
       });
     });
+
+    describe('for profile fixture with empty input fields', () => {
+      it('creates arguments without input', async () => {
+        const profileAst = await parseProfileFixture(
+          'profile_with_empty_input_structure',
+        );
+        const profileOutput = await getProfileOutput(
+          'profile_with_empty_input_structure',
+          profileAst,
+        );
+        const config = generateUseCaseFieldConfig(
+          'ScopeName',
+          profileAst,
+          profileSettings,
+          profileOutput.usecases[0],
+          providers,
+        );
+
+        expect(config).toMatchSnapshot();
+      });
+    });
   });
 
   describe('generateProfileConfig', () => {

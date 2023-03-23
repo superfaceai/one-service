@@ -80,6 +80,19 @@ UseCase description",
 }
 `;
 
+exports[`schema.types generateUseCaseFieldConfig for profile fixture with empty input fields creates arguments without input 1`] = `
+{
+  "args": {
+    "options": {
+      "type": "ScopeNameUseCaseOptions",
+    },
+  },
+  "description": undefined,
+  "resolve": [Function],
+  "type": "ScopeNameUseCaseResult",
+}
+`;
+
 exports[`schema.types generateUseCaseOptionsInputType creates input with providers enum and input parameters 1`] = `
 """"Additional options to pass to OneSDK perform function"""
 input Test {

@@ -132,9 +132,10 @@ export function generateUseCaseFieldConfig(
     useCase.result,
   );
 
-  const InputType = useCase.input
-    ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
-    : undefined;
+  const InputType =
+    useCase.input && Object.keys(useCase.input.fields).length !== 0
+      ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
+      : undefined;
 
   const OptionsType = generateUseCaseOptionsInputType(
     `${useCasePrefix}Options`,

@@ -99,13 +99,16 @@ type ScopeProfileTwo {
 }"
 `;
 
-exports[`schema.types generateStructureResultType creates ScopeNameResult as nullable string 1`] = `
+exports[`schema.types generateStructureResultType creates ScopeNameResult as None value 1`] = `
 """"
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameResult {
-  result: String
-}"
+  result: None
+}
+
+"""Represents NULL value"""
+scalar None"
 `;
 
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `

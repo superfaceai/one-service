@@ -194,7 +194,7 @@ export function generateStructureResultType(
 
   let type: GraphQLOutputType;
   if (structure === undefined) {
-    type = GraphQLString;
+    type = GraphQLNone;
   } else {
     type = outputType(`${name}Node`, structure);
   }
@@ -602,3 +602,21 @@ export function inputType(
       throw new Error(`Variable type not implemented for: ${structure.kind}`);
   }
 }
+
+export const GraphQLNone = new GraphQLScalarType({
+  name: 'None',
+
+  description: 'Represents NULL value',
+
+  serialize() {
+    return null;
+  },
+
+  parseValue() {
+    return null;
+  },
+
+  parseLiteral() {
+    return null;
+  },
+});

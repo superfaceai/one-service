@@ -250,7 +250,7 @@ describe('schema.types', () => {
       );
     });
 
-    it('creates ScopeNameResult as nullable string', async () => {
+    it('creates ScopeNameResult as None value', async () => {
       const profileOutput = await getProfileOutput('no_result');
       expectSchema(
         generateStructureResultType(

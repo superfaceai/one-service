@@ -1,6 +1,5 @@
 jest.mock('@superfaceai/one-sdk');
 
-import { SecurityValues } from '@superfaceai/ast';
 import { Profile, Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import { GraphQLResolveInfo } from 'graphql';
 import {
@@ -8,6 +7,7 @@ import {
   createResolver,
   getInstance,
   perform,
+  ResolverArgs,
   ResolverContext,
 } from './one_sdk';
 
@@ -15,16 +15,8 @@ const { Ok, Err } = jest.requireActual('@superfaceai/one-sdk');
 
 async function callResolver(
   args: {
-    input?: Record<string, any>;
-    options?: {
-      provider?: Record<
-        string,
-        {
-          parameters?: Record<string, string>;
-          security?: Record<string, Omit<SecurityValues, 'id'>>;
-        }
-      >;
-    };
+    input?: ResolverArgs['input'];
+    provider?: ResolverArgs['provider'];
   },
   profile = 'profile',
   useCase = 'UseCase',
@@ -134,8 +126,11 @@ describe('one_sdk', () => {
   describe('createResolver', () => {
     let resolverResult: any;
 
-    it('sets empty object if input is not set', async () => {
+    beforeEach(() => {
       performMock.mockResolvedValue(new Ok('perform result'));
+    });
+
+    it('sets empty object if input is not set', async () => {
       await callResolver({
         input: undefined,
       });
@@ -143,46 +138,14 @@ describe('one_sdk', () => {
       expect(performMock.mock.calls[0][0]).toEqual({});
     });
 
-    it('sets empty object if parameters are not set', async () => {
-      performMock.mockResolvedValue(new Ok('perform result'));
-      await callResolver({
-        options: {
+    it('passes `getOneSdkInstance` from context to perform', async () => {
+      const getOneSdkInstance = jest.fn(() => new SuperfaceClient());
+
+      await callResolver(
+        {
           provider: {
             test: {
               parameters: undefined,
-            },
-          },
-        },
-      });
-
-      expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
-    });
-
-    it('sets empty object if security are not set', async () => {
-      performMock.mockResolvedValue(new Ok('perform result'));
-      await callResolver({
-        options: {
-          provider: {
-            test: {
-              security: undefined,
-            },
-          },
-        },
-      });
-
-      expect(performMock.mock.calls[0][1]['security']).toEqual({});
-    });
-
-    it('passes `getOneSdkInstance` from context to perform', async () => {
-      const getOneSdkInstance = jest.fn(() => new SuperfaceClient());
-      performMock.mockResolvedValue(new Ok('perform result'));
-      await callResolver(
-        {
-          options: {
-            provider: {
-              test: {
-                parameters: undefined,
-              },
             },
           },
         },
@@ -194,6 +157,49 @@ describe('one_sdk', () => {
       expect(getOneSdkInstance).toBeCalledTimes(1);
     });
 
+    describe('provider configurations', () => {
+      it('sets empty object if parameters are not set', async () => {
+        await callResolver({
+          provider: {
+            test: {
+              parameters: undefined,
+            },
+          },
+        });
+
+        expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
+      });
+
+      it('sets empty object if security are not set', async () => {
+        await callResolver({
+          provider: {
+            test: {
+              security: undefined,
+            },
+          },
+        });
+
+        expect(performMock.mock.calls[0][1]['security']).toEqual({});
+      });
+
+      it('it passed undefined if provider is not selected', async () => {
+        await expect(callResolver({})).resolves.toEqual({
+          result: 'perform result',
+        });
+      });
+
+      it('throws error if more than provider is marked as used', async () => {
+        await expect(
+          callResolver({
+            provider: {
+              test: { use: true },
+              test_two: { use: true },
+            },
+          }),
+        ).rejects.toThrowError();
+      });
+    });
+
     describe('perform returns Ok result', () => {
       beforeEach(async () => {
         performMock.mockResolvedValue(new Ok('perform result'));
@@ -201,10 +207,8 @@ describe('one_sdk', () => {
         resolverResult = await callResolver(
           {
             input: { key: 'value' },
-            options: {
-              provider: {
-                test: {},
-              },
+            provider: {
+              test: { use: true },
             },
           },
           'scope/name',
@@ -244,11 +248,6 @@ describe('one_sdk', () => {
           callResolver(
             {
               input: { key: 'value' },
-              options: {
-                provider: {
-                  test: {},
-                },
-              },
             },
             'scope/name',
           ),
@@ -268,11 +267,6 @@ describe('one_sdk', () => {
           callResolver(
             {
               input: { key: 'value' },
-              options: {
-                provider: {
-                  test: {},
-                },
-              },
             },
             'scope/name',
           ),

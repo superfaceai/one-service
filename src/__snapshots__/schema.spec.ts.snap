@@ -28,16 +28,17 @@ type ProfileUseCaseResult {
 """Provider configuration for OneSDK perform"""
 input ProfileProviderOption {
   """Provider test configuration"""
-  test: ProfileProviderOptiontestConfig
+  test: ProfileProviderOptionTestConfig
 }
 
-input ProfileProviderOptiontestConfig {
-  parameters: ProfileProviderOptiontestProviderParameters
-  security: ProfileProviderOptiontestProviderSecurity
+input ProfileProviderOptionTestConfig {
+  use: Boolean
+  parameters: ProfileProviderOptionTestProviderParameters
+  security: ProfileProviderOptionTestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ProfileProviderOptiontestProviderParameters {
+input ProfileProviderOptionTestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -46,7 +47,7 @@ input ProfileProviderOptiontestProviderParameters {
 }
 
 """Provider-specific security"""
-input ProfileProviderOptiontestProviderSecurity {
+input ProfileProviderOptionTestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 
@@ -134,16 +135,17 @@ type ScopeNameUnsafeUsecaseResult {
 """Provider configuration for OneSDK perform"""
 input ScopeNameProviderOption {
   """Provider test configuration"""
-  test: ScopeNameProviderOptiontestConfig
+  test: ScopeNameProviderOptionTestConfig
 }
 
-input ScopeNameProviderOptiontestConfig {
-  parameters: ScopeNameProviderOptiontestProviderParameters
-  security: ScopeNameProviderOptiontestProviderSecurity
+input ScopeNameProviderOptionTestConfig {
+  use: Boolean
+  parameters: ScopeNameProviderOptionTestProviderParameters
+  security: ScopeNameProviderOptionTestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ScopeNameProviderOptiontestProviderParameters {
+input ScopeNameProviderOptionTestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -152,7 +154,7 @@ input ScopeNameProviderOptiontestProviderParameters {
 }
 
 """Provider-specific security"""
-input ScopeNameProviderOptiontestProviderSecurity {
+input ScopeNameProviderOptionTestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 

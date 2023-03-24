@@ -57,15 +57,14 @@ export type ResolverContext = {
 };
 export type ResolverArgs = {
   input?: PerformParams['input'];
-  options?: {
-    provider?: Record<
-      NonNullable<PerformParams['provider']>,
-      {
-        parameters?: PerformParams['parameters'];
-        security?: PerformParams['security'];
-      }
-    >;
-  };
+  provider?: Record<
+    NonNullable<PerformParams['provider']>,
+    {
+      parameters?: PerformParams['parameters'];
+      security?: PerformParams['security'];
+      use?: boolean;
+    }
+  >;
 };
 export type ResolverResult<TResult> = {
   result: TResult;
@@ -95,17 +94,30 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
-    if (
-      args?.options?.provider !== undefined &&
-      args.options.provider !== null &&
-      typeof args.options.provider === 'object' &&
-      Object.keys(args.options.provider).length > 1
-    ) {
-      throw new Error('Only one provider can be used at a time');
+    const activeProviders = [];
+
+    if (Object.keys(args.provider ?? {}).length > 0) {
+      for (const [providerName, providerOptions] of Object.entries(
+        args.provider ?? {},
+      )) {
+        if (providerOptions.use) {
+          activeProviders.push(providerName);
+        }
+      }
+
+      if (activeProviders.length > 1) {
+        throw new Error(
+          `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
+            ', ',
+          )}`,
+        );
+      }
+    } else {
+      activeProviders.push(...Object.keys(args.provider ?? {}));
     }
 
-    const provider = Object.keys(args.options?.provider ?? {})[0];
-    const providerOptions = args.options?.provider?.[provider];
+    const provider = activeProviders[0];
+    const providerOptions = args.provider?.[provider] ?? {};
 
     const input = args.input ?? {};
 
@@ -115,8 +127,8 @@ export function createResolver<
         useCase,
         input,
         provider,
-        parameters: providerOptions?.parameters ?? {},
-        security: providerOptions?.security ?? {},
+        parameters: providerOptions.parameters ?? {},
+        security: providerOptions.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

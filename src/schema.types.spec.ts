@@ -267,7 +267,7 @@ describe('schema.types', () => {
   });
 
   describe('generateProfileProviderOptionInputType', () => {
-    it('creates input with providers enum and input parameters', () => {
+    it('creates provider object with security and parameters field', () => {
       expectSchema(
         generateProfileProviderOptionInputType(
           'Test',

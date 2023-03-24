@@ -249,30 +249,32 @@ export function generateProfileProviderOptionInputType(
       providerName,
     ]);
 
+    const configurationFields = {
+      ...(providerParameters && {
+        parameters: {
+          type: new GraphQLInputObjectType({
+            name: `${name}${pascalize(providerName)}ProviderParameters`,
+            description: 'Provider-specific parameters',
+            fields: providerParameters,
+          }),
+        },
+      }),
+      ...(security && {
+        security: {
+          type: new GraphQLInputObjectType({
+            name: `${name}${pascalize(providerName)}ProviderSecurity`,
+            description: 'Provider-specific security',
+            fields: security,
+          }),
+        },
+      }),
+    };
+
     providerFields[providerName] = {
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({
-        name: `${name}${providerName}Config`,
-        fields: {
-          ...(providerParameters && {
-            parameters: {
-              type: new GraphQLInputObjectType({
-                name: `${name}${providerName}ProviderParameters`,
-                description: 'Provider-specific parameters',
-                fields: providerParameters,
-              }),
-            },
-          }),
-          ...(security && {
-            security: {
-              type: new GraphQLInputObjectType({
-                name: `${name}${providerName}ProviderSecurity`,
-                description: 'Provider-specific security',
-                fields: security,
-              }),
-            },
-          }),
-        },
+        name: `${name}${pascalize(providerName)}Config`,
+        fields: { use: { type: GraphQLBoolean }, ...configurationFields },
       }),
     };
   }
@@ -294,6 +296,13 @@ export function generateUseCaseProviderParametersFields(
   // Generate a union of all parameters' names by all configured providers
   for (const providerName of configuredProviders) {
     const providerSettings = allProvidersJsons[providerName];
+
+    if (!providerSettings) {
+      throw new Error(
+        `Super.json missconfigured, provider '${providerName}' not configured`,
+      );
+    }
+
     const parameters = providerSettings.parameters ?? [];
     parameters.forEach((parameter) =>
       parametersWithProviders.set(parameter.name, providerName),

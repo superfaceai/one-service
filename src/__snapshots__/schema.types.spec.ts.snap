@@ -20,31 +20,34 @@ Full profile to test all generation functionality",
 }
 `;
 
-exports[`schema.types generateProfileProviderOptionInputType creates input with providers enum and input parameters 1`] = `
+exports[`schema.types generateProfileProviderOptionInputType creates provider object with security and parameters field 1`] = `
 """"Provider configuration for OneSDK perform"""
 input Test {
   """Provider mock configuration"""
-  mock: TestmockConfig
+  mock: TestMockConfig
 
   """Provider superface configuration"""
-  superface: TestsuperfaceConfig
+  superface: TestSuperfaceConfig
 }
 
-input TestmockConfig
+input TestMockConfig {
+  use: Boolean
+}
 
-input TestsuperfaceConfig {
-  parameters: TestsuperfaceProviderParameters
-  security: TestsuperfaceProviderSecurity
+input TestSuperfaceConfig {
+  use: Boolean
+  parameters: TestSuperfaceProviderParameters
+  security: TestSuperfaceProviderSecurity
 }
 
 """Provider-specific parameters"""
-input TestsuperfaceProviderParameters {
+input TestSuperfaceProviderParameters {
   """Parameter accepted by superface"""
   accessToken: String
 }
 
 """Provider-specific security"""
-input TestsuperfaceProviderSecurity {
+input TestSuperfaceProviderSecurity {
   """Security accepted by superface"""
   api_key: SuperfaceApiKeySecurityValues
 

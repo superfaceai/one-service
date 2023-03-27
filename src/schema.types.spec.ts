@@ -1,4 +1,10 @@
-import { NormalizedProfileSettings } from '@superfaceai/ast';
+import {
+  NormalizedProfileSettings,
+  SecurityType,
+  HttpScheme,
+  ProviderJson,
+  ApiKeyPlacement,
+} from '@superfaceai/ast';
 import {
   ObjectStructure,
   PrimitiveStructure,
@@ -12,11 +18,12 @@ import {
   generateRootType,
   generateStructureResultType,
   generateUseCaseFieldConfig,
-  generateUseCaseOptionsInputType,
+  generateProfileProviderOptionInputType,
   generateUseCaseProviderParametersFields,
+  generateUseCaseSecurityFields,
   outputType,
   primitiveType,
-  ProviderSettingsRecord,
+  ProvidersJsonRecord,
   scalarType,
 } from './schema.types';
 import {
@@ -97,16 +104,58 @@ describe('schema.types', () => {
     },
   };
 
-  const providers: ProviderSettingsRecord = {
+  const providersJsons: ProvidersJsonRecord = {
     mock: {
-      security: [],
-      parameters: {},
+      name: 'mock',
+      defaultService: 'default',
+      services: [
+        {
+          id: 'default',
+          baseUrl: 'loop.back',
+        },
+      ],
     },
     superface: {
-      security: [],
-      parameters: {
-        accessToken: '$SUPERFACE_ACCESS_TOKEN',
-      },
+      name: 'superface',
+      defaultService: 'default',
+      services: [
+        {
+          id: 'default',
+          baseUrl: 'https://superface.test',
+        },
+      ],
+      securitySchemes: [
+        {
+          id: 'api_key',
+          type: SecurityType.APIKEY,
+          in: ApiKeyPlacement.HEADER,
+          name: 'X-API-KEY',
+        },
+        {
+          id: 'basic',
+          type: SecurityType.HTTP,
+          scheme: HttpScheme.BASIC,
+        },
+        {
+          id: 'bearer_token',
+          type: SecurityType.HTTP,
+          scheme: HttpScheme.BEARER,
+          bearerFormat: 'JWT',
+        },
+        {
+          id: 'digest',
+          type: SecurityType.HTTP,
+          scheme: HttpScheme.DIGEST,
+          statusCode: 401,
+          authorizationHeader: 'Authorization',
+          challengeHeader: 'www-authenticate',
+        },
+      ],
+      parameters: [
+        {
+          name: 'accessToken',
+        },
+      ],
     },
   };
 
@@ -118,7 +167,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
-        providers,
+        providersJsons,
       );
 
       expect(result.QueryType).toBeUndefined();
@@ -131,7 +180,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
-        providers,
+        providersJsons,
       );
 
       expect(result.MutationType).toBeUndefined();
@@ -149,7 +198,7 @@ describe('schema.types', () => {
           profileAst,
           profileSettings,
           profileOutput.usecases[0],
-          providers,
+          providersJsons,
         ),
       ).toThrowError();
     });
@@ -163,7 +212,7 @@ describe('schema.types', () => {
           profileAst,
           profileSettings,
           profileOutput.usecases[0],
-          providers,
+          providersJsons,
         );
 
         expect(config).toMatchSnapshot();
@@ -184,7 +233,7 @@ describe('schema.types', () => {
           profileAst,
           profileSettings,
           profileOutput.usecases[0],
-          providers,
+          providersJsons,
         );
 
         expect(config).toMatchSnapshot();
@@ -217,10 +266,14 @@ describe('schema.types', () => {
     });
   });
 
-  describe('generateUseCaseOptionsInputType', () => {
-    it('creates input with providers enum and input parameters', () => {
+  describe('generateProfileProviderOptionInputType', () => {
+    it('creates provider object with security and parameters field', () => {
       expectSchema(
-        generateUseCaseOptionsInputType('Test', profileSettings, providers),
+        generateProfileProviderOptionInputType(
+          'Test',
+          profileSettings,
+          providersJsons,
+        ),
       );
     });
   });
@@ -228,21 +281,37 @@ describe('schema.types', () => {
   describe('generateUseCaseProviderParametersFields', () => {
     it('generates provider parameters for configured providers', () => {
       expect(
-        generateUseCaseProviderParametersFields(
-          ['superface', 'mock'],
-          providers,
-        ),
+        generateUseCaseProviderParametersFields(providersJsons, [
+          'superface',
+          'mock',
+        ]),
       ).toMatchSnapshot();
     });
 
     it('returns undefined when no parameters are configured', () => {
-      const emptyProvider = { security: [], parameters: {} };
+      const emptyProvider: Omit<ProviderJson, 'name'> = {
+        defaultService: 'default',
+        services: [],
+        securitySchemes: [],
+        parameters: [],
+      };
       expect(
-        generateUseCaseProviderParametersFields(['foo', 'bar'], {
-          foo: emptyProvider,
-          bar: emptyProvider,
-        }),
+        generateUseCaseProviderParametersFields(
+          {
+            foo: { name: 'foo', ...emptyProvider },
+            bar: { name: 'bar', ...emptyProvider },
+          },
+          ['foo', 'bar'],
+        ),
       ).toBeUndefined();
+    });
+  });
+
+  describe('generateUseCaseSecurityFields', () => {
+    it('generates security fields for configured providers', () => {
+      expect(
+        generateUseCaseSecurityFields(providersJsons, ['mock', 'superface']),
+      ).toMatchSnapshot();
     });
   });
 

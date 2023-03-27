@@ -20,7 +20,12 @@ import {
 import { join as joinPath } from 'path';
 import { DEBUG_PREFIX } from './constants';
 import { load as loadProfile } from './profile';
-import { generateProfileConfig, generateProfileTypes } from './schema.types';
+import { load as loadProvider } from './provider';
+import {
+  generateProfileConfig,
+  generateProfileTypes,
+  ProvidersJsonRecord,
+} from './schema.types';
 import { hasFieldsDefined, sanitizedProfileName } from './schema.utils';
 
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
@@ -57,6 +62,15 @@ export async function generate(
   const queryFields: GraphQLFieldConfigMap<any, any> = {};
   const mutationFields: GraphQLFieldConfigMap<any, any> = {};
 
+  const loadedProviders: ProvidersJsonRecord = {};
+
+  await Promise.all(
+    Object.keys(superJson.providers).map(async (providerName) => {
+      const providerJson = await loadProvider(superJson, providerName);
+      loadedProviders[providerName] = providerJson;
+    }),
+  );
+
   for (const [profile, profileSettings] of Object.entries(superJson.profiles)) {
     debug(`generate start for ${profile}`);
 
@@ -68,7 +82,7 @@ export async function generate(
       profilePrefix,
       loadedProfile.ast,
       profileSettings,
-      superJson.providers,
+      loadedProviders,
     );
 
     if (QueryType) {

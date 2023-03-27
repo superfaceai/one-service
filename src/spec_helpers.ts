@@ -17,16 +17,12 @@ import { readFile, writeFile } from 'fs/promises';
 import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 import { basename, join as joinPath } from 'path';
 
-const mockProvider = {
-  mock: {
-    security: [],
-  },
-};
-
 export async function createSuperJson(
   profileFixtureName: string,
 ): Promise<NormalizedSuperJsonDocument> {
-  const file = fixturePath(`${profileFixtureName}.supr`);
+  const profileFile = fixturePath(`${profileFixtureName}.supr`);
+  const providerFile = fixturePath(`test.provider.json`);
+
   const profileAst = await parseProfileFixture(profileFixtureName);
   const profile = ProfileId.fromParameters(profileAst.header).withoutVersion;
 
@@ -34,21 +30,21 @@ export async function createSuperJson(
     profileAst.header.version,
   ).toString();
 
-  const providers = { ...mockProvider };
-
-  const [providerName] = Object.entries(providers)[0];
-
   return normalizeSuperJsonDocument({
     profiles: {
       [profile]: {
-        file,
+        file: profileFile,
         version,
         providers: {
-          [providerName]: {},
+          test: {},
         },
       },
     },
-    providers,
+    providers: {
+      test: {
+        file: providerFile,
+      },
+    },
   });
 }
 

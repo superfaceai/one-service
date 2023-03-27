@@ -1,3 +1,4 @@
+import { SecurityValues } from '@superfaceai/ast';
 import { Provider, SuperfaceClient } from '@superfaceai/one-sdk';
 import createDebug from 'debug';
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
@@ -14,6 +15,7 @@ export type PerformParams = {
   input: Record<string, any>;
   provider?: string;
   parameters?: Record<string, string>;
+  security?: Record<string, Omit<SecurityValues, 'id'>>;
   oneSdk?: SuperfaceClient;
 };
 
@@ -30,6 +32,8 @@ export function getInstance() {
 }
 
 export async function perform(params: PerformParams) {
+  debug('Performing with params', params);
+
   const oneSdk = params.oneSdk ?? getInstance();
 
   const profile = await oneSdk.getProfile(params.profile);
@@ -43,6 +47,7 @@ export async function perform(params: PerformParams) {
   return await useCase.perform(params.input, {
     provider,
     parameters: params.parameters,
+    security: params.security,
   });
 }
 
@@ -52,10 +57,14 @@ export type ResolverContext = {
 };
 export type ResolverArgs = {
   input?: PerformParams['input'];
-  options?: {
-    provider?: PerformParams['provider'];
-    parameters?: PerformParams['parameters'];
-  };
+  provider?: Record<
+    NonNullable<PerformParams['provider']>,
+    {
+      parameters?: PerformParams['parameters'];
+      security?: PerformParams['security'];
+      active?: boolean;
+    }
+  >;
 };
 export type ResolverResult<TResult> = {
   result: TResult;
@@ -85,13 +94,44 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
+    const activeProviders = [];
+    const configuredProviders = Object.keys(args.provider ?? {});
+
+    if (configuredProviders.length === 1) {
+      if (args.provider?.[configuredProviders[0]].active !== false) {
+        activeProviders.push(configuredProviders[0]);
+      }
+    } else {
+      for (const [providerName, providerOptions] of Object.entries(
+        args.provider ?? {},
+      )) {
+        if (providerOptions.active) {
+          activeProviders.push(providerName);
+        }
+      }
+
+      if (activeProviders.length > 1) {
+        throw new Error(
+          `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
+            ', ',
+          )}. Please choose a single active provider`,
+        );
+      }
+    }
+
+    const provider = activeProviders[0];
+    const providerOptions = args.provider?.[provider] ?? {};
+
+    const input = args.input ?? {};
+
     try {
       const result = await perform({
         profile,
         useCase,
-        input: args.input ?? {},
-        provider: args.options?.provider,
-        parameters: args.options?.parameters ?? {},
+        input,
+        provider,
+        parameters: providerOptions.parameters ?? {},
+        security: providerOptions.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

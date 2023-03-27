@@ -99,6 +99,18 @@ type ScopeProfileTwo {
 }"
 `;
 
+exports[`schema.types generateStructureResultType creates ScopeNameResult as None value 1`] = `
+""""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameResult {
+  result: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
 """"
 Wrapping type to handle many possible types returned as result by OneSDK
@@ -122,7 +134,20 @@ type ScopeNameResultNode {
 }"
 `;
 
-exports[`schema.types generateUseCaseFieldConfig for profile fixture creates field config with arguments, resolver and description 1`] = `
+exports[`schema.types generateUseCaseFieldConfig usecase with empty input creates arguments without input 1`] = `
+{
+  "args": {
+    "provider": {
+      "type": "ScopeNameProviderOption",
+    },
+  },
+  "description": undefined,
+  "resolve": [Function],
+  "type": "ScopeNameUseCaseResult",
+}
+`;
+
+exports[`schema.types generateUseCaseFieldConfig valid profile creates field config with arguments, resolver and description 1`] = `
 {
   "args": {
     "input": {
@@ -135,19 +160,6 @@ exports[`schema.types generateUseCaseFieldConfig for profile fixture creates fie
   },
   "description": "UseCase
 UseCase description",
-  "resolve": [Function],
-  "type": "ScopeNameUseCaseResult",
-}
-`;
-
-exports[`schema.types generateUseCaseFieldConfig for profile fixture with empty input fields creates arguments without input 1`] = `
-{
-  "args": {
-    "provider": {
-      "type": "ScopeNameProviderOption",
-    },
-  },
-  "description": undefined,
   "resolve": [Function],
   "type": "ScopeNameUseCaseResult",
 }

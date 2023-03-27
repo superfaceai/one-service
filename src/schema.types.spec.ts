@@ -188,22 +188,7 @@ describe('schema.types', () => {
   });
 
   describe('generateUseCaseFieldConfig', () => {
-    it('throws if usecase is missing result', async () => {
-      const profileAst = await parseProfileFixture('no_result');
-      const profileOutput = await getProfileOutput('no_result', profileAst);
-
-      expect(() =>
-        generateUseCaseFieldConfig(
-          'ScopeName',
-          profileAst,
-          profileSettings,
-          profileOutput.usecases[0],
-          providersJsons,
-        ),
-      ).toThrowError();
-    });
-
-    describe('for profile fixture', () => {
+    describe('valid profile', () => {
       it('creates field config with arguments, resolver and description', async () => {
         const profileAst = await parseProfileFixture('profile');
         const profileOutput = await getProfileOutput('profile', profileAst);
@@ -219,7 +204,7 @@ describe('schema.types', () => {
       });
     });
 
-    describe('for profile fixture with empty input fields', () => {
+    describe('usecase with empty input', () => {
       it('creates arguments without input', async () => {
         const profileAst = await parseProfileFixture(
           'profile_with_empty_input_structure',
@@ -257,6 +242,16 @@ describe('schema.types', () => {
   describe('generateStructureResultType', () => {
     it('creates ScopeNameResult with description and result field', async () => {
       const profileOutput = await getProfileOutput('profile');
+      expectSchema(
+        generateStructureResultType(
+          'ScopeNameResult',
+          profileOutput.usecases[0].result as StructureType,
+        ),
+      );
+    });
+
+    it('creates ScopeNameResult as None value', async () => {
+      const profileOutput = await getProfileOutput('no_result');
       expectSchema(
         generateStructureResultType(
           'ScopeNameResult',

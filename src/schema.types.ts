@@ -120,10 +120,6 @@ export function generateUseCaseFieldConfig(
   useCase: UseCaseStructure,
   providersJsons: ProvidersJsonRecord,
 ): GraphQLFieldConfig<any, any> {
-  if (!useCase.result) {
-    throw new Error(`${useCase.useCaseName} doesn't have defined result`);
-  }
-
   const useCasePrefix = `${profilePrefix}${pascalize(
     sanitize(useCase.useCaseName),
   )}`;
@@ -134,7 +130,8 @@ export function generateUseCaseFieldConfig(
   );
 
   const InputType =
-    useCase.input && Object.keys(useCase.input.fields).length !== 0
+    useCase.input !== undefined &&
+    Object.keys(useCase.input.fields).length !== 0
       ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
       : undefined;
 
@@ -191,11 +188,16 @@ export function generateProfileConfig(
 
 export function generateStructureResultType(
   name: string,
-  structure: StructureType,
+  structure: StructureType | undefined,
 ): GraphQLOutputType {
   debug(`generateStructureResultType for ${name} from structure`, structure);
 
-  const type = outputType(`${name}Node`, structure);
+  let type: GraphQLOutputType;
+  if (structure === undefined) {
+    type = GraphQLNone;
+  } else {
+    type = outputType(`${name}Node`, structure);
+  }
 
   return new GraphQLObjectType({
     name,
@@ -600,3 +602,21 @@ export function inputType(
       throw new Error(`Variable type not implemented for: ${structure.kind}`);
   }
 }
+
+export const GraphQLNone = new GraphQLScalarType({
+  name: 'None',
+
+  description: 'Represents NULL value',
+
+  serialize() {
+    return null;
+  },
+
+  parseValue() {
+    return null;
+  },
+
+  parseLiteral() {
+    return null;
+  },
+});

@@ -95,8 +95,13 @@ export function createResolver<
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
     const activeProviders = [];
+    const configuredProviders = Object.keys(args.provider ?? {});
 
-    if (Object.keys(args.provider ?? {}).length > 0) {
+    if (configuredProviders.length === 1) {
+      if (args.provider?.[configuredProviders[0]].active !== false) {
+        activeProviders.push(configuredProviders[0]);
+      }
+    } else {
       for (const [providerName, providerOptions] of Object.entries(
         args.provider ?? {},
       )) {
@@ -112,8 +117,6 @@ export function createResolver<
           )}. Please choose a single active provider`,
         );
       }
-    } else {
-      activeProviders.push(...Object.keys(args.provider ?? {}));
     }
 
     const provider = activeProviders[0];

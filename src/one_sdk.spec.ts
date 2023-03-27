@@ -188,6 +188,30 @@ describe('one_sdk', () => {
         });
       });
 
+      it('uses only configured provider even without setting active to true', async () => {
+        await callResolver({
+          provider: {
+            test: {},
+          },
+        });
+
+        expect(
+          jest.mocked(SuperfaceClient.prototype.getProvider).mock.calls[0][0],
+        ).toBe('test');
+      });
+
+      it('will not use only configured provider with active = false', async () => {
+        await callResolver({
+          provider: {
+            test: { active: false },
+          },
+        });
+
+        expect(
+          jest.mocked(SuperfaceClient.prototype.getProvider),
+        ).not.toBeCalled();
+      });
+
       it('throws error if more than provider is marked as active', async () => {
         await expect(
           callResolver({

@@ -274,7 +274,7 @@ export function generateProfileProviderOptionInputType(
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({
         name: `${name}${pascalize(providerName)}Config`,
-        fields: { use: { type: GraphQLBoolean }, ...configurationFields },
+        fields: { active: { type: GraphQLBoolean }, ...configurationFields },
       }),
     };
   }

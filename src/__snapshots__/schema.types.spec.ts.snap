@@ -31,11 +31,11 @@ input Test {
 }
 
 input TestMockConfig {
-  use: Boolean
+  active: Boolean
 }
 
 input TestSuperfaceConfig {
-  use: Boolean
+  active: Boolean
   parameters: TestSuperfaceProviderParameters
   security: TestSuperfaceProviderSecurity
 }

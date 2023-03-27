@@ -62,7 +62,7 @@ export type ResolverArgs = {
     {
       parameters?: PerformParams['parameters'];
       security?: PerformParams['security'];
-      use?: boolean;
+      active?: boolean;
     }
   >;
 };
@@ -100,7 +100,7 @@ export function createResolver<
       for (const [providerName, providerOptions] of Object.entries(
         args.provider ?? {},
       )) {
-        if (providerOptions.use) {
+        if (providerOptions.active) {
           activeProviders.push(providerName);
         }
       }

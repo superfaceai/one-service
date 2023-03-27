@@ -188,12 +188,12 @@ describe('one_sdk', () => {
         });
       });
 
-      it('throws error if more than provider is marked as used', async () => {
+      it('throws error if more than provider is marked as active', async () => {
         await expect(
           callResolver({
             provider: {
-              test: { use: true },
-              test_two: { use: true },
+              test: { active: true },
+              test_two: { active: true },
             },
           }),
         ).rejects.toThrowError();
@@ -208,7 +208,7 @@ describe('one_sdk', () => {
           {
             input: { key: 'value' },
             provider: {
-              test: { use: true },
+              test: { active: true },
             },
           },
           'scope/name',

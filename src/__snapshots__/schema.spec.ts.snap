@@ -32,7 +32,7 @@ input ProfileProviderOption {
 }
 
 input ProfileProviderOptionTestConfig {
-  use: Boolean
+  active: Boolean
   parameters: ProfileProviderOptionTestProviderParameters
   security: ProfileProviderOptionTestProviderSecurity
 }
@@ -139,7 +139,7 @@ input ScopeNameProviderOption {
 }
 
 input ScopeNameProviderOptionTestConfig {
-  use: Boolean
+  active: Boolean
   parameters: ScopeNameProviderOptionTestProviderParameters
   security: ScopeNameProviderOptionTestProviderSecurity
 }

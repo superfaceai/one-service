@@ -109,7 +109,7 @@ export function createResolver<
         throw new Error(
           `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
             ', ',
-          )}`,
+          )}. Please choose a single active provider`,
         );
       }
     } else {

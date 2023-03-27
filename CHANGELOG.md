@@ -7,17 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.2.3] - 2023-03-24
 ### Fixed
-- generate schema when use case contains empty input fields without input argument
-- Configurable parameters are now taken from provider definition instead of super.json's providers section - [#41](https://github.com/superfaceai/one-service/pull/41)
+- Handle use-cases without result defined - [#43](https://github.com/superfaceai/one-service/pull/43)
+- Configurable parameters are now taken from provider definition instead of super.json's providers section - [#41](https://github.com/superfaceai/one-service/pull/41), [#45](https://github.com/superfaceai/one-service/pull/45)
 
 ### Added
 - **BREAKING** Added UseCase arguemnt `provider` to allow provider specific configuration and avoid collisions between them [#41](https://github.com/superfaceai/one-service/pull/41)
 
+## [2.2.3] - 2023-03-24
+### Fixed
+- generate schema when use case contains empty input fields without input argument - [#42](https://github.com/superfaceai/one-service/pull/42)
+
 ## [2.2.2] - 2023-03-09
 ### Fixed
-- generate _superJson introspection schema and resolver with SuperJson document from argument instead of loading it from file system
+- generate _superJson introspection schema and resolver with SuperJson document from argument instead of loading it from file system - [#38](https://github.com/superfaceai/one-service/pull/38)
 
 ## [2.2.1] - 2023-03-07
 ### Fixed

@@ -70,6 +70,12 @@ export async function generateProfileTypes(
   const queryFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
   const mutationFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
 
+  const ProfileProviderOptionType = generateProfileProviderOptionInputType(
+    `${profilePrefix}ProviderOption`,
+    profileSettings,
+    providersJsons,
+  );
+
   for (const useCase of output.usecases) {
     const useCaseInfo = useCasesInfo.find(
       (uc) => uc.name === useCase.useCaseName,
@@ -82,9 +88,8 @@ export async function generateProfileTypes(
     const useCaseFieldConfig = generateUseCaseFieldConfig(
       profilePrefix,
       profileAst,
-      profileSettings,
       useCase,
-      providersJsons,
+      ProfileProviderOptionType,
     );
 
     const type = typeFromSafety(useCaseInfo.safety);
@@ -116,9 +121,8 @@ export async function generateProfileTypes(
 export function generateUseCaseFieldConfig(
   profilePrefix: string,
   profileAst: ProfileDocumentNode,
-  profileSettings: NormalizedProfileSettings,
   useCase: UseCaseStructure,
-  providersJsons: ProvidersJsonRecord,
+  ProfileProviderOptionType?: GraphQLInputObjectType,
 ): GraphQLFieldConfig<any, any> {
   const useCasePrefix = `${profilePrefix}${pascalize(
     sanitize(useCase.useCaseName),
@@ -135,17 +139,13 @@ export function generateUseCaseFieldConfig(
       ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
       : undefined;
 
-  const ProfileProviderOptionType = generateProfileProviderOptionInputType(
-    `${profilePrefix}ProviderOption`,
-    profileSettings,
-    providersJsons,
-  );
+  const args: GraphQLFieldConfigArgumentMap = {};
 
-  const args: GraphQLFieldConfigArgumentMap = {
-    provider: {
+  if (ProfileProviderOptionType) {
+    args.provider = {
       type: ProfileProviderOptionType,
-    },
-  };
+    };
+  }
 
   if (InputType) {
     args.input = {

@@ -42,6 +42,7 @@ import {
   pascalize,
   sanitize,
   sanitizeForGQLTypeName,
+  sanitizeProviderName,
   typeFromSafety,
 } from './schema.utils';
 import { ArrayMultiMap } from './structures';
@@ -268,8 +269,7 @@ export function generateProfileProviderOptionInputType(
       }),
     };
 
-    // TODO: sanitize provider name
-    providerFields[providerName] = {
+    providerFields[sanitizeProviderName(providerName)] = {
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({
         name: `${namePrefix}Config`,

@@ -26,6 +26,10 @@ export function camelize(input: string): string {
   });
 }
 
+export function snake_cased(input: string): string {
+  return input.replace(/([A-Z])/g, '_$1').toLowerCase();
+}
+
 export function pascalize(input: string): string {
   return capitalize(camelize(input));
 }
@@ -43,6 +47,23 @@ export function sanitizedProfileName(profileAst: ProfileDocumentNode): string {
       }).toString(),
     ),
   );
+}
+
+/**
+ * @param provider Provider name with characters: [a-z][a-z0-9_-]
+ * @returns GQL valid field name representing provider name with characters: [_a-zA-Z][_a-zA-Z0-9]
+ *
+ * Sanitization can be reversed by desanitizeProviderName
+ */
+export function sanitizeProviderName(provider: string): string {
+  return provider.replace(/-/g, '__');
+}
+
+/**
+ * Inversed sanitizeProviderName
+ */
+export function desanitizeProviderName(provider: string): string {
+  return provider.replace(/__/g, '-');
 }
 
 export function hasFieldsDefined(

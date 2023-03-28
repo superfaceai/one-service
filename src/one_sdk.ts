@@ -5,6 +5,7 @@ import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
 import { isOneSdkError, remapOneSdkError } from './errors';
 import { Logger } from './logger';
+import { desanitizeProviderName } from './schema.utils';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;
@@ -71,24 +72,29 @@ export async function perform(params: PerformParams) {
 }
 
 export function prepareProviderConfig(
-  provider: ResolverArgs['provider'],
+  providerArg: ResolverArgs['provider'],
   profile: string,
   useCase: string,
 ): {
   provider: PerformParams['provider'];
   providerConfig: ProviderConfig;
 } {
+  if (providerArg === undefined) {
+    return {
+      provider: undefined,
+      providerConfig: {},
+    };
+  }
+
   const activeProviders = [];
-  const configuredProviders = Object.keys(provider ?? {});
+  const configuredProviders = Object.keys(providerArg);
 
   if (configuredProviders.length === 1) {
-    if (provider?.[configuredProviders[0]].active !== false) {
+    if (providerArg[configuredProviders[0]].active !== false) {
       activeProviders.push(configuredProviders[0]);
     }
   } else {
-    for (const [providerName, providerConfig] of Object.entries(
-      provider ?? {},
-    )) {
+    for (const [providerName, providerConfig] of Object.entries(providerArg)) {
       if (providerConfig.active) {
         activeProviders.push(providerName);
       }
@@ -103,9 +109,18 @@ export function prepareProviderConfig(
     }
   }
 
+  const provider = activeProviders[0];
+
+  if (!provider) {
+    return {
+      provider: undefined,
+      providerConfig: {},
+    };
+  }
+
   return {
-    provider: activeProviders[0], // TODO: desanitize
-    providerConfig: provider?.[activeProviders[0]] ?? {},
+    provider: desanitizeProviderName(provider),
+    providerConfig: providerArg[provider] ?? {},
   };
 }
 

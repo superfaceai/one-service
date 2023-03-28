@@ -106,6 +106,9 @@ describe('schema.types', () => {
       superface: {
         defaults: {},
       },
+      'gql_bad-name': {
+        defaults: {},
+      },
     },
   };
 
@@ -159,6 +162,16 @@ describe('schema.types', () => {
       parameters: [
         {
           name: 'accessToken',
+        },
+      ],
+    },
+    'gql_bad-name': {
+      name: 'gql_bad-name',
+      defaultService: 'default',
+      services: [
+        {
+          id: 'default',
+          baseUrl: 'https://superface.test',
         },
       ],
     },

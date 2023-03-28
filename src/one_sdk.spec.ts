@@ -7,6 +7,7 @@ import {
   createResolver,
   getInstance,
   perform,
+  prepareProviderConfig,
   ResolverArgs,
   ResolverContext,
 } from './one_sdk';
@@ -123,6 +124,64 @@ describe('one_sdk', () => {
     });
   });
 
+  describe('prepareProviderConfig', () => {
+    it('returns undefined provider if providerArgs is undefined', async () => {
+      expect(prepareProviderConfig(undefined, 'profile', 'usecase')).toEqual({
+        provider: undefined,
+        providerConfig: {},
+      });
+    });
+
+    it('uses single configured provider without set active to true', async () => {
+      expect(
+        prepareProviderConfig(
+          {
+            test: {},
+          },
+          'profile',
+          'usecase',
+        ),
+      ).toEqual({ provider: 'test', providerConfig: {} });
+    });
+
+    it('returns undefined provider if only provider is marked as inactive', async () => {
+      expect(
+        prepareProviderConfig(
+          {
+            test: { active: false },
+          },
+          'profile',
+          'usecase',
+        ),
+      ).toEqual({ provider: undefined, providerConfig: {} });
+    });
+
+    it('throws error if more than one provider is marked as active', async () => {
+      expect(() =>
+        prepareProviderConfig(
+          {
+            test: { active: true },
+            test_two: { active: true },
+          },
+          'profile',
+          'usecase',
+        ),
+      ).toThrowError();
+    });
+
+    it('desanitizes provider name', async () => {
+      expect(
+        prepareProviderConfig(
+          {
+            foo__bar_baz: {},
+          },
+          'profile',
+          'usecase',
+        ),
+      ).toEqual({ provider: 'foo-bar_baz', providerConfig: {} });
+    });
+  });
+
   describe('createResolver', () => {
     let resolverResult: any;
 
@@ -180,47 +239,6 @@ describe('one_sdk', () => {
         });
 
         expect(performMock.mock.calls[0][1]['security']).toEqual({});
-      });
-
-      it('it passed undefined if provider is not selected', async () => {
-        await expect(callResolver({})).resolves.toEqual({
-          result: 'perform result',
-        });
-      });
-
-      it('uses only configured provider even without setting active to true', async () => {
-        await callResolver({
-          provider: {
-            test: {},
-          },
-        });
-
-        expect(
-          jest.mocked(SuperfaceClient.prototype.getProvider).mock.calls[0][0],
-        ).toBe('test');
-      });
-
-      it('will not use only configured provider with active = false', async () => {
-        await callResolver({
-          provider: {
-            test: { active: false },
-          },
-        });
-
-        expect(
-          jest.mocked(SuperfaceClient.prototype.getProvider),
-        ).not.toBeCalled();
-      });
-
-      it('throws error if more than provider is marked as active', async () => {
-        await expect(
-          callResolver({
-            provider: {
-              test: { active: true },
-              test_two: { active: true },
-            },
-          }),
-        ).rejects.toThrowError();
       });
     });
 

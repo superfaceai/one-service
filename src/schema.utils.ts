@@ -13,7 +13,7 @@ import { GraphQLFieldConfigMap, GraphQLInputFieldConfigMap } from 'graphql';
  * Comlink allowed: [a-z][a-z0-9_-] + scope delimiter /
  */
 export function sanitize(input: string): string {
-  return input.replace(/\//g, '_').replace(/-/g, '_');
+  return input.replace(/[-_/]/g, '_');
 }
 
 export function capitalize(input: string): string {
@@ -28,6 +28,10 @@ export function camelize(input: string): string {
 
 export function pascalize(input: string): string {
   return capitalize(camelize(input));
+}
+
+export function sanitizeForGQLTypeName(input: string): string {
+  return pascalize(sanitize(input));
 }
 
 export function sanitizedProfileName(profileAst: ProfileDocumentNode): string {

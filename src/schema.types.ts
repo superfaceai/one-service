@@ -268,6 +268,7 @@ export function generateProfileProviderOptionInputType(
       }),
     };
 
+    // TODO: sanitize provider name
     providerFields[providerName] = {
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({

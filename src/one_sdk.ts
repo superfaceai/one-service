@@ -19,6 +19,25 @@ export type PerformParams = {
   oneSdk?: SuperfaceClient;
 };
 
+export type ResolverContext = {
+  logger?: Logger;
+  getOneSdkInstance?: () => SuperfaceClient;
+};
+
+export type ProviderConfig = {
+  parameters?: PerformParams['parameters'];
+  security?: PerformParams['security'];
+  active?: boolean;
+};
+export type ResolverArgs = {
+  input?: PerformParams['input'];
+  provider?: Record<NonNullable<PerformParams['provider']>, ProviderConfig>;
+};
+
+export type ResolverResult<TResult> = {
+  result: TResult;
+};
+
 export function createInstance() {
   return new SuperfaceClient();
 }
@@ -51,24 +70,44 @@ export async function perform(params: PerformParams) {
   });
 }
 
-export type ResolverContext = {
-  logger?: Logger;
-  getOneSdkInstance?: () => SuperfaceClient;
-};
-export type ResolverArgs = {
-  input?: PerformParams['input'];
-  provider?: Record<
-    NonNullable<PerformParams['provider']>,
-    {
-      parameters?: PerformParams['parameters'];
-      security?: PerformParams['security'];
-      active?: boolean;
+export function prepareProviderConfig(
+  provider: ResolverArgs['provider'],
+  profile: string,
+  useCase: string,
+): {
+  provider: PerformParams['provider'];
+  providerConfig: ProviderConfig;
+} {
+  const activeProviders = [];
+  const configuredProviders = Object.keys(provider ?? {});
+
+  if (configuredProviders.length === 1) {
+    if (provider?.[configuredProviders[0]].active !== false) {
+      activeProviders.push(configuredProviders[0]);
     }
-  >;
-};
-export type ResolverResult<TResult> = {
-  result: TResult;
-};
+  } else {
+    for (const [providerName, providerConfig] of Object.entries(
+      provider ?? {},
+    )) {
+      if (providerConfig.active) {
+        activeProviders.push(providerName);
+      }
+    }
+
+    if (activeProviders.length > 1) {
+      throw new Error(
+        `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
+          ', ',
+        )}. Please choose a single active provider`,
+      );
+    }
+  }
+
+  return {
+    provider: activeProviders[0], // TODO: desanitize
+    providerConfig: provider?.[activeProviders[0]] ?? {},
+  };
+}
 
 export function createResolver<
   TSource,
@@ -94,35 +133,13 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
-    const activeProviders = [];
-    const configuredProviders = Object.keys(args.provider ?? {});
-
-    if (configuredProviders.length === 1) {
-      if (args.provider?.[configuredProviders[0]].active !== false) {
-        activeProviders.push(configuredProviders[0]);
-      }
-    } else {
-      for (const [providerName, providerOptions] of Object.entries(
-        args.provider ?? {},
-      )) {
-        if (providerOptions.active) {
-          activeProviders.push(providerName);
-        }
-      }
-
-      if (activeProviders.length > 1) {
-        throw new Error(
-          `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
-            ', ',
-          )}. Please choose a single active provider`,
-        );
-      }
-    }
-
-    const provider = activeProviders[0];
-    const providerOptions = args.provider?.[provider] ?? {};
-
     const input = args.input ?? {};
+
+    const { provider, providerConfig } = prepareProviderConfig(
+      args.provider,
+      profile,
+      useCase,
+    );
 
     try {
       const result = await perform({
@@ -130,8 +147,8 @@ export function createResolver<
         useCase,
         input,
         provider,
-        parameters: providerOptions.parameters ?? {},
-        security: providerOptions.security ?? {},
+        parameters: providerConfig.parameters ?? {},
+        security: providerConfig.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

@@ -5,6 +5,7 @@ import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
 import { isOneSdkError, remapOneSdkError } from './errors';
 import { Logger } from './logger';
+import { desanitizeProviderName } from './schema.utils';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;
@@ -17,6 +18,25 @@ export type PerformParams = {
   parameters?: Record<string, string>;
   security?: Record<string, Omit<SecurityValues, 'id'>>;
   oneSdk?: SuperfaceClient;
+};
+
+export type ResolverContext = {
+  logger?: Logger;
+  getOneSdkInstance?: () => SuperfaceClient;
+};
+
+export type ProviderConfig = {
+  parameters?: PerformParams['parameters'];
+  security?: PerformParams['security'];
+  active?: boolean;
+};
+export type ResolverArgs = {
+  input?: PerformParams['input'];
+  provider?: Record<NonNullable<PerformParams['provider']>, ProviderConfig>;
+};
+
+export type ResolverResult<TResult> = {
+  result: TResult;
 };
 
 export function createInstance() {
@@ -51,24 +71,58 @@ export async function perform(params: PerformParams) {
   });
 }
 
-export type ResolverContext = {
-  logger?: Logger;
-  getOneSdkInstance?: () => SuperfaceClient;
-};
-export type ResolverArgs = {
-  input?: PerformParams['input'];
-  provider?: Record<
-    NonNullable<PerformParams['provider']>,
-    {
-      parameters?: PerformParams['parameters'];
-      security?: PerformParams['security'];
-      active?: boolean;
+export function prepareProviderConfig(
+  providerArg: ResolverArgs['provider'],
+  profile: string,
+  useCase: string,
+): {
+  provider: PerformParams['provider'];
+  providerConfig: ProviderConfig;
+} {
+  if (providerArg === undefined) {
+    return {
+      provider: undefined,
+      providerConfig: {},
+    };
+  }
+
+  const activeProviders = [];
+  const configuredProviders = Object.keys(providerArg);
+
+  if (configuredProviders.length === 1) {
+    if (providerArg[configuredProviders[0]].active !== false) {
+      activeProviders.push(configuredProviders[0]);
     }
-  >;
-};
-export type ResolverResult<TResult> = {
-  result: TResult;
-};
+  } else {
+    for (const [providerName, providerConfig] of Object.entries(providerArg)) {
+      if (providerConfig.active) {
+        activeProviders.push(providerName);
+      }
+    }
+
+    if (activeProviders.length > 1) {
+      throw new Error(
+        `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
+          ', ',
+        )}. Please choose a single active provider`,
+      );
+    }
+  }
+
+  const provider = activeProviders[0];
+
+  if (!provider) {
+    return {
+      provider: undefined,
+      providerConfig: {},
+    };
+  }
+
+  return {
+    provider: desanitizeProviderName(provider),
+    providerConfig: providerArg[provider] ?? {},
+  };
+}
 
 export function createResolver<
   TSource,
@@ -94,35 +148,13 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
-    const activeProviders = [];
-    const configuredProviders = Object.keys(args.provider ?? {});
-
-    if (configuredProviders.length === 1) {
-      if (args.provider?.[configuredProviders[0]].active !== false) {
-        activeProviders.push(configuredProviders[0]);
-      }
-    } else {
-      for (const [providerName, providerOptions] of Object.entries(
-        args.provider ?? {},
-      )) {
-        if (providerOptions.active) {
-          activeProviders.push(providerName);
-        }
-      }
-
-      if (activeProviders.length > 1) {
-        throw new Error(
-          `Multiple providers are active for ${profile}/${useCase}: ${activeProviders.join(
-            ', ',
-          )}. Please choose a single active provider`,
-        );
-      }
-    }
-
-    const provider = activeProviders[0];
-    const providerOptions = args.provider?.[provider] ?? {};
-
     const input = args.input ?? {};
+
+    const { provider, providerConfig } = prepareProviderConfig(
+      args.provider,
+      profile,
+      useCase,
+    );
 
     try {
       const result = await perform({
@@ -130,8 +162,8 @@ export function createResolver<
         useCase,
         input,
         provider,
-        parameters: providerOptions.parameters ?? {},
-        security: providerOptions.security ?? {},
+        parameters: providerConfig.parameters ?? {},
+        security: providerConfig.security ?? {},
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

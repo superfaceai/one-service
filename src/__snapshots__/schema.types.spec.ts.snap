@@ -28,6 +28,9 @@ input Test {
 
   """Provider superface configuration"""
   superface: TestSuperfaceConfig
+
+  """Provider gql_bad-name configuration"""
+  gql_bad__name: TestGqlBadNameConfig
 }
 
 input TestMockConfig {
@@ -77,6 +80,10 @@ input SuperfaceBearerTokenSecurityValues {
 input SuperfaceDigestSecurityValues {
   username: String
   password: String
+}
+
+input TestGqlBadNameConfig {
+  active: Boolean
 }"
 `;
 

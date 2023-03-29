@@ -1,0 +1,10 @@
+name = "profile"
+version = "1.0.0"
+
+usecase UseCaseOne safe {
+  result string
+}
+
+usecase UseCaseTwo safe {
+  result string
+}

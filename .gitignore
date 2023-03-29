@@ -4,6 +4,7 @@ node_modules
 yarn-debug.log*
 yarn-error.log*
 
+src/coverage
 dist
 superface
 workdir/

@@ -36,12 +36,13 @@ import {
 import { DEBUG_PREFIX } from './constants';
 import { createResolver } from './one_sdk';
 import {
-  capitalize,
   description,
   hasFieldsDefined,
   isDocumentedStructure,
   pascalize,
   sanitize,
+  sanitizeForGQLTypeName,
+  sanitizeProviderName,
   typeFromSafety,
 } from './schema.utils';
 import { ArrayMultiMap } from './structures';
@@ -70,6 +71,12 @@ export async function generateProfileTypes(
   const queryFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
   const mutationFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
 
+  const ProfileProviderOptionType = generateProfileProviderOptionInputType(
+    `${profilePrefix}ProviderOption`,
+    profileSettings,
+    providersJsons,
+  );
+
   for (const useCase of output.usecases) {
     const useCaseInfo = useCasesInfo.find(
       (uc) => uc.name === useCase.useCaseName,
@@ -82,9 +89,8 @@ export async function generateProfileTypes(
     const useCaseFieldConfig = generateUseCaseFieldConfig(
       profilePrefix,
       profileAst,
-      profileSettings,
       useCase,
-      providersJsons,
+      ProfileProviderOptionType,
     );
 
     const type = typeFromSafety(useCaseInfo.safety);
@@ -116,12 +122,11 @@ export async function generateProfileTypes(
 export function generateUseCaseFieldConfig(
   profilePrefix: string,
   profileAst: ProfileDocumentNode,
-  profileSettings: NormalizedProfileSettings,
   useCase: UseCaseStructure,
-  providersJsons: ProvidersJsonRecord,
+  ProfileProviderOptionType?: GraphQLInputObjectType,
 ): GraphQLFieldConfig<any, any> {
-  const useCasePrefix = `${profilePrefix}${pascalize(
-    sanitize(useCase.useCaseName),
+  const useCasePrefix = `${profilePrefix}${sanitizeForGQLTypeName(
+    useCase.useCaseName,
   )}`;
 
   const ResultType = generateStructureResultType(
@@ -135,17 +140,13 @@ export function generateUseCaseFieldConfig(
       ? generateStructureInputType(`${useCasePrefix}Input`, useCase.input)
       : undefined;
 
-  const ProfileProviderOptionType = generateProfileProviderOptionInputType(
-    `${profilePrefix}ProviderOption`,
-    profileSettings,
-    providersJsons,
-  );
+  const args: GraphQLFieldConfigArgumentMap = {};
 
-  const args: GraphQLFieldConfigArgumentMap = {
-    provider: {
+  if (ProfileProviderOptionType) {
+    args.provider = {
       type: ProfileProviderOptionType,
-    },
-  };
+    };
+  }
 
   if (InputType) {
     args.input = {
@@ -233,12 +234,6 @@ export function generateProfileProviderOptionInputType(
     )}`,
   );
 
-  const values: GraphQLEnumValueConfigMap = {};
-
-  providersNames.forEach((value) => {
-    values[sanitize(value)] = { value };
-  });
-
   const providerFields: GraphQLInputFieldConfigMap = {};
 
   for (const providerName of providersNames) {
@@ -247,35 +242,37 @@ export function generateProfileProviderOptionInputType(
       [providerName],
     );
 
-    const security = generateUseCaseSecurityFields(providersJsons, [
+    const providerSecurity = generateUseCaseSecurityFields(providersJsons, [
       providerName,
     ]);
+
+    const namePrefix = `${name}${sanitizeForGQLTypeName(providerName)}`;
 
     const configurationFields = {
       ...(providerParameters && {
         parameters: {
           type: new GraphQLInputObjectType({
-            name: `${name}${pascalize(providerName)}ProviderParameters`,
+            name: `${namePrefix}ProviderParameters`,
             description: 'Provider-specific parameters',
             fields: providerParameters,
           }),
         },
       }),
-      ...(security && {
+      ...(providerSecurity && {
         security: {
           type: new GraphQLInputObjectType({
-            name: `${name}${pascalize(providerName)}ProviderSecurity`,
+            name: `${namePrefix}ProviderSecurity`,
             description: 'Provider-specific security',
-            fields: security,
+            fields: providerSecurity,
           }),
         },
       }),
     };
 
-    providerFields[providerName] = {
+    providerFields[sanitizeProviderName(providerName)] = {
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({
-        name: `${name}${pascalize(providerName)}Config`,
+        name: `${namePrefix}Config`,
         fields: { active: { type: GraphQLBoolean }, ...configurationFields },
       }),
     };
@@ -342,13 +339,14 @@ export function generateUseCaseSecurityFields(
 
     providerJson.securitySchemes?.forEach((schema) => {
       let type: GraphQLInputType;
+      const name = `${sanitizeForGQLTypeName(
+        providerName,
+      )}${sanitizeForGQLTypeName(schema.id)}SecurityValues`;
 
       if (schema.type === 'http') {
         if (schema.scheme === 'basic') {
           type = new GraphQLInputObjectType({
-            name: `${capitalize(providerName)}${pascalize(
-              sanitize(schema.id),
-            )}SecurityValues`,
+            name,
             fields: {
               username: {
                 type: GraphQLString,
@@ -360,9 +358,7 @@ export function generateUseCaseSecurityFields(
           });
         } else if (schema.scheme === 'bearer') {
           type = new GraphQLInputObjectType({
-            name: `${capitalize(providerName)}${pascalize(
-              sanitize(schema.id),
-            )}SecurityValues`,
+            name,
             fields: {
               token: {
                 type: GraphQLString,
@@ -371,9 +367,7 @@ export function generateUseCaseSecurityFields(
           });
         } else if (schema.scheme === 'digest') {
           type = new GraphQLInputObjectType({
-            name: `${capitalize(providerName)}${pascalize(
-              sanitize(schema.id),
-            )}SecurityValues`,
+            name,
             fields: {
               username: {
                 type: GraphQLString,
@@ -390,9 +384,7 @@ export function generateUseCaseSecurityFields(
         }
       } else if (schema.type === 'apiKey') {
         type = new GraphQLInputObjectType({
-          name: `${capitalize(providerName)}${pascalize(
-            sanitize(schema.id),
-          )}SecurityValues`,
+          name,
           fields: {
             apikey: {
               type: GraphQLString,

@@ -1,5 +1,104 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`schema generate generates valid schema for profile with mutiple usecases 1`] = `[]`;
+
+exports[`schema generate generates valid schema for profile with mutiple usecases 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  Profile: ProfileQuery
+  _superJson: SuperJson
+}
+
+type ProfileQuery {
+  UseCaseOne(provider: ProfileProviderOption): ProfileUseCaseOneResult
+  UseCaseTwo(provider: ProfileProviderOption): ProfileUseCaseTwoResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ProfileUseCaseOneResult {
+  result: String
+}
+
+"""Provider configuration for OneSDK perform"""
+input ProfileProviderOption {
+  """Provider test configuration"""
+  test: ProfileProviderOptionTestConfig
+}
+
+input ProfileProviderOptionTestConfig {
+  active: Boolean
+  parameters: ProfileProviderOptionTestProviderParameters
+  security: ProfileProviderOptionTestProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input ProfileProviderOptionTestProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input ProfileProviderOptionTestProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ProfileUseCaseTwoResult {
+  result: String
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}"
+`;
+
 exports[`schema generate generates valid schema for profile without scope 1`] = `[]`;
 
 exports[`schema generate generates valid schema for profile without scope 2`] = `
@@ -88,6 +187,201 @@ type ProfileInfo {
   name: String
   version: String
   providers: [String]
+}"
+`;
+
+exports[`schema generate generates valid schema for usecase with empty input 1`] = `[]`;
+
+exports[`schema generate generates valid schema for usecase with empty input 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  _superJson: SuperJson
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}
+
+"""Profile's unsafe and idempotent use-cases"""
+type Mutation {
+  ScopeName: ScopeNameMutation
+}
+
+type ScopeNameMutation {
+  UseCase(provider: ScopeNameProviderOption): ScopeNameUseCaseResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameUseCaseResult {
+  result: String
+}
+
+"""Provider configuration for OneSDK perform"""
+input ScopeNameProviderOption {
+  """Provider test configuration"""
+  test: ScopeNameProviderOptionTestConfig
+}
+
+input ScopeNameProviderOptionTestConfig {
+  active: Boolean
+  parameters: ScopeNameProviderOptionTestProviderParameters
+  security: ScopeNameProviderOptionTestProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input ScopeNameProviderOptionTestProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input ScopeNameProviderOptionTestProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}"
+`;
+
+exports[`schema generate generates valid schema for usecase without result 1`] = `[]`;
+
+exports[`schema generate generates valid schema for usecase without result 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  _superJson: SuperJson
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}
+
+"""Profile's unsafe and idempotent use-cases"""
+type Mutation {
+  ScopeName: ScopeNameMutation
+}
+
+type ScopeNameMutation {
+  NoResult(provider: ScopeNameProviderOption): ScopeNameNoResultResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameNoResultResult {
+  result: None
+}
+
+"""Represents NULL value"""
+scalar None
+
+"""Provider configuration for OneSDK perform"""
+input ScopeNameProviderOption {
+  """Provider test configuration"""
+  test: ScopeNameProviderOptionTestConfig
+}
+
+input ScopeNameProviderOptionTestConfig {
+  active: Boolean
+  parameters: ScopeNameProviderOptionTestProviderParameters
+  security: ScopeNameProviderOptionTestProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input ScopeNameProviderOptionTestProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input ScopeNameProviderOptionTestProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
 }"
 `;
 

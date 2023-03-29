@@ -2,11 +2,13 @@ import { GraphQLString } from 'graphql';
 import {
   camelize,
   capitalize,
+  desanitizeProviderName,
   description,
   hasFieldsDefined,
   pascalize,
   sanitize,
   sanitizedProfileName,
+  sanitizeProviderName,
   typeFromSafety,
 } from './schema.utils';
 
@@ -78,6 +80,15 @@ describe('schema.utils', () => {
           kind: 'ProfileDocument',
         }),
       ).toBe('ScopeNameProfileName');
+    });
+  });
+
+  describe('sanitizeProviderName + desanitizeProviderName', () => {
+    it('returns original provider name', () => {
+      const provider = 'foo-bar_baz';
+      expect(desanitizeProviderName(sanitizeProviderName(provider))).toBe(
+        provider,
+      );
     });
   });
 

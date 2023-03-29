@@ -10,7 +10,12 @@ import {
   PrimitiveStructure,
   StructureType,
 } from '@superfaceai/parser';
-import { GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 import {
   enumType,
   generateProfileConfig,
@@ -101,6 +106,9 @@ describe('schema.types', () => {
       superface: {
         defaults: {},
       },
+      'gql_bad-name': {
+        defaults: {},
+      },
     },
   };
 
@@ -157,6 +165,16 @@ describe('schema.types', () => {
         },
       ],
     },
+    'gql_bad-name': {
+      name: 'gql_bad-name',
+      defaultService: 'default',
+      services: [
+        {
+          id: 'default',
+          baseUrl: 'https://superface.test',
+        },
+      ],
+    },
   };
 
   describe('generateProfileTypes', () => {
@@ -188,16 +206,30 @@ describe('schema.types', () => {
   });
 
   describe('generateUseCaseFieldConfig', () => {
+    const ProfileProviderOptionType = new GraphQLInputObjectType({
+      name: 'ScopeNameProviderOption',
+      fields: {
+        provider: {
+          type: new GraphQLInputObjectType({
+            name: 'ScopeNameProviderConfig',
+            fields: {
+              active: { type: GraphQLBoolean },
+            },
+          }),
+        },
+      },
+    });
+
     describe('valid profile', () => {
       it('creates field config with arguments, resolver and description', async () => {
         const profileAst = await parseProfileFixture('profile');
         const profileOutput = await getProfileOutput('profile', profileAst);
+
         const config = generateUseCaseFieldConfig(
           'ScopeName',
           profileAst,
-          profileSettings,
           profileOutput.usecases[0],
-          providersJsons,
+          ProfileProviderOptionType,
         );
 
         expect(config).toMatchSnapshot();
@@ -216,9 +248,8 @@ describe('schema.types', () => {
         const config = generateUseCaseFieldConfig(
           'ScopeName',
           profileAst,
-          profileSettings,
           profileOutput.usecases[0],
-          providersJsons,
+          ProfileProviderOptionType,
         );
 
         expect(config).toMatchSnapshot();

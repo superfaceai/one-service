@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2023-03-30
+### Added
+- **BREAKING** Added UseCase arguemnt `provider` to allow provider specific configuration and avoid collisions between them [#41](https://github.com/superfaceai/one-service/pull/41) [#45](https://github.com/superfaceai/one-service/pull/45) [#46](https://github.com/superfaceai/one-service/pull/46)
+
 ### Fixed
 - Handle use-cases without result defined - [#43](https://github.com/superfaceai/one-service/pull/43)
 - Configurable parameters are now taken from provider definition instead of super.json's providers section - [#41](https://github.com/superfaceai/one-service/pull/41), [#45](https://github.com/superfaceai/one-service/pull/45)
-
-### Added
-- **BREAKING** Added UseCase arguemnt `provider` to allow provider specific configuration and avoid collisions between them [#41](https://github.com/superfaceai/one-service/pull/41) [#45](https://github.com/superfaceai/one-service/pull/45) [#46](https://github.com/superfaceai/one-service/pull/46)
 
 ## [2.2.3] - 2023-03-24
 ### Fixed
@@ -90,7 +91,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0-rc.0 - 2022-01-11
 
-[Unreleased]: https://github.com/superfaceai/one-service/compare/v2.2.3...HEAD
+[Unreleased]: https://github.com/superfaceai/one-service/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/superfaceai/one-service/compare/v2.2.3...v3.0.0
 [2.2.3]: https://github.com/superfaceai/one-service/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/superfaceai/one-service/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/superfaceai/one-service/compare/v2.2.0...v2.2.1

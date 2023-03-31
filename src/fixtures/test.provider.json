@@ -20,7 +20,7 @@
   ],
   "securitySchemes": [
     {
-      "id": "api_key",
+      "id": "api-key",
       "type": "apiKey",
       "in": "header",
       "name": "X-API-KEY"

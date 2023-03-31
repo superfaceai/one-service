@@ -42,7 +42,7 @@ import {
   pascalize,
   sanitize,
   sanitizeForGQLTypeName,
-  sanitizeProviderName,
+  sanitizeForFieldName,
   typeFromSafety,
 } from './schema.utils';
 import { ArrayMultiMap } from './structures';
@@ -288,7 +288,7 @@ export function generateProfileProviderOptionInputType(
   const providerFields: GraphQLInputFieldConfigMap = {};
 
   for (const providerName of providersNames) {
-    providerFields[sanitizeProviderName(providerName)] =
+    providerFields[sanitizeForFieldName(providerName)] =
       providerConfigTypeMap[providerName];
   }
 
@@ -411,7 +411,7 @@ export function generateUseCaseSecurityFields(
         );
       }
 
-      fields[schema.id] = {
+      fields[sanitizeForFieldName(schema.id)] = {
         description: `Security accepted by ${providerName}`,
         type,
       };

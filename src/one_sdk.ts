@@ -5,7 +5,7 @@ import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql';
 import { DEBUG_PREFIX } from './constants';
 import { isOneSdkError, remapOneSdkError } from './errors';
 import { Logger } from './logger';
-import { desanitizeProviderName } from './schema.utils';
+import { desanitizeForFieldName } from './schema.utils';
 
 const debug = createDebug(`${DEBUG_PREFIX}:onesdk`);
 let instance: SuperfaceClient;
@@ -119,9 +119,23 @@ export function prepareProviderConfig(
   }
 
   return {
-    provider: desanitizeProviderName(provider),
+    provider: desanitizeForFieldName(provider),
     providerConfig: providerArg[provider] ?? {},
   };
+}
+
+export function prepareSecurity(
+  security?: ProviderConfig['security'],
+): ProviderConfig['security'] {
+  if (security === undefined) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(security).map(([key, value]) => {
+      return [desanitizeForFieldName(key), value];
+    }),
+  );
 }
 
 export function createResolver<
@@ -154,6 +168,8 @@ export function createResolver<
       useCase,
     );
 
+    const security = prepareSecurity(providerConfig.security);
+
     try {
       const result = await perform({
         profile,
@@ -161,7 +177,7 @@ export function createResolver<
         provider,
         input: args.input ?? {},
         parameters: providerConfig.parameters,
-        security: providerConfig.security,
+        security,
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

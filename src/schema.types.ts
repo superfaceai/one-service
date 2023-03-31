@@ -393,7 +393,7 @@ export function generateUseCaseSecurityFields(
           });
         } else {
           throw new Error(
-            `Unsupported security scheme.Error in security schema definition for provider ${providerName}`,
+            `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
           );
         }
       } else if (schema.type === 'apiKey') {
@@ -407,7 +407,7 @@ export function generateUseCaseSecurityFields(
         });
       } else {
         throw new Error(
-          `Unsupported security scheme.Error in security schema definition for provider ${providerName}`,
+          `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
         );
       }
 
@@ -517,7 +517,7 @@ export function outputType(
   name: string,
   structure: StructureType,
 ): GraphQLOutputType {
-  debug(`outputType for ${name} from ${structure.kind} `);
+  debug(`outputType for ${name} from ${structure.kind}`);
 
   switch (structure.kind) {
     case 'PrimitiveStructure':
@@ -557,7 +557,7 @@ export function outputType(
       return new GraphQLNonNull(outputType(name, structure.value));
 
     default:
-      throw new Error(`Variable type not implemented for: ${structure.kind} `);
+      throw new Error(`Variable type not implemented for: ${structure.kind}`);
   }
 }
 
@@ -565,7 +565,7 @@ export function inputType(
   name: string,
   structure: StructureType,
 ): GraphQLInputType {
-  debug(`inputType for ${name} from ${structure.kind} `);
+  debug(`inputType for ${name} from ${structure.kind}`);
 
   switch (structure.kind) {
     case 'PrimitiveStructure':
@@ -583,7 +583,7 @@ export function inputType(
       Object.entries(structure.fields ?? {}).forEach(
         ([fieldName, innerStructure]) => {
           const fieldConfig: GraphQLInputFieldConfig = {
-            type: inputType(`${name}${pascalize(fieldName)} `, innerStructure),
+            type: inputType(`${name}${pascalize(fieldName)}`, innerStructure),
             description: isDocumentedStructure(innerStructure)
               ? description(innerStructure)
               : undefined,
@@ -605,7 +605,7 @@ export function inputType(
       return new GraphQLNonNull(inputType(name, structure.value));
 
     default:
-      throw new Error(`Variable type not implemented for: ${structure.kind} `);
+      throw new Error(`Variable type not implemented for: ${structure.kind}`);
   }
 }
 

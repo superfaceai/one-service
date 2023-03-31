@@ -22,35 +22,35 @@ Full profile to test all generation functionality",
 
 exports[`schema.types generateProfileProviderOptionInputType creates provider object with security and parameters field 1`] = `
 """"Provider configuration for OneSDK perform"""
-input Test {
+input TestProviderInput {
   """Provider mock configuration"""
-  mock: TestMockConfig
+  mock: MockProviderConfig
 
   """Provider superface configuration"""
-  superface: TestSuperfaceConfig
+  superface: SuperfaceProviderConfig
 
   """Provider gql_bad-name configuration"""
-  gql_bad__name: TestGqlBadNameConfig
+  gql_bad__name: GqlBadNameProviderConfig
 }
 
-input TestMockConfig {
+input MockProviderConfig {
   active: Boolean
 }
 
-input TestSuperfaceConfig {
+input SuperfaceProviderConfig {
   active: Boolean
-  parameters: TestSuperfaceProviderParameters
-  security: TestSuperfaceProviderSecurity
+  parameters: SuperfaceProviderParameters
+  security: SuperfaceProviderSecurity
 }
 
 """Provider-specific parameters"""
-input TestSuperfaceProviderParameters {
+input SuperfaceProviderParameters {
   """Parameter accepted by superface"""
   accessToken: String
 }
 
 """Provider-specific security"""
-input TestSuperfaceProviderSecurity {
+input SuperfaceProviderSecurity {
   """Security accepted by superface"""
   api_key: SuperfaceApiKeySecurityValues
 
@@ -82,7 +82,7 @@ input SuperfaceDigestSecurityValues {
   password: String
 }
 
-input TestGqlBadNameConfig {
+input GqlBadNameProviderConfig {
   active: Boolean
 }"
 `;
@@ -304,6 +304,23 @@ enum MyObjectTypeEnum {
   ONE
   TWO
 }"
+`;
+
+exports[`schema.types prepareProviderConfigTypeMap creates map of provider config types 1`] = `
+{
+  "gql_bad-name": {
+    "description": "Provider gql_bad-name configuration",
+    "type": "GqlBadNameProviderConfig",
+  },
+  "mock": {
+    "description": "Provider mock configuration",
+    "type": "MockProviderConfig",
+  },
+  "superface": {
+    "description": "Provider superface configuration",
+    "type": "SuperfaceProviderConfig",
+  },
+}
 `;
 
 exports[`schema.types scalarType returns GraphQLScalarType 1`] = `

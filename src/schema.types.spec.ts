@@ -30,6 +30,7 @@ import {
   primitiveType,
   ProvidersJsonRecord,
   scalarType,
+  prepareProviderConfigTypeMap,
 } from './schema.types';
 import {
   expectSchema,
@@ -177,6 +178,8 @@ describe('schema.types', () => {
     },
   };
 
+  const providerConfigTypeMap = prepareProviderConfigTypeMap(providersJsons);
+
   describe('generateProfileTypes', () => {
     it('skips QueryType if no safe usecase is present', async () => {
       const profileAst = await parseProfileFixture('unsafe_only');
@@ -185,7 +188,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
-        providersJsons,
+        providerConfigTypeMap,
       );
 
       expect(result.QueryType).toBeUndefined();
@@ -198,7 +201,7 @@ describe('schema.types', () => {
         'ScopeName',
         profileAst,
         profileSettings,
-        providersJsons,
+        providerConfigTypeMap,
       );
 
       expect(result.MutationType).toBeUndefined();
@@ -292,13 +295,19 @@ describe('schema.types', () => {
     });
   });
 
+  describe('prepareProviderConfigTypeMap', () => {
+    it('creates map of provider config types', () => {
+      expect(prepareProviderConfigTypeMap(providersJsons)).toMatchSnapshot();
+    });
+  });
+
   describe('generateProfileProviderOptionInputType', () => {
     it('creates provider object with security and parameters field', () => {
       expectSchema(
         generateProfileProviderOptionInputType(
           'Test',
           profileSettings,
-          providersJsons,
+          providerConfigTypeMap,
         ),
       );
     });

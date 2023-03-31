@@ -15,8 +15,8 @@ type Query {
 }
 
 type ProfileQuery {
-  UseCaseOne(provider: ProfileProviderOption): ProfileUseCaseOneResult
-  UseCaseTwo(provider: ProfileProviderOption): ProfileUseCaseTwoResult
+  UseCaseOne(provider: ProfileProviderInput): ProfileUseCaseOneResult
+  UseCaseTwo(provider: ProfileProviderInput): ProfileUseCaseTwoResult
 }
 
 """
@@ -27,19 +27,19 @@ type ProfileUseCaseOneResult {
 }
 
 """Provider configuration for OneSDK perform"""
-input ProfileProviderOption {
+input ProfileProviderInput {
   """Provider test configuration"""
-  test: ProfileProviderOptionTestConfig
+  test: TestProviderConfig
 }
 
-input ProfileProviderOptionTestConfig {
+input TestProviderConfig {
   active: Boolean
-  parameters: ProfileProviderOptionTestProviderParameters
-  security: ProfileProviderOptionTestProviderSecurity
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ProfileProviderOptionTestProviderParameters {
+input TestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -48,7 +48,7 @@ input ProfileProviderOptionTestProviderParameters {
 }
 
 """Provider-specific security"""
-input ProfileProviderOptionTestProviderSecurity {
+input TestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 
@@ -114,7 +114,7 @@ type Query {
 }
 
 type ProfileQuery {
-  UseCase(provider: ProfileProviderOption): ProfileUseCaseResult
+  UseCase(provider: ProfileProviderInput): ProfileUseCaseResult
 }
 
 """
@@ -125,19 +125,19 @@ type ProfileUseCaseResult {
 }
 
 """Provider configuration for OneSDK perform"""
-input ProfileProviderOption {
+input ProfileProviderInput {
   """Provider test configuration"""
-  test: ProfileProviderOptionTestConfig
+  test: TestProviderConfig
 }
 
-input ProfileProviderOptionTestConfig {
+input TestProviderConfig {
   active: Boolean
-  parameters: ProfileProviderOptionTestProviderParameters
-  security: ProfileProviderOptionTestProviderSecurity
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ProfileProviderOptionTestProviderParameters {
+input TestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -146,7 +146,7 @@ input ProfileProviderOptionTestProviderParameters {
 }
 
 """Provider-specific security"""
-input ProfileProviderOptionTestProviderSecurity {
+input TestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 
@@ -190,6 +190,102 @@ type ProfileInfo {
 }"
 `;
 
+exports[`schema generate generates valid schema for two profiles with same provider 1`] = `[]`;
+
+exports[`schema generate generates valid schema for two profiles with same provider 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  _superJson: SuperJson
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}
+
+"""Profile's unsafe and idempotent use-cases"""
+type Mutation {
+  ScopeName: ScopeNameMutation
+}
+
+type ScopeNameMutation {
+  UnsafeUsecase(provider: ScopeNameProviderInput): ScopeNameUnsafeUsecaseResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameUnsafeUsecaseResult {
+  result: Int
+}
+
+"""Provider configuration for OneSDK perform"""
+input ScopeNameProviderInput {
+  """Provider test configuration"""
+  test: TestProviderConfig
+}
+
+input TestProviderConfig {
+  active: Boolean
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input TestProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input TestProviderSecurity {
+  """Security accepted by test"""
+  api_key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}"
+`;
+
 exports[`schema generate generates valid schema for usecase with empty input 1`] = `[]`;
 
 exports[`schema generate generates valid schema for usecase with empty input 2`] = `
@@ -221,7 +317,7 @@ type Mutation {
 }
 
 type ScopeNameMutation {
-  UseCase(provider: ScopeNameProviderOption): ScopeNameUseCaseResult
+  UseCase(provider: ScopeNameProviderInput): ScopeNameUseCaseResult
 }
 
 """
@@ -232,19 +328,19 @@ type ScopeNameUseCaseResult {
 }
 
 """Provider configuration for OneSDK perform"""
-input ScopeNameProviderOption {
+input ScopeNameProviderInput {
   """Provider test configuration"""
-  test: ScopeNameProviderOptionTestConfig
+  test: TestProviderConfig
 }
 
-input ScopeNameProviderOptionTestConfig {
+input TestProviderConfig {
   active: Boolean
-  parameters: ScopeNameProviderOptionTestProviderParameters
-  security: ScopeNameProviderOptionTestProviderSecurity
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ScopeNameProviderOptionTestProviderParameters {
+input TestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -253,7 +349,7 @@ input ScopeNameProviderOptionTestProviderParameters {
 }
 
 """Provider-specific security"""
-input ScopeNameProviderOptionTestProviderSecurity {
+input TestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 
@@ -317,7 +413,7 @@ type Mutation {
 }
 
 type ScopeNameMutation {
-  NoResult(provider: ScopeNameProviderOption): ScopeNameNoResultResult
+  NoResult(provider: ScopeNameProviderInput): ScopeNameNoResultResult
 }
 
 """
@@ -331,19 +427,19 @@ type ScopeNameNoResultResult {
 scalar None
 
 """Provider configuration for OneSDK perform"""
-input ScopeNameProviderOption {
+input ScopeNameProviderInput {
   """Provider test configuration"""
-  test: ScopeNameProviderOptionTestConfig
+  test: TestProviderConfig
 }
 
-input ScopeNameProviderOptionTestConfig {
+input TestProviderConfig {
   active: Boolean
-  parameters: ScopeNameProviderOptionTestProviderParameters
-  security: ScopeNameProviderOptionTestProviderSecurity
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ScopeNameProviderOptionTestProviderParameters {
+input TestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -352,7 +448,7 @@ input ScopeNameProviderOptionTestProviderParameters {
 }
 
 """Provider-specific security"""
-input ScopeNameProviderOptionTestProviderSecurity {
+input TestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 
@@ -416,7 +512,7 @@ type Mutation {
 }
 
 type ScopeNameMutation {
-  UnsafeUsecase(provider: ScopeNameProviderOption): ScopeNameUnsafeUsecaseResult
+  UnsafeUsecase(provider: ScopeNameProviderInput): ScopeNameUnsafeUsecaseResult
 }
 
 """
@@ -427,19 +523,19 @@ type ScopeNameUnsafeUsecaseResult {
 }
 
 """Provider configuration for OneSDK perform"""
-input ScopeNameProviderOption {
+input ScopeNameProviderInput {
   """Provider test configuration"""
-  test: ScopeNameProviderOptionTestConfig
+  test: TestProviderConfig
 }
 
-input ScopeNameProviderOptionTestConfig {
+input TestProviderConfig {
   active: Boolean
-  parameters: ScopeNameProviderOptionTestProviderParameters
-  security: ScopeNameProviderOptionTestProviderSecurity
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
 }
 
 """Provider-specific parameters"""
-input ScopeNameProviderOptionTestProviderParameters {
+input TestProviderParameters {
   """Parameter accepted by test"""
   param_no_default: String
 
@@ -448,7 +544,7 @@ input ScopeNameProviderOptionTestProviderParameters {
 }
 
 """Provider-specific security"""
-input ScopeNameProviderOptionTestProviderSecurity {
+input TestProviderSecurity {
   """Security accepted by test"""
   api_key: TestApiKeySecurityValues
 

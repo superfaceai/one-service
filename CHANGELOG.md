@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix Provider Configuration GraphQL type name collision - [#47](https://github.com/superfaceai/one-service/pull/47)
 - Fix loading security and parameters from `super.json` - [#48](https://github.com/superfaceai/one-service/pull/48)
+- Sanitize security ids for GQL schema and desanitized for OneSDK - [#49](https://github.com/superfaceai/one-service/pull/49)
 
 ## [3.0.0] - 2023-03-30
 ### Added

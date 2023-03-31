@@ -50,20 +50,17 @@ export function sanitizedProfileName(profileAst: ProfileDocumentNode): string {
 }
 
 /**
- * @param provider Provider name with characters: [a-z][a-z0-9_-]
- * @returns GQL valid field name representing provider name with characters: [_a-zA-Z][_a-zA-Z0-9]
- *
  * Sanitization can be reversed by desanitizeProviderName
  */
-export function sanitizeProviderName(provider: string): string {
-  return provider.replace(/-/g, '__');
+export function sanitizeForFieldName(input: string): string {
+  return input.replace(/-/g, '__');
 }
 
 /**
- * Inversed sanitizeProviderName
+ * Inversed sanitizeForFieldName
  */
-export function desanitizeProviderName(provider: string): string {
-  return provider.replace(/__/g, '-');
+export function desanitizeForFieldName(input: string): string {
+  return input.replace(/__/g, '-');
 }
 
 export function hasFieldsDefined(

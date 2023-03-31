@@ -8,6 +8,7 @@ import {
   getInstance,
   perform,
   prepareProviderConfig,
+  prepareSecurity,
   ResolverArgs,
   ResolverContext,
 } from './one_sdk';
@@ -182,6 +183,18 @@ describe('one_sdk', () => {
     });
   });
 
+  describe('prepareSecurity', () => {
+    it('returns undefined security if security is undefined', async () => {
+      expect(prepareSecurity(undefined)).toBe(undefined);
+    });
+
+    it('returns desanitized security ids', async () => {
+      expect(prepareSecurity({ foo__bar: { apikey: 'apikey' } })).toEqual({
+        'foo-bar': { apikey: 'apikey' },
+      });
+    });
+  });
+
   describe('createResolver', () => {
     let resolverResult: any;
 
@@ -267,6 +280,22 @@ describe('one_sdk', () => {
         });
 
         expect(performMock.mock.calls[0][1]['security']).toBe(undefined);
+      });
+
+      it('passes desantized security ids to perform function', async () => {
+        await callResolver({
+          provider: {
+            test: {
+              security: {
+                foo__bar: { apikey: 'apikey' },
+              },
+            },
+          },
+        });
+
+        expect(performMock.mock.calls[0][1]['security']).toEqual({
+          'foo-bar': { apikey: 'apikey' },
+        });
       });
     });
 

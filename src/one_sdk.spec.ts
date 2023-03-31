@@ -217,7 +217,21 @@ describe('one_sdk', () => {
     });
 
     describe('provider configurations', () => {
-      it('sets empty object if parameters are not set', async () => {
+      it('passes parameters to perform function', async () => {
+        await callResolver({
+          provider: {
+            test: {
+              parameters: { foo: 'bar' },
+            },
+          },
+        });
+
+        expect(performMock.mock.calls[0][1]['parameters']).toEqual({
+          foo: 'bar',
+        });
+      });
+
+      it('passses undefined if parameters are not set', async () => {
         await callResolver({
           provider: {
             test: {
@@ -226,10 +240,24 @@ describe('one_sdk', () => {
           },
         });
 
-        expect(performMock.mock.calls[0][1]['parameters']).toEqual({});
+        expect(performMock.mock.calls[0][1]['parameters']).toBe(undefined);
       });
 
-      it('sets empty object if security are not set', async () => {
+      it('passes security values to perform function', async () => {
+        await callResolver({
+          provider: {
+            test: {
+              security: { foo: { apikey: 'apikey' } },
+            },
+          },
+        });
+
+        expect(performMock.mock.calls[0][1]['security']).toEqual({
+          foo: { apikey: 'apikey' },
+        });
+      });
+
+      it('passses undefined if security are not set', async () => {
         await callResolver({
           provider: {
             test: {
@@ -238,7 +266,7 @@ describe('one_sdk', () => {
           },
         });
 
-        expect(performMock.mock.calls[0][1]['security']).toEqual({});
+        expect(performMock.mock.calls[0][1]['security']).toBe(undefined);
       });
     });
 

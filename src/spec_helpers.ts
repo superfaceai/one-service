@@ -1,6 +1,7 @@
 import {
   ProfileDocumentNode,
   NormalizedSuperJsonDocument,
+  SuperJsonDocument,
 } from '@superfaceai/ast';
 import { normalizeSuperJsonDocument } from '@superfaceai/one-sdk';
 import {
@@ -18,20 +19,23 @@ import { GraphQLSchema, printSchema, validateSchema } from 'graphql';
 import { basename, join as joinPath } from 'path';
 
 export async function createSuperJson(
-  profileFixtureName: string,
+  profileFixtureNames: string[],
 ): Promise<NormalizedSuperJsonDocument> {
-  const profileFile = fixturePath(`${profileFixtureName}.supr`);
+  const superJson: SuperJsonDocument = {};
   const providerFile = fixturePath(`test.provider.json`);
 
-  const profileAst = await parseProfileFixture(profileFixtureName);
-  const profile = ProfileId.fromParameters(profileAst.header).withoutVersion;
+  for (const profileFixtureName of profileFixtureNames) {
+    const profileFile = fixturePath(`${profileFixtureName}.supr`);
 
-  const version = ProfileVersion.fromParameters(
-    profileAst.header.version,
-  ).toString();
+    const profileAst = await parseProfileFixture(profileFixtureName);
+    const profile = ProfileId.fromParameters(profileAst.header).withoutVersion;
 
-  return normalizeSuperJsonDocument({
-    profiles: {
+    const version = ProfileVersion.fromParameters(
+      profileAst.header.version,
+    ).toString();
+
+    superJson.profiles = {
+      ...superJson.profiles,
       [profile]: {
         file: profileFile,
         version,
@@ -39,13 +43,16 @@ export async function createSuperJson(
           test: {},
         },
       },
+    };
+  }
+
+  superJson.providers = {
+    test: {
+      file: providerFile,
     },
-    providers: {
-      test: {
-        file: providerFile,
-      },
-    },
-  });
+  };
+
+  return normalizeSuperJsonDocument(superJson);
 }
 
 export async function parseProfileFixture(

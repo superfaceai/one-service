@@ -50,12 +50,13 @@ import { ArrayMultiMap } from './structures';
 const debug = createDebug(`${DEBUG_PREFIX}:schema`);
 
 export type ProvidersJsonRecord = Record<string, ProviderJson>;
+export type ProviderConfigTypeMap = Record<string, GraphQLInputFieldConfig>;
 
 export async function generateProfileTypes(
   profilePrefix: string,
   profileAst: ProfileDocumentNode,
   profileSettings: NormalizedProfileSettings,
-  providersJsons: ProvidersJsonRecord,
+  providerConfigTypeMap: GraphQLInputFieldConfigMap,
 ): Promise<{
   QueryType?: GraphQLObjectType;
   MutationType?: GraphQLObjectType;
@@ -72,9 +73,9 @@ export async function generateProfileTypes(
   const mutationFields: GraphQLFieldConfigMap<any, any> = {}; // TODO: something better than any?
 
   const ProfileProviderOptionType = generateProfileProviderOptionInputType(
-    `${profilePrefix}ProviderOption`,
+    profilePrefix,
     profileSettings,
-    providersJsons,
+    providerConfigTypeMap,
   );
 
   for (const useCase of output.usecases) {
@@ -221,22 +222,12 @@ export function generateStructureInputType(
   return inputType(name, structure);
 }
 
-export function generateProfileProviderOptionInputType(
-  name: string,
-  profileSettings: NormalizedProfileSettings,
+export function prepareProviderConfigTypeMap(
   providersJsons: ProvidersJsonRecord,
-): GraphQLInputObjectType {
-  const providersNames = Object.keys(profileSettings.providers);
+): ProviderConfigTypeMap {
+  const providerFields: ProviderConfigTypeMap = {};
 
-  debug(
-    `generateProfileProviderOptionInputType for ${name} with providers: ${providersNames.join(
-      ', ',
-    )}`,
-  );
-
-  const providerFields: GraphQLInputFieldConfigMap = {};
-
-  for (const providerName of providersNames) {
+  for (const providerName of Object.keys(providersJsons)) {
     const providerParameters = generateUseCaseProviderParametersFields(
       providersJsons,
       [providerName],
@@ -246,7 +237,7 @@ export function generateProfileProviderOptionInputType(
       providerName,
     ]);
 
-    const namePrefix = `${name}${sanitizeForGQLTypeName(providerName)}`;
+    const namePrefix = sanitizeForGQLTypeName(providerName);
 
     const configurationFields = {
       ...(providerParameters && {
@@ -269,17 +260,40 @@ export function generateProfileProviderOptionInputType(
       }),
     };
 
-    providerFields[sanitizeProviderName(providerName)] = {
+    providerFields[providerName] = {
       description: `Provider ${providerName} configuration`,
       type: new GraphQLInputObjectType({
-        name: `${namePrefix}Config`,
+        name: `${namePrefix}ProviderConfig`,
         fields: { active: { type: GraphQLBoolean }, ...configurationFields },
       }),
     };
   }
 
+  return providerFields;
+}
+
+export function generateProfileProviderOptionInputType(
+  profilePrefix: string,
+  profileSettings: NormalizedProfileSettings,
+  providerConfigTypeMap: ProviderConfigTypeMap,
+): GraphQLInputObjectType {
+  const providersNames = Object.keys(profileSettings.providers);
+
+  debug(
+    `generateProfileProviderOptionInputType for ${profilePrefix} with providers: ${providersNames.join(
+      ', ',
+    )}`,
+  );
+
+  const providerFields: GraphQLInputFieldConfigMap = {};
+
+  for (const providerName of providersNames) {
+    providerFields[sanitizeProviderName(providerName)] =
+      providerConfigTypeMap[providerName];
+  }
+
   return new GraphQLInputObjectType({
-    name,
+    name: `${profilePrefix}ProviderInput`,
     description: 'Provider configuration for OneSDK perform',
     fields: providerFields,
   });
@@ -379,7 +393,7 @@ export function generateUseCaseSecurityFields(
           });
         } else {
           throw new Error(
-            `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
+            `Unsupported security scheme.Error in security schema definition for provider ${providerName}`,
           );
         }
       } else if (schema.type === 'apiKey') {
@@ -393,7 +407,7 @@ export function generateUseCaseSecurityFields(
         });
       } else {
         throw new Error(
-          `Unsupported security scheme. Error in security schema definition for provider ${providerName}`,
+          `Unsupported security scheme.Error in security schema definition for provider ${providerName}`,
         );
       }
 
@@ -503,7 +517,7 @@ export function outputType(
   name: string,
   structure: StructureType,
 ): GraphQLOutputType {
-  debug(`outputType for ${name} from ${structure.kind}`);
+  debug(`outputType for ${name} from ${structure.kind} `);
 
   switch (structure.kind) {
     case 'PrimitiveStructure':
@@ -543,7 +557,7 @@ export function outputType(
       return new GraphQLNonNull(outputType(name, structure.value));
 
     default:
-      throw new Error(`Variable type not implemented for: ${structure.kind}`);
+      throw new Error(`Variable type not implemented for: ${structure.kind} `);
   }
 }
 
@@ -551,7 +565,7 @@ export function inputType(
   name: string,
   structure: StructureType,
 ): GraphQLInputType {
-  debug(`inputType for ${name} from ${structure.kind}`);
+  debug(`inputType for ${name} from ${structure.kind} `);
 
   switch (structure.kind) {
     case 'PrimitiveStructure':
@@ -569,7 +583,7 @@ export function inputType(
       Object.entries(structure.fields ?? {}).forEach(
         ([fieldName, innerStructure]) => {
           const fieldConfig: GraphQLInputFieldConfig = {
-            type: inputType(`${name}${pascalize(fieldName)}`, innerStructure),
+            type: inputType(`${name}${pascalize(fieldName)} `, innerStructure),
             description: isDocumentedStructure(innerStructure)
               ? description(innerStructure)
               : undefined,
@@ -591,7 +605,7 @@ export function inputType(
       return new GraphQLNonNull(inputType(name, structure.value));
 
     default:
-      throw new Error(`Variable type not implemented for: ${structure.kind}`);
+      throw new Error(`Variable type not implemented for: ${structure.kind} `);
   }
 }
 

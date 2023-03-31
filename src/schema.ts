@@ -24,6 +24,7 @@ import { load as loadProvider } from './provider';
 import {
   generateProfileConfig,
   generateProfileTypes,
+  prepareProviderConfigTypeMap,
   ProvidersJsonRecord,
 } from './schema.types';
 import { hasFieldsDefined, sanitizedProfileName } from './schema.utils';
@@ -71,6 +72,8 @@ export async function generate(
     }),
   );
 
+  const providerConfigTypeMap = prepareProviderConfigTypeMap(loadedProviders);
+
   for (const [profile, profileSettings] of Object.entries(superJson.profiles)) {
     debug(`generate start for ${profile}`);
 
@@ -82,7 +85,7 @@ export async function generate(
       profilePrefix,
       loadedProfile.ast,
       profileSettings,
-      loadedProviders,
+      providerConfigTypeMap,
     );
 
     if (QueryType) {

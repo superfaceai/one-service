@@ -13,7 +13,7 @@ let instance: SuperfaceClient;
 export type PerformParams = {
   profile: string;
   useCase: string;
-  input: Record<string, any>;
+  input?: Record<string, any>;
   provider?: string;
   parameters?: Record<string, string>;
   security?: Record<string, Omit<SecurityValues, 'id'>>;
@@ -148,8 +148,6 @@ export function createResolver<
   ): Promise<ResolverResult<TResult>> {
     debug(`Performing ${profile}/${useCase}`, { source, args, context, info });
 
-    const input = args.input ?? {};
-
     const { provider, providerConfig } = prepareProviderConfig(
       args.provider,
       profile,
@@ -160,10 +158,10 @@ export function createResolver<
       const result = await perform({
         profile,
         useCase,
-        input,
         provider,
-        parameters: providerConfig.parameters ?? {},
-        security: providerConfig.security ?? {},
+        input: args.input ?? {},
+        parameters: providerConfig.parameters,
+        security: providerConfig.security,
         oneSdk: context?.getOneSdkInstance?.(),
       });
 

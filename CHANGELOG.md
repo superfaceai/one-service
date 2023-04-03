@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.1] - 2023-04-03
 ### Fixed
 - Fix Provider Configuration GraphQL type name collision - [#47](https://github.com/superfaceai/one-service/pull/47)
 - Fix loading security and parameters from `super.json` - [#48](https://github.com/superfaceai/one-service/pull/48)
@@ -95,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0-rc.0 - 2022-01-11
 
-[Unreleased]: https://github.com/superfaceai/one-service/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/superfaceai/one-service/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/superfaceai/one-service/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/superfaceai/one-service/compare/v2.2.3...v3.0.0
 [2.2.3]: https://github.com/superfaceai/one-service/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/superfaceai/one-service/compare/v2.2.1...v2.2.2

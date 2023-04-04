@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fix mapping Comlink `number` primitive type to GraphQL `Float`  
+- Fix mapping Comlink `number` primitive type to GraphQL `Float` - [#51](https://github.com/superfaceai/one-service/pull/51)
 
 ## [3.0.1] - 2023-04-03
 ### Fixed

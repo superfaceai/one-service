@@ -21,11 +21,11 @@ import {
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
+  GraphQLFloat,
   GraphQLInputFieldConfig,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   GraphQLInputType,
-  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -473,7 +473,7 @@ export function primitiveType(
     case 'string':
       return GraphQLString; // http://spec.graphql.org/October2021/#sec-String
     case 'number':
-      return GraphQLInt; // http://spec.graphql.org/October2021/#sec-Int
+      return GraphQLFloat; // http://spec.graphql.org/October2021/#sec-Float
     case 'boolean':
       return GraphQLBoolean; // http://spec.graphql.org/October2021/#sec-Boolean
     default:

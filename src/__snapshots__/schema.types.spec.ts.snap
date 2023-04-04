@@ -214,7 +214,7 @@ exports[`schema.types inputType returns GraphQLInputType 1`] = `
   Primitive
   Number
   """
-  primitive_number: Int
+  primitive_number: Float
 
   """
   Primitive
@@ -266,7 +266,7 @@ exports[`schema.types outputType returns GraphQLObjectType 1`] = `
   Primitive
   Number
   """
-  primitive_number: Int
+  primitive_number: Float
 
   """
   Primitive

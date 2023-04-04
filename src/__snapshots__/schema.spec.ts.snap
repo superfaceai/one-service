@@ -228,7 +228,7 @@ type ScopeNameMutation {
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameUnsafeUsecaseResult {
-  result: Int
+  result: Float
 }
 
 """Provider configuration for OneSDK perform"""
@@ -519,7 +519,7 @@ type ScopeNameMutation {
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameUnsafeUsecaseResult {
-  result: Int
+  result: Float
 }
 
 """Provider configuration for OneSDK perform"""

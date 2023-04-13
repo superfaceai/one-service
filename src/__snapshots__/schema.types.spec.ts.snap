@@ -118,6 +118,34 @@ type ScopeNameResult {
 scalar None"
 `;
 
+exports[`schema.types generateStructureResultType creates ScopeNameResult as None value if result is empty object 1`] = `
+""""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameResult {
+  result: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
+exports[`schema.types generateStructureResultType creates ScopeNameResult if result contains nested empty object 1`] = `
+""""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameResult {
+  result: ScopeNameResultNode
+}
+
+type ScopeNameResultNode {
+  foo: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
 exports[`schema.types generateStructureResultType creates ScopeNameResult with description and result field 1`] = `
 """"
 Wrapping type to handle many possible types returned as result by OneSDK

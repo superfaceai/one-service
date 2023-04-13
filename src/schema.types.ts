@@ -195,7 +195,11 @@ export function generateStructureResultType(
   debug(`generateStructureResultType for ${name} from structure`, structure);
 
   let type: GraphQLOutputType;
-  if (structure === undefined) {
+  if (
+    structure === undefined ||
+    (structure.kind === 'ObjectStructure' &&
+      Object.keys(structure.fields).length === 0)
+  ) {
     type = GraphQLNone;
   } else {
     type = outputType(`${name}Node`, structure);
@@ -545,10 +549,14 @@ export function outputType(
         },
       );
 
-      return new GraphQLObjectType({
-        name,
-        fields,
-      });
+      if (Object.keys(fields).length === 0) {
+        return GraphQLNone;
+      } else {
+        return new GraphQLObjectType({
+          name,
+          fields,
+        });
+      }
 
     case 'ListStructure':
       return new GraphQLList(outputType(name, structure.value));

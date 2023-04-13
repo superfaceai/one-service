@@ -37,6 +37,22 @@ describe('schema', () => {
       expectSchema(schema);
     });
 
+    it('generates valid schema for usecase with empty result', async () => {
+      const schema = await generate(
+        await createSuperJson(['profile_with_empty_result']),
+      );
+      expectSchemaValidationErrors(schema);
+      expectSchema(schema);
+    });
+
+    it('generates valid schema for usecase with empty nested object in result', async () => {
+      const schema = await generate(
+        await createSuperJson(['profile_with_empty_nested_object_in_result']),
+      );
+      expectSchemaValidationErrors(schema);
+      expectSchema(schema);
+    });
+
     it('generates valid schema for usecase without result', async () => {
       const schema = await generate(await createSuperJson(['no_result']));
       expectSchemaValidationErrors(schema);

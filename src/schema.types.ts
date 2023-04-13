@@ -601,6 +601,9 @@ export function inputType(
         },
       );
 
+      if (Object.keys(fields).length === 0) {
+        return GraphQLNone;
+      }
       return new GraphQLInputObjectType({
         name,
         fields,

@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fix mapping Comlink empty result structure to GraphQL
+- Fix mapping Comlink empty result structure and empty nested objects to GraphQL
+- Fix mapping Comlink empty nested objects in input to GraphQL
 
 ## [3.0.2] - 2023-04-05
 ### Fixed

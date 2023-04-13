@@ -382,6 +382,114 @@ input TestDigestSecurityValues {
 }"
 `;
 
+exports[`schema generate generates valid schema for usecase with empty nested object in input 1`] = `[]`;
+
+exports[`schema generate generates valid schema for usecase with empty nested object in input 2`] = `
+""""Superface.ai ❤️"""
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Profile's safe use-cases"""
+type Query {
+  _superJson: SuperJson
+}
+
+type SuperJson {
+  profiles: [ProfileInfo]
+  providers: [String]
+}
+
+type ProfileInfo {
+  name: String
+  version: String
+  providers: [String]
+}
+
+"""Profile's unsafe and idempotent use-cases"""
+type Mutation {
+  ScopeName: ScopeNameMutation
+}
+
+type ScopeNameMutation {
+  UseCase(
+    provider: ScopeNameProviderInput
+
+    """Use-case inputs"""
+    input: ScopeNameUseCaseInput
+  ): ScopeNameUseCaseResult
+}
+
+"""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameUseCaseResult {
+  result: String
+}
+
+"""Provider configuration for OneSDK perform"""
+input ScopeNameProviderInput {
+  """Provider test configuration"""
+  test: TestProviderConfig
+}
+
+input TestProviderConfig {
+  active: Boolean
+  parameters: TestProviderParameters
+  security: TestProviderSecurity
+}
+
+"""Provider-specific parameters"""
+input TestProviderParameters {
+  """Parameter accepted by test"""
+  param_no_default: String
+
+  """Parameter accepted by test"""
+  param_default: String
+}
+
+"""Provider-specific security"""
+input TestProviderSecurity {
+  """Security accepted by test"""
+  api__key: TestApiKeySecurityValues
+
+  """Security accepted by test"""
+  basic: TestBasicSecurityValues
+
+  """Security accepted by test"""
+  bearer_token: TestBearerTokenSecurityValues
+
+  """Security accepted by test"""
+  digest: TestDigestSecurityValues
+}
+
+input TestApiKeySecurityValues {
+  apikey: String
+}
+
+input TestBasicSecurityValues {
+  username: String
+  password: String
+}
+
+input TestBearerTokenSecurityValues {
+  token: String
+}
+
+input TestDigestSecurityValues {
+  username: String
+  password: String
+}
+
+input ScopeNameUseCaseInput {
+  foo: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
 exports[`schema generate generates valid schema for usecase with empty nested object in result 1`] = `[]`;
 
 exports[`schema generate generates valid schema for usecase with empty nested object in result 2`] = `

@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fix mapping Comlink empty result structure and empty nested objects to GraphQL
-- Fix mapping Comlink empty nested objects in input to GraphQL
+- Map empty objects in result and input to custom types with noop field (`EmptyObject`, `EmptyInputObject`) - [#52](https://github.com/superfaceai/one-service/pull/52)
 
 ## [3.0.2] - 2023-04-05
 ### Fixed

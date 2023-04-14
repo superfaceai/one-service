@@ -293,6 +293,28 @@ describe('schema.types', () => {
         ),
       );
     });
+
+    it('creates ScopeNameResult as None value if result is empty object', async () => {
+      const profileOutput = await getProfileOutput('profile_with_empty_result');
+      expectSchema(
+        generateStructureResultType(
+          'ScopeNameResult',
+          profileOutput.usecases[0].result as StructureType,
+        ),
+      );
+    });
+
+    it('creates ScopeNameResult if result contains nested empty object', async () => {
+      const profileOutput = await getProfileOutput(
+        'profile_with_empty_nested_object_in_result',
+      );
+      expectSchema(
+        generateStructureResultType(
+          'ScopeNameResult',
+          profileOutput.usecases[0].result as StructureType,
+        ),
+      );
+    });
   });
 
   describe('prepareProviderConfigTypeMap', () => {

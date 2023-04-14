@@ -111,7 +111,50 @@ exports[`schema.types generateStructureResultType creates ScopeNameResult as Non
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameResult {
-  result: None
+  result: EmptyObject
+}
+
+"""Represents empty object"""
+type EmptyObject {
+  _: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
+exports[`schema.types generateStructureResultType creates ScopeNameResult as None value if result is empty object 1`] = `
+""""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameResult {
+  result: EmptyObject
+}
+
+"""Represents empty object"""
+type EmptyObject {
+  _: None
+}
+
+"""Represents NULL value"""
+scalar None"
+`;
+
+exports[`schema.types generateStructureResultType creates ScopeNameResult if result contains nested empty object 1`] = `
+""""
+Wrapping type to handle many possible types returned as result by OneSDK
+"""
+type ScopeNameResult {
+  result: ScopeNameResultNode
+}
+
+type ScopeNameResultNode {
+  foo: EmptyObject
+}
+
+"""Represents empty object"""
+type EmptyObject {
+  _: None
 }
 
 """Represents NULL value"""

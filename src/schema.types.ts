@@ -639,7 +639,7 @@ export const GraphQLNone = new GraphQLScalarType({
 });
 
 export const GraphQLEmptyObject = new GraphQLObjectType({
-  name: 'Empty',
+  name: 'EmptyObject',
 
   description: 'Represents empty object',
 
@@ -649,7 +649,7 @@ export const GraphQLEmptyObject = new GraphQLObjectType({
 });
 
 export const GraphQLEmptyInputObject = new GraphQLInputObjectType({
-  name: 'EmptyInput',
+  name: 'EmptyInputObject',
 
   description: 'Represents empty input object',
 

@@ -483,7 +483,12 @@ input TestDigestSecurityValues {
 }
 
 input ScopeNameUseCaseInput {
-  foo: None
+  foo: EmptyInput
+}
+
+"""Represents empty input object"""
+input EmptyInput {
+  _: None
 }
 
 """Represents NULL value"""
@@ -532,7 +537,12 @@ type ScopeNameUseCaseResult {
 }
 
 type ScopeNameUseCaseResultNode {
-  foo: None
+  foo: Empty
+}
+
+"""Represents empty object"""
+type Empty {
+  _: None
 }
 
 """Represents NULL value"""
@@ -631,7 +641,12 @@ type ScopeNameMutation {
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameUseCaseResult {
-  result: None
+  result: Empty
+}
+
+"""Represents empty object"""
+type Empty {
+  _: None
 }
 
 """Represents NULL value"""
@@ -730,7 +745,12 @@ type ScopeNameMutation {
 Wrapping type to handle many possible types returned as result by OneSDK
 """
 type ScopeNameNoResultResult {
-  result: None
+  result: Empty
+}
+
+"""Represents empty object"""
+type Empty {
+  _: None
 }
 
 """Represents NULL value"""

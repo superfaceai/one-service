@@ -200,7 +200,7 @@ export function generateStructureResultType(
     (structure.kind === 'ObjectStructure' &&
       Object.keys(structure.fields).length === 0)
   ) {
-    type = GraphQLNone;
+    type = GraphQLEmptyObject;
   } else {
     type = outputType(`${name}Node`, structure);
   }
@@ -550,7 +550,7 @@ export function outputType(
       );
 
       if (Object.keys(fields).length === 0) {
-        return GraphQLNone;
+        return GraphQLEmptyObject;
       } else {
         return new GraphQLObjectType({
           name,
@@ -602,7 +602,7 @@ export function inputType(
       );
 
       if (Object.keys(fields).length === 0) {
-        return GraphQLNone;
+        return GraphQLEmptyInputObject;
       }
       return new GraphQLInputObjectType({
         name,
@@ -635,5 +635,25 @@ export const GraphQLNone = new GraphQLScalarType({
 
   parseLiteral() {
     return null;
+  },
+});
+
+export const GraphQLEmptyObject = new GraphQLObjectType({
+  name: 'Empty',
+
+  description: 'Represents empty object',
+
+  fields: {
+    _: { type: GraphQLNone },
+  },
+});
+
+export const GraphQLEmptyInputObject = new GraphQLInputObjectType({
+  name: 'EmptyInput',
+
+  description: 'Represents empty input object',
+
+  fields: {
+    _: { type: GraphQLNone },
   },
 });

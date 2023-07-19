@@ -1,4 +1,4 @@
-[Website](https://superface.ai) | [Get Started](https://superface.ai/docs/getting-started) | [Documentation](https://superface.ai/docs) | [Discord](https://sfc.is/discord) | [Twitter](https://twitter.com/superfaceai) | [Support](https://superface.ai/support)
+[Website](https://superface.ai) | [Get Started](https://superface.ai/docs/getting-started) | [Documentation](https://superface.ai/docs) | [Twitter](https://twitter.com/superfaceai) | [Support](https://superface.ai/support)
 
 <img src="https://github.com/superfaceai/one-service/raw/main/docs/LogoGreen.png" alt="Superface" width="100" height="100">
 
@@ -8,7 +8,7 @@
 [![npm](https://img.shields.io/npm/v/@superfaceai/one-service)](https://www.npmjs.com/package/@superfaceai/one-service)
 [![license](https://img.shields.io/npm/l/@superfaceai/one-service)](LICENSE)
 ![TypeScript](https://img.shields.io/static/v1?message=TypeScript&&logoColor=ffffff&color=007acc&labelColor=5c5c5c&label=built%20with)
-[![Discord](https://img.shields.io/discord/819563244418105354?logo=discord&logoColor=fff)](https://sfc.is/discord)
+[![GitHub Discussions](https://img.shields.io/github/discussions/superfaceai/.github?logo=github&logoColor=fff)](https://github.com/orgs/superfaceai/discussions)
 
 OneService allows you to run [OneSDK](https://github.com/superfaceai/one-sdk-js) as a service with configured usecases. And use it as [backend for frontend](https://samnewman.io/patterns/architectural/bff/).
 
